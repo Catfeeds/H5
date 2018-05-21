@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="__CSS__/mint-ui.css" />
+
+<head>
+    {include file="public/base" /}
+    <style>
+        .mint-swipe-indicator {
+            background: #666666;
+        }
+
+        .mint-swipe-indicator.is-active {
+            background: red;
+        }
+
+        .noshow {
+            background: #ccc;
+        }
+        [v-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="details" v-cloak>
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">详情</h1>
+        </header>
+        <div class="mui-content">
+            <!--列表头-->
+            <div class="list_title clear  ">
+                <ul class="mui-row">
+                    <li class="mui-col-sm-4 mui-col-xs-4">
+                        <a href="#">商品</a>
+                    </li>
+                    <li class="mui-col-sm-4 mui-col-xs-4">
+                        <a :href="'{:url('goods/details_page')}?id='+id">详情</a>
+                    </li>
+                    <li class="mui-col-sm-4 mui-col-xs-4">
+                        <a :href="'{:url('goods/evaluation')}?goods_id='+id">评价</a>
+                    </li>
+                </ul>
+            </div>
+            <!--轮播-->
+            <div>
+                <mt-swipe :auto="4000" style="height: 300px">
+                    <mt-swipe-item v-for="item in goodsImage">
+                        <img :src="item.big" width="100%" height="100%" />
+                    </mt-swipe-item>
+                </mt-swipe>
+            </div>
+
+            <!--产品详情-->
+            <div class="goods_name">
+                <p>{{goodsName}}</p>
+                <p>价格：
+                    <strong>￥{{goodsPrice}}</strong>
+                    <span>￥{{goodsPrice}}</span>
+                </p>
+            </div>
+            <!--产品规格-->
+            <div id="mask">
+                <div class="clear title">
+                    <p class="fl" style="font-size: 14px; color: #333333;">产品规格</p>
+                </div>
+                <div class="clear">
+                    <ul class="clear" v-for="(item,index) in goodsAttr">
+                        <p class="p_style">{{item.attrname}}</p>
+                        <li v-for="(list,listIndex) in goodsAttr[index].sub_attr_id" @click="liListClick(list,listIndex,index,list.isshow,list.isactive)"
+                            :class="{active:list.isactive==true,noshow:list.isshow==false}">
+                            {{list.attrvaluename}}
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="clear" v-show="showStone">
+                    <ul class="clear">
+                        <p class="p_style">可选主石</p>
+                        <li v-for="(item,index) in GoodsDiamondMatching" @click="changeshape(index,item.shape,item.weight)" :class="{active:index == isactive}">
+                            {{item.shape_name}} {{item.weight}}CT
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="clear list_04">
+                    <p class="p_style">数量</p>
+                    <button class="val_sel" @click="pro_num_jian">-</button>
+                    <input class="val_text" type="text" v-model="num" disabled>
+                    <button class="val_sel" @click="pro_num_jia">+</button>
+                    <p class="kucun">库存
+                        <span>{{goodsStockNum}}</span>
+                    </p>
+                </div>
+                <div class="clear ser_num">商品编号：
+                    <span>{{goodsCode}}</span>
+                </div>
+            </div>
+            <!--产品参数-->
+            <div class="Parameter">
+                <p class="title">产品参数</p>
+                <ul class="clear" v-for="(item,index) in goodsAttr">
+                    <p>{{item.attrname}}:</p>
+                    <li v-for="(list) in goodsAttr[index].sub_attr_id">{{list.attrvaluename}}</li>
+                </ul>
+            </div>
+
+            <div style="width: 100%;height: 60px"></div>
+        </div>
+
+        <!-- 区分成品还是定制 若为成品可以立即购买 若为定制商品需要选择配托 -->
+        <div class="nav_footer mui-row">
+            <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 collect">
+                <span class="icon_style my-span-background"></span>
+                <span>收藏</span>
+            </a>
+            <a href="{:url('cart/index')}" class="mui-col-sm-3 mui-col-xs-3">
+                <span class="icon_style">
+                    <svg class="icon" aria-hidden="true" style="font-size: 30px;">
+                        <use xlink:href="#icon-gouwuche1-copy"></use>
+                    </svg>
+
+                </span>
+                <span>购物车</span>
+                <span class="mui-badge mui-badge-danger my-badge">{{cartnum}}</span>
+            </a>
+            <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 addcart">
+                <span>加入购物车</span>
+            </a>
+            <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 shop_now" v-show="goodstype == 3">
+                <span>立即购买</span>
+            </a>
+            <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 custom-btn" v-show="goodstype == 4" v-if="showStone" @click="peiShiShowAlert">
+                <span>在线配石</span>
+            </a>
+            <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 custom-btn" v-show="ifStone" @click="diamondPiPei">
+                <span>确认匹配</span>
+            </a>
+        </div>
+
+        <!-- 点击配托弹出层 -->
+        <div v-show="detailsShow">
+            <div class="buttom_alert" @click="buttom_alert"></div>
+            <div class="buttom_box peishi_box">
+                <p>参数详情</p>
+                <ul>
+                    <li>形状</li>
+                    <li>钻重</li>
+                    <li>净度</li>
+                    <li>颜色</li>
+                    <li>价格</li>
+                </ul>
+                <ul v-for="(item,index) in peishiList" @click="selectDiamond(index,item.goods_id)" :class="{active:index == isActive}">
+                    <li>{{item.shape}}</li>
+                    <li>{{item.weight}}</li>
+                    <li>{{item.clarity}}</li>
+                    <li>{{item.color}}</li>
+                    <li>{{item.price}}</li>
+                </ul>
+                <div class="nav_footer mui-row">
+                    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 custom-btn" style="width:100%" @click="pipei">
+                        <span>确认匹配</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 当确认匹配显示所选的托和匹配到的钻 -->
+        <div class="matching" v-show="isShow">
+            <div class="buttom_alert" @click="buttom_alert"></div>
+            <div class="queRen">
+                <div class="tops">
+                    <h1>匹配项目：</h1>
+                    <ul class="ma-box">
+                        <li>
+                            <div class="fl good-img">
+                                <img :src="thumb" class="w4rem" alt="">
+                            </div>
+                            <div class="fr good-title">
+                                <p>
+                                    <span>{{goodsName}}</span>
+                                    <button @click="ringAgain">重选</button>
+                                </p>
+                                <p>{{jietuoList.name}}</p>
+                                <p class="rmb">￥{{jietuoList.goods_price}}</p>
+                            </div>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <li>
+                            <div class="fl good-img">
+                                <img src="__IMG__/zuanjie.png" class="w4rem" alt="">
+                            </div>
+                            <div class="fr good-title">
+                                <p>
+                                    <span>{{chosediamond.goods_name}}</span>
+                                    <button @click="diamondAgain">重选</button>
+                                </p>
+                                <p>{{chosediamond.shape}}&nbsp;{{chosediamond.weight}}Ct&nbsp;{{chosediamond.clarity}}&nbsp;{{chosediamond.color}}</p>
+                                <p class="rmb">￥{{chosediamond.price}}</p>
+                            </div>
+                            <div class="clearfix"></div>
+                        </li>
+                        <div class="clearfix"></div>
+                    </ul>
+                </div>
+                <a class="custom-btn" @click="queRenButton">确认定制</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+<script src="__MOBILE__/js/mint-ui.js?__Version__"></script>
+<script>
+    /*图片懒加载*/
+    Vue.use(VueLazyload, {
+        preLoad: 1.3,
+        error: "错误",
+        loading: '',
+        attempt: 1
+    });
+
+    let vm = new Vue({
+        el: '#details',
+        components: {},
+        data() {
+            return {
+                number: 0,
+                num: 1,
+                id: '',
+                goodsName: '',
+                goodsPrice: '',
+                goodstype: '',
+                goodsImage: [],
+                goodsCode: '',
+                goodsStockNum: '',
+                token: '',
+                goodsAttr: [],
+                goodsId: '',
+                str: [],
+                attrIndex: [],
+                skuObj: [],
+                skuProduct: '',
+                showArr: [],
+                allattr: [],
+                cartnum: 0,
+                goodsIdList: [],
+                goodsIdList01: [],
+                detailsShow: false,
+                peishiList: '',
+                type: 0, //购物车类型  1为立即购买
+                GoodsDiamondMatching: [],
+                shape: '',
+                weight: '',
+                isactive: -1,
+                diamond_id: '', //已选择的钻石goods_id
+                character_carving: '',
+                isActive: -1,
+                isShow: false,
+                jietuoList: '',
+                chosediamond: '',
+                thumb: '',
+                showStone: true,
+                ifStone: false
+            }
+        },
+        filters: {
+            //保留2位小数点过滤器 不四舍五入
+            number(value) {
+                let toFixedNum = Number(value).toFixed(3);
+                let realVal = toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                return realVal;
+            }
+        },
+        created() {
+            this.token = getToken();
+            this.id = getUrlParam("id");
+            this.diamond_id = getUrlParam("diamond_id");
+
+            // 如果是钻石配托 进入详情页 显示确认定制 并且没有可选主石
+            if (this.diamond_id !== null) {
+                this.showStone = false;
+                this.ifStone = true
+            }
+
+            /*轮播图片ajax*/
+            axios.get(__apiurl2 + '/goods/getgoodsinfo', {
+                params: {
+                    id: this.id,
+                },
+                headers: {
+                    Aid: getAId(),
+                    token:this.token
+                },
+            }).then(res => {
+                console.log(res)
+                this.goodsName = res.data.data.name;
+                this.goodsImage = res.data.data.image;
+                this.goodsCode = res.data.data.code;
+                this.goodsPrice = res.data.data.price_seller;
+                this.goodstype = res.data.data.type;
+                this.thumb = res.data.data.thumb;
+                this.goodsStockNum = res.data.data.stock_num;
+                this.GoodsDiamondMatching = res.data.data.GoodsDiamondMatching;
+                /*获取产品规格数据*/
+                this.goodsAttr = res.data.data.skuattr; //前台遍历属性
+                for (var index in this.goodsAttr) {
+                    for (var key in this.goodsAttr[index].sub_attr_id) {
+                        this.$set(this.goodsAttr[index].sub_attr_id[key], 'isshow', true); //加上显示标识
+                        this.$set(this.goodsAttr[index].sub_attr_id[key], 'isactive', false);
+                    }
+                }
+                //成品也不显示可选主石
+                if (this.goodstype == 3) {
+                    this.showStone = false;
+                }
+            }).catch(error => {
+                mui.alert(error)
+            })
+
+            //购物车数据  只取购物车总数
+            axios({
+                method: 'GET',
+                url: __apiurl2 + '/cart/index',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+                headers: {
+                    Aid: getAId()
+                },
+            }).then(res => {
+                if (res.data.status == 100) {
+                    // console.log(res.data.data.total_num)
+                    this.cartnum = res.data.data.total_num;
+                }
+            }).catch(error => {
+                // mui.alert(error)
+            })
+            /*获取产品规格数据*/
+            // axios.get(__apiurl + '/goods/newgetgoodsattr', {
+            //     params: {
+            //         id: this.id,
+            //         is_sku: 1
+            //     }
+            // }).then(res => {
+            //     this.goodsAttr = res.data.data; //前台遍历属性
+            //     for (var index in this.goodsAttr) {
+            //         for (var key in this.goodsAttr[index].sub_attr_id) {
+            //             this.$set(this.goodsAttr[index].sub_attr_id[key], 'isshow', true); //加上显示标识
+            //             this.$set(this.goodsAttr[index].sub_attr_id[key], 'isactive', false);
+            //         }
+            //     }
+            // }).catch(error => {
+            //     mui.alert(error)
+            // })
+            //获取sku规格
+            this.getDetailsData();
+            //获取收藏列表
+            axios({
+                method: 'POST',
+                url: __apiurl + '/user/getUserGoodsCollectionList',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+            }).then(res => {
+                var _this = this;
+                this.goodsIdList = res.data.data.data;
+                var newarray = [];
+                for (var i in this.goodsIdList) {
+                    newarray = this.goodsIdList[i].goods_id;
+                    _this.goodsIdList01.push(newarray);
+                }
+                if (in_array(_this.id, _this.goodsIdList01)) { //判断this.id是否在数组中
+                    $('.my-span-background').addClass('active');
+                }
+            }).catch(error => {
+                mui.alert(error)
+            })
+        },
+        methods: {
+            //获取SKU规格
+            getDetailsData() {
+                axios.get(__apiurl2 + '/goods/getgoodssku', {
+                    params: {
+                        id: this.id
+                    },
+                    headers: {
+                        Aid: getAId(),
+                        Token: this.token
+                    },
+                }).then(response => {
+                    this.skuProduct = response.data.data;
+                    var temp = [];
+                    for (var i in response.data.data) {
+                        var tmp = response.data.data[i].attributes.split('^');
+                        for (var j in tmp) {
+                            temp.push(tmp[j]);
+                        }
+                        this.skuObj.push(response.data.data[i].attributes);
+                    }
+
+                    for (var i = 0; i < temp.length; i++) {
+                        if (this.allattr.indexOf(temp[i]) == -1) { //判断在数组中是否存在，不存在则push到this.showArr数组中
+                            this.allattr.push(temp[i]);
+                        }
+                    }
+                }).catch(error => {
+                    mui.alert(error)
+                })
+            },
+            pro_num_jian() {
+                if (this.ischosesku() != undefined) {
+                    if (this.num <= 1) {
+                        this.num = 1;
+                        return
+                    }
+                    this.num--;
+                } else {
+                    mui.alert('请先选择规格')
+                }
+            },
+            pro_num_jia() {
+                if (this.ischosesku() != undefined) {
+                    if (this.num > this.goodsStockNum) {
+                        mui.alert('该商品库存不足')
+                    } else {
+                        if (this.num == this.goodsStockNum) {
+                            this.num = this.goodsStockNum;
+                        } else {
+                            this.num++;
+                        }
+                    }
+                } else {
+                    mui.alert('请先选择规格')
+                }
+            },
+            //判断是否选择有sku 并返回选择的sku
+            ischosesku() {
+                //无规格的不用判断sku选择
+                if (this.skuObj.length == 0) {
+                    return '';
+                }
+                var newstr = '';
+                for (var index in this.str) {
+                    newstr += index + ':' + this.str[index] + '^';
+                }
+                newstr = newstr.substr(0, newstr.length - 1);
+                if (in_array(newstr, this.skuObj)) {
+                    return newstr;
+                }
+            },
+            addcart() {
+                __checkLogin();
+                var sku = this.ischosesku();
+                if (sku == undefined) {
+                    mui.alert('请选择规格');
+                    return false;
+                }
+                if (this.num > this.goodsStockNum || this.num == 0) {
+                    mui.alert('该商品库存不足');
+                    return false;
+                }
+                axios({
+                    url: __apiurl2 + '/Cart/addToCart',
+                    method: 'post',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token,
+                        Aid: getAId()
+                    },
+                    data: {
+                        goods_id: this.id,
+                        goods_num: this.num,
+                        type: this.type,
+                        spec_key: sku,
+                        diamond_id: this.diamond_id,
+                        character_carving: this.character_carving
+                    },
+                }).then(res => {
+                    if (this.type == 1 && res.data.status == 100) {
+                        window.location.href = "{:url('order/confirm')}";
+                        return false;
+                    }
+                    if (res.data.status == 100) {
+                        mui.alert(res.data.msg);
+                        this.cartnum += 1;
+                        // $('.my-badge').html(this.cartnum);
+                    } else {
+                        mui.alert(res.data.msg)
+                    }
+                }).catch(function (error) {
+                    mui.alert("error init" + error)
+                })
+                // }
+            },
+            /*产品规格LI点击事件*/
+            liListClick(product, index, sIndex, isshow, isactive) {
+
+                if (isactive) {
+                    this.inverseli(product);
+                    return false;
+                }
+                if (isshow == false) {
+                    return false;
+                }
+
+                this.str[product.attr_id] = product.attr_value_id;
+
+                this.attrIndex[sIndex] = index;
+                let _this = this;
+                _this.number = index;
+                /*获取商品价格*/
+                var newstr = '';
+                for (var index in _this.str) {
+                    if (index == product.attr_id) {
+                        if (_this.str[index] != product.attr_value_id) {
+                            _this.str[index] = product.attr_value_id;
+                        }
+                    }
+                    newstr += index + ':' + _this.str[index] + '^';
+                }
+
+                _this.showliorther(product, _this.str, 1); //查找对应sku里面属性
+
+                for (var i in this.skuProduct) {
+                    if (newstr.substr(0, newstr.length - 1) == this.skuProduct[i].attributes) {
+                        this.goodsPrice = this.skuProduct[i].price_seller;
+                        this.goodsStockNum = this.skuProduct[i].goods_number;
+                        if (this.num >= this.goodsStockNum && this.goodsStockNum != 0) {
+                            this.num = this.goodsStockNum;
+                        }
+                    }
+                }
+            },
+            showliorther(obj, str, type) { //点击当前属性时查找对应sku里面属性   注:对比当前选择的属性与sku
+                var thisli = obj.attr_id + ':' + obj.attr_value_id;
+                var showarr = [];
+                var strarr = [];
+                for (var index in str) {
+                    var nowli = index + ':' + str[index];
+                    strarr.push(nowli);
+                    var tmp = [];
+                    var selfattr = []; //当前规格集合
+                    for (var i in this.skuObj) {
+                        if (this.skuObj[i].indexOf(nowli) != -1) {
+                            tmp.push(this.skuObj[i]); //取出不包含当前属性的sku
+                        }
+                        var temp = this.skuObj[i].split("^");
+
+                        for (var j in temp) {
+                            var tts = temp[j].split(":");
+                            if (tts[0] == index) {
+                                selfattr.push(temp[j]);
+                            }
+                        }
+                    }
+                    var lasttmp = [];
+                    for (var i in tmp) {
+                        var temp = tmp[i].split("^");
+                        for (var j in temp) {
+                            var tmm = temp[j].split(':');
+                            if (tmm[0] != index) {
+                                selfattr.push(temp[j]);
+                            }
+                        }
+                    }
+                    //去重
+                    var linshi = [];
+                    for (var i = 0; i < selfattr.length; i++) {
+                        if (linshi.indexOf(selfattr[i]) == -1) { //判断在数组中是否存在，不存在则push到this.showArr数组中
+                            linshi.push(selfattr[i]);
+                        }
+                    }
+                    // console.log(linshi);
+                    //每一项找出不存在的值
+                    for (var i in this.allattr) {
+                        if (!in_array(this.allattr[i], linshi)) {
+                            showarr.push(this.allattr[i]);
+                        }
+                    }
+                }
+                // console.log(strarr);
+                // console.log(showarr);
+                // return false;
+                for (var i in this.goodsAttr) {
+                    for (var j in this.goodsAttr[i].sub_attr_id) {
+                        var tmp = this.goodsAttr[i].sub_attr_id[j].attr_id + ':' + this.goodsAttr[i].sub_attr_id[
+                            j].attr_value_id;
+                        if (!in_array(tmp, showarr)) { //设置不能点击
+                            this.goodsAttr[i].sub_attr_id[j].isshow = true;
+                        } else {
+                            this.goodsAttr[i].sub_attr_id[j].isshow = false;
+                        }
+                        if (type == 2 && thisli == tmp) {
+                            // console.log(this.goodsAttr[i].sub_attr_id[j].isactive );
+                            this.goodsAttr[i].sub_attr_id[j].isactive = false;
+                        } else {
+                            if (in_array(tmp, strarr)) {
+                                this.goodsAttr[i].sub_attr_id[j].isactive = true;
+                            } else {
+                                this.goodsAttr[i].sub_attr_id[j].isactive = false;
+                            }
+                        }
+                    }
+                }
+            },
+            inverseli(obj) { //当前选中li取消选择
+                var nowli = obj.attr_id + ':' + obj.attr_value_id;
+                var newstr = [];
+                for (var index in this.str) {
+                    var tmp = index + ':' + this.str[index]
+                    if (tmp != nowli) {
+                        newstr[index] = this.str[index]
+                    }
+                }
+                this.str = newstr;
+                this.showliorther(obj, this.str, 2);
+            },
+            //收藏按钮
+            collect() {
+                /*if (this.token == '') {
+                    mui.alert('请登录后再收藏', function () {
+                        window.location.href = "{:url('com/login')}"
+                    })
+                } else {*/
+                __checkLogin();
+                if ($('.my-span-background').hasClass('active')) {
+                    axios({
+                        method: 'POST',
+                        url: __apiurl + '/user/delusergoodscollection',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        },
+                        data: {
+                            goods_id: this.id
+                        }
+                    }).then(res => {
+                        if (res.data.status == 100) {
+                            mui.alert(res.data.msg, function () {
+                                $('.my-span-background').removeClass('active');
+                            })
+                        }
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                } else {
+                    axios({
+                        method: 'POST',
+                        url: __apiurl + '/user/addusergoodscollection',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        },
+                        data: {
+                            goods_id: this.id
+                        }
+                    }).then(res => {
+                        if (res.data.status == 100) {
+                            mui.alert(res.data.msg, function () {
+                                $('.my-span-background').addClass('active');
+                            })
+                        }
+                        console.log(res)
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                }
+                // }
+
+            },
+
+            buttom_alert() {
+                this.detailsShow = false;
+                this.isShow = false;
+            },
+            // 点击在线配石
+            peiShiShowAlert() {
+                var that = this;
+                // 判断是否选择参数
+                var newstr = '';
+                for (var index in that.str) {
+                    newstr += index + ':' + that.str[index] + '^';
+                }
+                var spestr = newstr.substr(0, newstr.length - 1); //判断是否选中规格
+                if (!in_array(spestr, that.skuObj)) {
+                    mui.alert('请选择产品规格')
+                    return false;
+                }
+                if (!that.shape) {
+                    mui.alert('请选择主石规格')
+                    return false;
+                }
+
+                axios({
+                    url: __apiurl2 + '/goods/gettpzlist',
+                    method: "get",
+                    params: {
+                        shape: that.shape,
+                        weight: that.weight
+                    },
+                    headers: {
+                        Aid: getAId()
+                    },
+                }).then(res => {
+                    that.peishiList = res.data.data;
+
+                    if (that.peishiList.length == 0) {
+                        that.detailsShow = false;
+                        mui.alert('没有可匹配钻石');
+                    } else {
+                        that.detailsShow = true;
+                    }
+                })
+
+            },
+            changeshape(index, shape, weight) {
+                this.isactive = index;
+                this.shape = shape;
+                this.weight = weight;
+            },
+
+            // 在线配石
+            selectDiamond(index, goods_id) {
+                this.isActive = index;
+                this.diamond_id = goods_id;
+            },
+
+            // 托配钻
+            pipei(type) {
+                // 判断选择的规格
+                var newstr = '';
+                for (var index in this.str) {
+                    newstr += index + ':' + this.str[index] + '^';
+                }
+                console.log(index)
+                var spestr = newstr.substr(0, newstr.length - 1); //选中规格
+                for (var i in this.skuProduct) {
+                    if (spestr == this.skuProduct[i]['attributes']) {
+                        this.jietuoList = this.skuProduct[i];
+                    }
+                }
+                if (type != 1) {
+                    this.chosediamond = this.peishiList[this.isActive]; //选中的钻石详情(托配钻)
+                    console.log(this.chosediamond)
+                }
+
+                this.detailsShow = false;
+                this.isShow = true;
+            },
+
+            // 戒指重选
+            ringAgain() {
+                history.go(-1);
+            },
+
+            // 钻石重选
+            diamondAgain() {
+                if (this.diamond_id != null) {
+                    window.location.href = "{:url('Goods/diamond')}";
+                } else {
+                    this.detailsShow = true;
+                    this.isShow = false;
+                }
+            },
+
+            // 钻配托
+            diamondPiPei() {
+                // 判断是否选择参数
+                var newstr = '';
+                for (var index in this.str) {
+                    newstr += index + ':' + this.str[index] + '^';
+                }
+                var spestr = newstr.substr(0, newstr.length - 1);
+                if (!in_array(spestr, this.skuObj)) {
+                    mui.alert('请选择规格')
+                    return false;
+                }
+                this.getdiamondinfo()
+                this.pipei(1);
+            },
+
+            // 确认定制后提交到订单页
+            queRenButton() {
+                this.addcart();
+                // window.location.href = "{:url('cart/index')}";
+            },
+
+            getdiamondinfo() {
+                var _this = this;
+                request({
+                    url: __apiurl2 + '/goods/getdiamondinfo',
+                    type: "get",
+                    data: {
+                        diamond_id: this.diamond_id
+                    }
+                }, function (res) {
+                    _this.chosediamond = res.data;
+                }, false)
+                // axios({
+                //     url: __apiurl2 + '/goods/getdiamondinfo',
+                //     method: "get",
+                //     params: {
+                //         diamond_id: this.diamond_id
+                //     }
+                // }).then(res => {
+                //     console.log(res);
+                //     this.chosediamond = res.data;
+                //     console.log(res.data);
+                // })
+            }
+
+        }
+    });
+    $('.addcart').click(function () {
+        vm.addcart();
+    });
+    $('.collect').click(function () {
+        vm.collect();
+    });
+    $('.shop_now').click(function () {
+        vm.type = 1;
+        vm.addcart();
+    })
+
+    //判断是否在数组里面
+    function in_array(search, array) {
+        for (var i in array) {
+            if (array[i] == search) {
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+
+</html>

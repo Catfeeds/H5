@@ -1,0 +1,75 @@
+<?php
+namespace app\newapi\service;
+
+use app\newapi\model\GoodsDiamond;
+use app\newapi\model\Goods as GoodsModel;
+use think\Db;
+
+//Goods服务层
+class Goods
+{
+	//获取钻配托列表页 根据钻石钻重找合适的戒托
+	public static function zptGoodslist($data,$page,$pagesize)
+	{
+		// 钻石数据
+		$diamondinfo = GoodsDiamond::getdiamondinfo($data['diamond_id']);
+		//根据钻重获取匹配的戒托
+		if ($data['goods_attr_filter']) {  //处理参数字符串
+			$arr=explode(";",$data['goods_attr_filter']);
+            foreach ($arr as $item){
+                $kv=explode(":",$item);
+                if (!$kv[0]) continue;
+                // $params[$kv[0]]=$kv[1];
+                $kvvarr=explode(",",$kv[1]);
+                if(count($kvvarr)>1){
+                    // $params[$kv[0]]=$kvvarr;
+                    foreach ($kvvarr as $key => $val) {
+                    	 $params[] = $kv[0].':'.$val;
+                    }
+                } else {
+                	$params[] = $kv[0].':'.$kv[1];
+                }               
+            }
+            $data['goods_attr_filter'] = $params;
+		}
+		
+		$goodslist = GoodsModel::getGoodsList($diamondinfo,$data,$page,$pagesize);
+		
+		return $goodslist;
+	}
+
+	//根据钻石钻重找戒托所有的属性
+	public static function zptAttrList($data)
+	{
+		// 钻石数据
+		$diamondinfo = GoodsDiamond::getdiamondinfo($data['diamond_id']);
+		//获取当前所有商品的属性
+		$GoodsAttr = GoodsModel::getAttrList($diamondinfo,$data);
+
+		//处理数组
+		if($GoodsAttr){
+	        $attrlist = [];
+	        foreach ($GoodsAttr as $key=>$v){
+	            if(isset($attrlist[$v['attr_id']])){	                
+	                $attrlist[$v['attr_id']]['sub'][] = ['id'=>$v['value_id'],'name'=>$v['value_name']];	                
+	            }else{
+	                $attrlist[$v['attr_id']]['id']    = $v['attr_id'];
+	                $attrlist[$v['attr_id']]['name']  = $v['name'];
+	                $attrlist[$v['attr_id']]['sub'][] = ['id'=>$v['value_id'],'name'=>$v['value_name']];
+	            }
+	        }
+	        $result=[];
+	        foreach ($attrlist as $vv){
+	            array_push($result, $vv);
+	        }	       
+	        //去重
+	        foreach ($result as $key => $val) {
+	        	$val['sub'] = er_array_unique($val['sub']);
+	        	$result[$key] = $val;
+	        }
+	        return $result;
+	    } else {
+	    	return '';
+	    }
+	}
+}

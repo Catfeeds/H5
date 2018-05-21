@@ -1,0 +1,295 @@
+<?php
+namespace app\api\controller;
+
+use think\Controller;
+use think\Session;
+use think\Db;
+use app\common\controller\ApiBase;
+
+/**
+ * 订单api
+ * Class Order
+ * @package app\api\controller
+ */
+class Order extends ApiBase
+{
+    protected function _initialize()
+    {
+        parent::_initialize();       
+    }   
+
+ 
+
+    /**
+     * 用户订单详情
+     * @param $id int 订单ID
+     * @return array
+     * @author fire upt
+     * @date 20171214
+     */
+    public function detail($id)
+    {
+        $uid=$this->checkUserLogin();           
+        $where['agent_id'] = get_agent_id();
+        $where['user_id'] = $uid;
+        $where['id'] = $id;
+        $list = D('order')->getUserOrderList($where);          
+        
+        //判断订单数据
+        $result = empty($list) ? array('status'=>1014,'msg'=>'无订单数据') : array('status'=>100,'msg'=>'','data'=>$list);
+        //返回JSON数据
+        $this->ajaxReturn($result);
+    }
+
+    /**
+     * 用户操作-取消订单
+     * @param $id int 订单ID
+     * @return array
+     * @author fire upt
+     * @date 20171214
+     */
+    public function cancel($id){
+        
+        $uid=$this->checkUserLogin();
+        $where['id'] = $id;
+        $where['user_id'] = $uid;  
+        //查询订单
+        $num = model('order')->orderNumber($where);
+        //订单不存在
+        if($num == 0){
+            $this->ajaxReturn(['status'=>1015,'msg'=>'此订单不存在']);
+        }
+        //更新订单状态
+        $res = model('order')->updateOrderStatus($where,7);
+        //判断订单数据
+        $result = $res ? array('status'=>100,'msg'=>'取消订单成功') : array('status'=>1016,'msg'=>'取消失败');
+        //返回JSON数据
+        $this->ajaxReturn($result);
+    }
+
+    
+    /**
+     * 获取订单提交前的相关信息,不包括地址和config数据    
+     * @return array
+     * @author fire
+     * @date 20171214
+     */
+    public function addpre(){
+        $uid=$this->checkUserLogin();
+        D('cart')->refreshCart($uid); //更新购物车数据
+        
+        $cartList = D('cart')->getList(['user_id'=>$uid,'selected'=>1]);        
+        //计算会员商品赠送积分,计算折扣价
+        $result = logic('Score')->getGoodsScore($uid,$cartList,['agent_id'=>'g_agent_id']);
+        
+        $total_goods_price= logic('DataProcessing')->cart_goods_price($result['list']);
+        $res['payment'] = get_agent_payment($total_goods_price);
+        $res['total_goods_price']=$total_goods_price;
+        $res['cartList']=$cartList;
+        unset($payment['underline']);
+        $result = $res ? array('status'=>100,'msg'=>'成功','data'=>$res) : array('status'=>1016,'msg'=>'失败');
+        //返回JSON数据
+        $this->ajaxReturn($result);
+    }    
+    
+    /**
+     * 根据购物车生成订单
+     * @param $shipping_type int 收货方式
+     * @param $pay_type int 支付方式
+     * @param $pay_code string 支付code
+     * @param $user_note string 用户备注
+     * @param $store_id int 门店ID
+     * @param $shipping_time string 最后新发货时间
+     * @param $consignee string 收货人
+     * @param $mobile string 手机
+     * @param $user_address_id int 地址ID
+     * @return array
+     * @author fire
+     * @date 20171215
+     */
+    public function addsubmit(){
+        $uid=$this->checkUserLogin();
+        
+        $post = I('post.');
+        $post['agent_id'] = get_agent_id();  
+        
+        $result = logic('Order')->addOrder($uid,$post);
+
+        if($result['status'] == 100){
+            echo json_encode(['status'=>100,'msg'=>'订单生成成功','data'=>$result['data']]);
+        }else{
+            echo json_encode(['status'=>$result['status'],'msg'=>$result['msg'],'data'=>'']);
+        }
+    }
+    
+    /**
+     * 订单确认
+     * @param $id int 订单编号    
+     * @return array
+     * @author fire
+     * @date 20171215
+     */
+    public function addconfirm($id){
+        $uid=$this->checkUserLogin();
+        
+        $where['id'] = $id;
+        $where['user_id'] = $uid;
+        $order = M('order')->where($where)->find();
+        if(!$order){
+            echo json_encode(['status'=>1011,'msg'=>'订单不存在']);
+        }
+        
+        $data['order']=$order;
+        
+        $payment = get_agent_payment($order['order_amount']);
+        $payment = convert_arr_key($payment,'code');
+        
+        $data['payment']=$payment;
+        
+        if($order['pay_status']==0&&$order['pay_type']==2&&$order['add_time']<date('Y-m-d H:i:s',time()-900)){
+            echo json_encode(['status'=>1012,'msg'=>'该订单已过期']);
+        }
+        
+        if($order['pay_status']==0){ //未支付
+            if($order['pay_type']==2){ //在线支付 未支付 跳转支付页面
+                if($payment[$order['pay_code']]['url']){
+                    $data['pay_url']=$payment[$order['pay_code']]['url'].'?order_id='.$order['id'];                   
+                }else{
+                    echo json_encode(['status'=>1013,'msg'=>'支付方式未配置']);                   
+                }
+            }
+        }
+        
+        $this->ajaxFormat($data);
+    }
+    
+    
+    /**
+     * 订单商品评价列表  
+     * @param $goods_id int 商品编号
+     * @param $status int 是否显示 1显示   2不显示
+     * @return array
+     * @author guihongbing
+     * @date 20171215
+     */
+    public function evalList($page=1,$pagesize=20,$orderby="id desc")
+    {   
+        $where['agent_id'] = get_agent_id();
+        $where['goods_id'] = I('goods_id',0);
+        $where['status'] = ['>',0];   
+        
+        $start=($page-1)*$pagesize;        
+        $res = model('OrderGoodsEval')->where($where)->order($orderby)->limit($start,$pagesize)->select();        
+        $result = (count($res)==0) ? array('status'=>1018,'msg'=>'无订单商品评价','data'=>'') :array('status'=>100,'msg'=>'','data'=>$res);
+        $this->ajaxReturn($result);    
+    }
+    
+    /**
+     * 发布订单商品评价
+     * @param $order_id int 订单编号
+     * @param $goods_id int 商品编号
+     * @param $goods_sku string 商品规格名称
+     * @param score int 商品得分，5分制
+     * @param $uid int 用户编号
+     * @param $uname string 用户姓名
+     * @param $images string 上传图片
+     * @param $content string 内容
+     * @param $create_ip int 用户IP地址
+     * @return $result array
+     * @author fire upt  sxm edit 
+     * @date 20171215
+     */
+    public function addEval(){
+        $uid=$this->checkUserLogin();
+        $result = logic('Order')->AddUserOrderGoodsEval(
+            $uid,
+            I('order_id'),
+            I('order_goods_id'),
+            I('score'),
+            I('content'),
+            get_agent_id()
+        );
+
+        if($result['status'] == 100){
+            return json(['status'=>100,'msg'=>'评价成功','data'=>'']);
+        }else{
+            return json(['status'=>$result['status'],'msg'=>$result['msg'],'data'=>'']);
+        }
+
+        // $agent_id=get_agent_id();
+        // $param['order_id'] = I('order_id');
+        // $param['goods_id'] = I('goods_id');
+        // $param['order_goods_id'] = I('order_goods_id');
+        // $param['goods_sku'] = I('goods_sku');
+        // $param['score'] = I('score');
+        // $param['uid'] = $uid;
+        // $param['agent_id'] = $agent_id;
+        // // $param['uname'] = I('uname');
+        // // $param['images'] = I('images');
+        // $param['content'] = htmlspecialchars(I('content'));
+        // // $param['create_ip'] = $this->ip();            
+        // $res = model('OrderGoodsEval')->insertGetId($param);
+
+        // $result = empty($res) ? array('status'=>1021,'msg'=>'发布订单商品评价失败','data'=>'') : array('status'=>100,'msg'=>'success','data'=>$res);
+        // $this->ajaxReturn($result);
+    }
+    
+    /**
+     * 订单商品评价列表
+     * @param $id int 评论编号  
+     * @return array
+     * @author fire
+     * @date 20171215
+     */
+    public function delEval($id){
+        $uid=$this->checkUserLogin();
+        
+        $where['uid']=$uid;
+        $where['id']=$id;
+        
+        $res = model('OrderGoodsEval')->where($where)->update(['status' => 0]);
+        $result = empty($res) ? array('status'=>1021,'msg'=>'删除失败','data'=>'') : array('status'=>100,'msg'=>'删除成功','data'=>$res);
+        $this->ajaxReturn($result);
+    }
+
+    /**
+     * 订单收货
+     * @param $id int 订单编号  
+     * @return json
+     * @author sxm
+     */
+    public function sureOrder($id)
+    {
+        $uid=$this->checkUserLogin();
+        $where['id'] = $id;
+        $where['user_id'] = $uid;  
+        //查询订单
+        $num = model('order')->orderNumber($where);
+        //订单不存在
+        if($num == 0){
+            return json(['status'=>101,'msg'=>'该订单不存在']);
+        }
+        //更新订单状态
+        $res = model('order')->order_status_5($id,$uid,2);
+        if($res) {
+            return json(['status'=>100,'msg'=>'收货成功']);
+        } else {
+            return json(['status'=>101,'msg'=>'收货失败']);
+        }
+    } 
+
+    /**
+     * 门店自取选择门店地址
+     * @return json
+     * @author sxm
+     * @date 20180224
+     */
+     public function setorderstore(){
+        $list = M('Store')->where(['agent_id'=>get_agent_id()])->select();
+        if ($list) {
+            return json(['status'=>100,'msg'=>'请求成功','data'=>$list]);
+        } else {
+            return json(['status'=>101,'msg'=>'请求失败']);
+        }
+    }
+}

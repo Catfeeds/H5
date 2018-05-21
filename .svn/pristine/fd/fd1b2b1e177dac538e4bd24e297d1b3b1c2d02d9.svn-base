@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body>
+<div id="app">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">自有定制</h1>
+    </header>
+    <div class="mui-content">
+        <div class="goods_list_title clear">
+            <a @click="priceclick" :class="{active:backgroundStyle}">按价格</a>
+            <a @click="timeclick" :class="{active:backgroundStyle01}">按时间</a>
+            <a @click="alertBox">筛选</a>
+        </div>
+
+        <!--侧边弹出框-->
+        <div class="w_mask" v-show="ok" @click="displayNone">
+        </div>
+        <div class="none_box" v-show="ok">
+            <div class="wrap_box">
+                <div v-for="(item,index) in getsAttr">
+                    <p>{{item.name}}</p>
+                    <ul class="clear">
+                        <li v-for="tab in getsAttr[index].sub"
+                            :class="{active:tab.select}"
+                            :value="tab.id"
+                            :data-val="item.id"
+                            @click="attrListClick(tab,item)">
+                            {{tab.name}}
+                        </li>
+                    </ul>
+                </div>
+                <div class="btn_02">
+                    <button @click="reset">重置</button>
+                    <button @click="addSubmit">确定</button>
+                </div>
+            </div>
+        </div>
+        <!--中间商品列表-->
+        <div class="goods_all_list">
+            <ul class="clear">
+                <li v-for="item in productList">
+                    <a :href="'details.html?id='+item.id+'&diamond_id='+diamond_id">
+                        <div class="wrap_img">
+                            <img v-lazy="item.thumb" alt="">
+                        </div>
+                        <div class="wrap_text">
+                            <p id="aaa">{{item.name}}</p>
+                            <p>￥<span class="price">{{parseFloat(item.price) | formatMoney }}</span></p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <img v-show="showImg" src="__IMG__/timg_01.gif" alt="" style="display: block;width: 30px;margin: auto;">
+
+        <div style="width: 100%;height: 90px"></div>
+
+    </div>
+</div>
+
+
+{include file="public/nav" /}
+</body>
+<script>
+    Vue.use(VueLazyload, {
+        preLoad: 1.3,
+        error: "错误",
+        loading: '',
+        attempt: 1
+    });
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            backgroundStyle: false,
+            backgroundStyle01: false,
+            productList: [],
+            ok: false,
+            newArr: [],
+            getsAttr: [],
+            isShow: false,
+            attrObj: [],
+            itemIds: [],
+            diamond_id:'',
+            showImg: false,
+            moreStatus:true,
+            page: 1
+        },
+        computed: {},
+        filters: {
+            formatMoney:function(value) {
+                return value.toFixed(2);
+            }
+        },
+
+        mounted:function() {
+            this.diamond_id = getUrlParam("diamond_id");
+            this.$nextTick(function () {
+                this.goodsViwe();
+            });
+        },
+        methods: {
+            goodsViwe:function() {
+                var _this = this;
+                axios.get(__newapiurl + '/v1.goods/getcustomgoods', {
+                    params: {
+                        diamond_id: _this.diamond_id
+                    }
+                }).then(function (response) {
+                    _this.productList = response.data.data.data;
+                }).catch(function (error) {
+                    mui.alert(error);
+                })
+            },
+            //按价格排序
+            priceclick:function() {
+                var _this = this;
+                _this.backgroundStyle = !_this.backgroundStyle;
+                if (_this.backgroundStyle) {
+                    axios.get(__newapiurl + '/v1.goods/getcustomgoods', {
+                        params: {
+                            diamond_id: _this.diamond_id,
+                            orderby: "price desc"                           
+                        }
+                    }).then(function (response){
+                        _this.productList = response.data.data.data;
+                    }).catch( function (error){
+                        mui.alert(error);
+                    })
+                }
+                if (_this.backgroundStyle == false) {
+                    axios.get(__newapiurl + '/v1.goods/getcustomgoods', {
+                        params: {
+                            diamond_id: _this.diamond_id,
+                            orderby: "price asc"
+                        }
+                    }).then(function (response)  {
+                        _this.productList = response.data.data.data;
+                    }).catch(function (error) {
+                        mui.alert(error);
+                    })
+                }
+            },
+            //按时间排序
+            timeclick:function() {
+                var _this = this;
+                _this.backgroundStyle01 = !_this.backgroundStyle01;
+                if (_this.backgroundStyle01) {
+                    axios.get(__newapiurl + '/v1.goods/getcustomgoods', {
+                        params: {
+                            diamond_id: _this.diamond_id,
+                            orderby: "create_time desc"
+                        }
+                    }).then(function (response)  {
+                        _this.productList = response.data.data.data;
+
+                    })
+                        .catch(function (error) {
+                            mui.alert(error);
+                        })
+                }
+                if (_this.backgroundStyle01 == false) {
+                    axios.get(__newapiurl + '/v1.goods/getcustomgoods', {
+                        params: {
+                            diamond_id: _this.diamond_id,
+                            orderby: "create_time asc"
+                        }
+                    }).then(function (response){
+                        _this.productList = response.data.data.data;
+                    })
+                        .catch(function (error){
+                            mui.alert(error);
+                        })
+                }
+
+            },
+            //弹出筛选条件
+            alertBox:function() {
+                var _this = this;
+                this.ok = true;
+                axios.get(__newapiurl + '/v1.goods/getcustomattr', {
+                    params: {
+                        diamond_id: _this.diamond_id
+                    }
+                }).then(function (res) {
+                    _this.getsAttr = res.data.data;
+                }).catch(function (error)  {
+                    mui.alert(error)
+                })
+            },
+            displayNone:function() {
+                this.ok = false;
+            },
+            //单个属性的点击事件
+            attrListClick:function(tab, item) {
+                if (typeof tab.select == 'undefined') {
+                    // Vue.set(item, "checked", true);  //全局设置
+                    this.$set(tab, "select", true);     //本循环设置
+                    // tab.id item.id
+                    if (this.itemIds.indexOf(item.id) == -1) { //判断父id是否在父元素数组里面
+                        this.itemIds.push(item.id);
+                        var str = [];
+                        str[item.id] = ',' + tab.id;
+                        this.attrObj.push(str);
+                    } else {
+                        for (var index in this.attrObj) { //遍历父元素数组
+                            for (var i in this.attrObj[index]) {
+                                if (item.id == i) {
+                                    if (tab.id != this.attrObj[index][i]) {
+                                        this.attrObj[index][i] = this.attrObj[index][i] + ',' + tab.id;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    tab.select = !tab.select;
+                    for (var index in this.attrObj) {
+                        for (var i in this.attrObj[index]) {
+                            if (item.id == i) {
+                                var tmp = this.attrObj[index][i].replace("," + tab.id, "");
+                                if (tmp) {
+                                    this.attrObj[index][i] = tmp;
+                                } else {
+                                    // delete this.attrObj[index];
+                                    var temp = [];
+                                    temp[papval] = '';
+                                    this.attrObj[index] = temp;
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            //确定
+            addSubmit:function() {
+                var str = '';
+                for (var index in this.attrObj) {
+                    for (var i in this.attrObj[index]) {
+                        var tmp = this.attrObj[index][i].substr(1);
+                        if (tmp) {
+                            str += i + ':' + tmp + ';';
+                        }
+                    }
+                }
+                if (!str) {
+                    mui.alert('未选择数据');
+                    return false;
+                }
+                axios.get(__newapiurl + '/v1.goods/getcustomgoods', {
+                    params: {
+                        diamond_id: this.diamond_id,
+                        goods_attr_filter: str
+                    }
+                }).then(function (res){
+                    if (res.status == 200) {
+                        this.productList = res.data.data.data;
+                    }
+                }).catch(function (error)  {
+                    mui.alert(error)
+                });
+                this.ok = false;
+            },
+            //重置
+            reset:function() {
+                $('li').each(function (i, el) {
+                    if ($(el).hasClass('active')) {
+                        $(el).removeClass('active');
+                    }
+                    vum.itemIds = [];
+                    vum.attrObj = [];
+                })
+            },
+        }
+    })
+
+        //获取滚动条当前的位置
+        function getScrollTop() {
+        var scrollTop = 0;
+        if (document.documentElement && document.documentElement.scrollTop) {
+            scrollTop = document.documentElement.scrollTop;
+        } else if (document.body) {
+            scrollTop = document.body.scrollTop;
+        }
+        return scrollTop;
+    }
+
+    //获取当前可视范围的高度
+    function getClientHeight() {
+        var clientHeight = 0;
+        if (document.body.clientHeight && document.documentElement.clientHeight) {
+            clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight);
+        } else {
+            clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight);
+        }
+        return clientHeight;
+    }
+
+    //获取文档完整的高度
+    function getScrollHeight() {
+        return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+        
+    }
+
+    //滚动事件触发
+    window.onscroll = function () {
+        if (vm.moreStatus == false) {
+            return false;
+        }
+        if (getScrollTop() + getClientHeight() == getScrollHeight()) {
+            vm.showImg = true;
+            vm.page++;
+            axios.get(__newapiurl + '/v1.goods/getcustomgoods', {
+                params: {
+                    diamond_id: vm.diamond_id,
+                    page: vm.page
+                }
+            }).then(function (response) {
+                vm.showImg = false;
+                var newProductList = response.data.data;
+                if(newProductList == '') {
+                    mui.alert("无更多数据");
+                    vm.moreStatus = false;
+                }
+                console.log(newProductList)
+                vm.productList = vm.productList.concat(newProductList)
+            }).catch(function (error){
+                mui.alert(error);
+            });
+        }
+    }
+
+</script>
+</html>

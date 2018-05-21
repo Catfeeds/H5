@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__" />
+    <style type="text/css">
+        .personal {
+            background-color: #fff;
+            height: 100px;
+            line-height: 100px;
+        }
+
+        .personal .userPhoto {
+            width: 80px;
+            height: 80px;
+            float: left;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            margin: 10px;
+        }
+
+        .personal .userPhoto img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .quit_login {
+            width: 100%;
+            height: 50px;
+            color: #f786a3;
+            border: none;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="seting" v-cloak>
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">设置</h1>
+        </header>
+        <div class="mui-content">
+            <div class="personal clear" @click="goUser">
+                <div class="userPhoto">
+                    <img :src="head_pic" alt="">
+                </div>
+                <div class="number fl">
+                    <span>用户名：{{userName}}</span>
+                </div>
+                <div class="usermessge fr" style="padding-top: 25px;">
+                    <svg class="icon right-icon" aria-hidden="true">
+                        <use xlink:href="#icon-xiangyou"></use>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="user-main-list">
+                <li>
+                    <a href="address.html">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-dizhi1"></use>
+                        </svg>
+                        <span class="list-name">地址管理</span>
+                        <svg class="icon right-icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiangyou"></use>
+                        </svg>
+                    </a>
+                </li>
+            </div>
+
+            <div class="user-main-list">
+                <li>
+                    <a href="passwordset.html">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-anquan"></use>
+                        </svg>
+                        <span class="list-name">重置密码</span>
+                        <svg class="icon right-icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiangyou"></use>
+                        </svg>
+                    </a>
+                </li>
+            </div>
+            <div class="quit">
+                <button type="button" class="quit_login" @click="quitout">退出登录</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    new Vue({
+        el: '.seting',
+        data: {
+            userName: '',
+            token: '',
+            head_pic:'',
+        },
+        created: function () {
+            __checkLogin();
+            this.userName = getUserInfo().username;
+            this.head_pic = getUserInfo().head_pic ? getUserInfo().head_pic :'__IMG__/zuanjie.png';
+        },
+        methods: {
+            quitout: function () {
+                var btnArray = ['是', '否'];
+                mui.confirm('确定退出登录?', '提示', btnArray, function (e) {
+                    if (e.index == 0) {
+                        clearUserInfo();
+                        window.location.href = "{:url('/mobile/index')}";
+                    }
+                });
+
+            },
+            goUser: function () {
+                window.location.href = "{:url('/mobile/user/personal')}";
+            }
+        },
+    });
+</script>
+
+</html>

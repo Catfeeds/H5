@@ -1,0 +1,47 @@
+<?php
+namespace app\mobile\controller;
+use think\Db;
+use function think\name;
+use app\common\controller\MobileBase;
+
+class Test extends MobileBase
+{    
+    public function index(){
+        return $this->fetch();
+    }
+    
+    
+    public function jsapipaytest()
+    {        
+        $user=session('user');        
+        
+        dump($user);        
+        
+        $orderpaydata=httpRequest("http://demom.btbzb.com/api/pay/wxmp?order_id=".$_GET['order_id']."&openid=".$user['openid']); 
+        
+        //dump($orderpaydata);
+        
+        $orderpayobj=json_decode($orderpaydata,true);
+        
+        dump($orderpayobj['data']['options']);
+        
+        $this->assign($this->assign('jsApiParameters',json_encode($orderpayobj['data']['options']))); 
+        
+        $this->assign("payTotal",1);
+        return $this->fetch(); 
+    }   
+    
+    public function jssdktest(){        
+        $wxuser=get_agent_wxuser_base(); 
+        
+        
+        vendor("wechat.JSSDK");        
+        $jssdk = new \JSSDK($wxuser['appid'], $wxuser['appsecret']);
+        $signPackage = $jssdk->GetSignPackage();        
+       
+        
+        $this->assign("signPackage",$signPackage);
+        $this->assign("linkurl","http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]?uuid=123456");
+        return $this->fetch();
+    }    
+}

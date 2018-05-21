@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body>
+<div id="cart">
+
+
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">购物车</h1>
+        <button class="mui-btn  mui-btn-link mui-pull-right" @click="editBtn" :class="{'active':selectedAll}"
+                v-show="isEditShow01">编辑
+        </button>
+        <button class="mui-btn  mui-btn-link mui-pull-right" @click="editBtn01" v-show="isEditShow02">完成</button>
+    </header>
+    <div class="mui-content">
+        <div>
+            <ul>
+                <li v-for="item in productList">
+                    <div class="cart_header background_f ">
+                    <span class="checkbox_style" type="checkbox" @click="selectChang(item)"
+                          :class="{'active':item.selected}"></span>
+                        <span>{{item.goods_name}}</span>
+                    </div>
+                    <div class="cart_body">
+                        <div class="clear">
+                            <div class="left ">
+                                <div class="wrap_img">
+                                    <img :src="item.g_thumb" alt="">
+                                </div>
+                            </div>
+                            <div class="right">
+                                <div class="gia">
+                                    <p>{{item.goods_name}}</p>
+                                    <p>{{item.spec_key_name}}</p>
+                                </div>
+                                <div class="goods_num clear">
+                                    <p class="fl">{{item.member_goods_price*item.goods_num |number }}</p>
+                                    <div class="fr wrap_num" v-if="item.g_type > 1">
+                                        <a href="javascript:;" @click="changeMoney(item,-1)">-</a>
+                                        <input type="text" v-model="item.goods_num" disabled>
+                                        <a href="javascript:;" @click="changeMoney(item,1)">+</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div style="width: 100%;height: 110px"></div>
+        <div class="bottom_content">
+        <span class="checkbox_style main_top" type="checkbox" :class="{'active':selectedAll}"
+              @click="checkedAll"></span>
+            <span>全选</span>
+            <span class="all_price">合计：{{totalMoney | number}}</span>
+            <!--<a href="../order/confirm.html" v-show="isJiesuan">去结算</a>-->
+            <a href="javascript:;" v-show="isJiesuan" @click="jiesuan">去结算</a>
+            <a href="javascript:;" v-show="isDelete" @click="deleteList">删除</a>
+        </div>
+    </div>
+    {include file="public/nav" /}
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#cart',
+        data: {
+            token: '',
+            productList: [],
+            specKeyName: '',
+            totalMoney: '',
+            selectedAll: 0,
+            isDelete: false,
+            isJiesuan: true,
+            isEditShow01: true,
+            isEditShow02: false,
+            deleteId: ''
+
+
+        },
+        /*局部过滤器*/
+        filters: {
+            //保留2位小数点过滤器 不四舍五入
+            number(value) {
+                let toFixedNum = Number(value).toFixed(3);
+                let realVal = toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                return "¥" + realVal;
+            }
+        },
+        created() {
+            this.token = getToken();
+        },
+        mounted: function () {
+            this.$nextTick(function () {
+                this.goodsList();
+            })
+        },
+        computed: {},
+        methods: {
+            goodsList() {
+                var _this = this;
+                axios.get(__apiurl + '/cart/index', {
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    }
+                }).then(response => {
+                    console.log(response);
+                    _this.selectedAll = response.data.data.selectedAll;
+                    _this.productList = response.data.data.list;
+                    _this.totalMoney = response.data.data.selected_total_price; //总价格
+                }).catch(error => {
+                    console.log(error);
+                    mui.alert('购物车空空如也！去选购商品吧', function () {
+                         window.location.href="{:url('/mobile/index')}";
+                    });
+                })
+            },
+            changeMoney(product, way) {
+                var tmp = true;
+                var tmpnum = product.goods_num;
+                if (way > 0) {
+                    tmpnum++;
+                } else {
+                    tmpnum--;
+                    if (tmpnum < 1) {
+                        tmpnum = 1;
+                        tmp = false;  //数量小于1不请求
+                    }
+                }
+                if (tmp) {
+                    //转json字符串
+                    var str = JSON.stringify([{'id': product.id, 'goods_num': tmpnum, 'selected': product.selected}]);
+                    var obj = {'cart': str};
+                    this.editcart(obj, (res) => {
+                        console.log(res);
+                        if (res.status == 100) {
+                            product.goods_num = tmpnum;
+                            this.totalMoney = res.data.totalprice;
+                        } else {
+                            mui.alert(res.msg)
+                        }
+                    });
+                }
+            },
+            //单选
+            selectChang(product) {
+                product.selected = !product.selected;
+                var str = JSON.stringify([{'id': product.id, 'goods_num': product.goods_num, 'selected': product.selected}]);
+                var obj = {'cart': str};
+                console.log(obj);
+                this.editcart(obj, res => {
+                    this.totalMoney = res.data.totalprice;
+                    this.selectedAll = res.data.selectedAll;
+
+                });
+            },
+            //全选
+            checkedAll() {
+                this.selectedAll = this.selectedAll == 0 ? 1 : 0;
+                axios.get(__apiurl + '/cart/selectAll', {
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        isselected: this.selectedAll
+                    }
+                }).then(response => {
+
+                    var _this = this;
+                    if (response.data.status == 100) {
+                        this.totalMoney = response.data.totalprice;
+                        this.productList.forEach(function (item, i) {
+                            item.selected = _this.selectedAll;
+                        })
+                    }
+                }).catch(error => {
+                    console.log(error);
+                })
+            },
+            //编辑
+            editBtn() {
+                this.isEditShow02 = true;
+                this.isEditShow01 = false;
+                this.checkedAll();    //执行全选函数
+                this.isDelete = true;
+                this.isJiesuan = false;
+            },
+            //完成
+            editBtn01() {
+                this.isEditShow02 = false;
+                this.isEditShow01 = true;
+                this.isDelete = false;
+                this.isJiesuan = true;
+            },
+
+
+            //删除
+            deleteList() {
+                var _this = this;
+                var newDeleteID= _this.deleteId;
+                this.productList.forEach(function (el, i) {
+                    if (el.selected) {
+                        newDeleteID += el.id + ',';
+                    }
+                })
+
+                console.log(newDeleteID);
+                axios.post(__apiurl + '/cart/delCart', {
+                    id: newDeleteID
+                }, {
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    }
+                }).then(response => {
+                    console.log(response)
+                    if (response.data.status == 100) {
+                        //删除状态为selected 的条数
+                        _this.productList = _this.productList.filter(function (item) {
+                            return !item.selected;
+                        })
+                        this.totalMoney = '';
+
+                        /*  _this.productList.forEach(function (el, index) {
+                              if (el.selected) {
+                                  _this.productList.splice(index, 1);
+                              }
+                          })*/
+                    } else {
+                        mui.alert(response.data.msg)
+                    }
+                }).catch(error => {
+                    console.log(error);
+                })
+            },
+            //结算
+            jiesuan() {
+                let _this = this;
+                var tmp = 0;
+                _this.productList.forEach(function (item) {
+                    if (item.selected != 0) {
+                        tmp++;
+                    }
+                })
+                if (tmp!=0) {
+                    window.location.href = "{:url('order/confirm')}";
+                } else {
+                    alert('请选择商品')
+                }
+            },
+            //公共函数
+            editcart(obj, fnc) {
+                axios.post(__apiurl + '/cart/saveCart', obj, {
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    }
+                }).then(response => {
+                    fnc && fnc(response.data);
+                }).catch(error => {
+               mui.alert(error);
+                })
+            }
+
+        }
+    })
+
+
+
+</script>
+
+</html>

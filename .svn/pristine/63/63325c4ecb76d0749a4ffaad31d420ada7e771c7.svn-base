@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <title>搜索页面</title>
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <div class="mui-input-row mui-search">
+            <input type="search" placeholder="搜索商品" class="mui-input-clear" v-model="" id="myform">
+        </div>
+	</header>
+</body>
+<script>
+   
+</script>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body onresize="document.activeElement.scrollIntoView(true)">
+<header class="mui-bar mui-bar-nav">
+    <a href="javascript:history.go(-1)" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">订单提交</h1>
+</header>
+<div class="mui-content" id="orderConfirm">
+    <!-- 己选择地址 -->
+    <div class="address-true" @click="dizhi">
+        <a href="javascript:;" class="clear" v-for=" item in listName" v-if="item.is_default==1">
+            <div class="top clear">
+                <div class="fl box_01"><strong>收货人：{{item.recname}}</strong></div>
+                <div class="fr box_02">{{item.phone}}</div>
+            </div>
+            <div class="address-where">
+                {{item.address}}
+            </div>
+        </a>
+    </div>
+    <div class="location-icon clear"></div>
+
+    <!-- 己选择地址 end -->
+    <!--中间商品-->
+    <div class="order-list clear">
+        <a href="javascript:;" class="clear">
+            <ul class="order-left clear">
+                <li v-for="item in cartList"><img :src="item.thumb" alt=""></li>
+            </ul>
+            <div class="order-sum">
+                共{{cartList.length}}件
+            </div>
+        </a>
+    </div>
+    <!--中间商品 end-->
+    <!--支付方式-->
+    <div class="step-content clear">
+        <div class="way-list ">
+            <h1>支付方式</h1>
+            <li class="clear" v-for="item in payMent" style="margin-top: 10px">
+                <div class="left_c">
+                    <input type="radio" :value="item.code" name="payment" v-if="item.code==1000" checked
+                           @click="chosepayment(item)">
+                    <input type="radio" :value="item.code" name="payment" v-else="item.code"
+                           @click="chosepayment(item)">
+                </div>
+                <div class="right_c">
+                    <h2>{{item.name}}</h2>
+                    <div v-if="item.ziliao">
+                        <p>{{item.ziliao.bankaccount}}</p>
+                        <p>账号：{{item.ziliao.bankcard}}</p>
+                        <p>开户行：{{item.ziliao.bank}}</p>
+                    </div>
+                </div>
+            </li>
+        </div>
+
+        <!--物流方式-->
+        <ul class="way-list">
+            <h1>物流方式</h1>
+            <li v-for="item in shippingType">
+                <input type="radio" v-model="shipping_type" :value="item.value" @click="showInputList(item)">
+                <h2>{{item.name}}</h2>
+                <p>预计到货时间5-8个工作日</p>
+            </li>
+            <div class="exploration-center" v-show="isShow">
+                <h2>门店自取信息</h2>
+                <ul>
+                    <li>
+                        <p>体验中心：</p>
+                        <select class="mui-btn" v-model="storeindex" @change="changestore">
+                            <option value="-1">请选择</option>
+                            <option v-for="(item,index) in storeInfo" :value="index">{{item.name}}</option>
+                        </select>
+                        <input type="text" class="select-input" v-model="address">
+                    </li>
+                    <li>
+                        <p>预约时间：</p>
+                        <div class="mui-content">
+                            <input type="text" class="select-input " :value="date" onclick="showDate()">
+                        </div>
+                    </li>
+                    <li>
+                        <p>收货人员：</p>
+                        <div class="mui-content">
+                            <input type="text" class="select-input" v-model="consignee">
+                        </div>
+                    </li>
+                    <li>
+                        <p>联系电话：</p>
+                        <div class="mui-content">
+                            <input type="text" class="select-input" v-model="mobile">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </ul>
+
+        <ul class="way-list ">
+            <h1>订单备注</h1>
+            <li>
+                <textarea id="valueName" v-model="userNote" placeholder="用户留言内容"></textarea>
+            </li>
+        </ul>
+        <div class="aubmit_btn">
+            <p>实际付款：￥{{totalGoodsPrice |number}}</p>
+            <div class="SubmitOrders" @click="SubmitOrders">提交订单</div>
+        </div>
+    </div>
+    <!--支付方式 end-->
+    <div style="width: 100%;height: 50px"></div>
+</div>
+
+
+{include file="public/nav" /}
+</body>
+<script>
+
+
+    var vm = new Vue({
+        el: '#orderConfirm',
+        data: {
+            isShow: false,
+            selected: false,
+            token: '',
+            totalGoodsPrice: '',
+            cartList: '',
+            payMent: '',
+            userNote: '',
+            listName: [],   //收货人信息数据
+            goods_sn: '',
+            wxURL: '',
+            user_address_id: '',
+            shippingType: [{name: '邮寄', value: 2, checked: false}, {name: '门店自取', value: 1, checked: true}],
+            shipping_type: 2,
+            pay_type: 1,
+            pay_code: 1000,
+            date: '',
+            consignee: '',
+            mobile: '',
+            storeInfo: [],
+            store_id: '',
+            address: '',
+            storeindex: -1
+        },
+        filters: {
+            //保留2位小数点过滤器 不四舍五入
+            number(value) {
+                let toFixedNum = Number(value).toFixed(3);
+                let realVal = toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                return realVal;
+            }
+        },
+        created() {
+            this.token = getToken();
+            var _this = this;
+            //订单提交接口
+            axios.get(__apiurl + '/order/addpre', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+            }).then(response => {
+                _this.totalGoodsPrice = response.data.data.total_goods_price;
+                _this.cartList = response.data.data.cartList;
+                _this.payMent = response.data.data.payment;
+            }).catch(error => {
+                mui.alert(error);
+            });
+            axios.get(__apiurl + '/user/getAddress', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: getToken()
+                },
+            }).then(res => {
+                _this.listName = res.data.data;
+                for (var i in res.data.data) {
+                    if (res.data.data[i].is_default == 1) {
+                        _this.user_address_id = res.data.data[i].id;
+                    }
+                }
+            }).catch(error => {
+                mui.alert(error)
+            });
+
+            //获取门店信息
+            axios.get(__apiurl + '/order/setorderstore', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: getToken()
+                },
+            }).then(res => {
+                this.storeInfo = res.data.data;
+            }).catch(error => {
+                mui.alert(error)
+            });
+        },
+        methods: {
+            SubmitOrders() {
+                //订单提交接口2
+                axios.post(__apiurl + '/order/addsubmit', {
+                    shipping_type: this.shipping_type,
+                    pay_type: this.pay_type,
+                    pay_code: this.pay_code,
+                    user_note: this.userNote,
+                    store_id: this.store_id,
+                    shipping_time: this.date,
+                    consignee: this.consignee,
+                    mobile: this.mobile,
+                    user_address_id: this.user_address_id
+                }, {
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    }
+                }).then(res => {
+                    if (res.data.status == 100) {
+                    	var wxopenid=getOpenId();
+                        if (this.pay_type == 2 && this.pay_code == 1002) {                        	
+                            //微信支付接口  ,如果有openid就是公众号支付，没有为H5支付，upt by fire                         
+                            axios.post(__apiurl + '/pay/wxpay', {
+                                    order_id: res.data.data.id,openid:wxopenid
+                                }, {
+                                    headers: {
+                                        Accept: "application/json; charset=utf-8",
+                                        Token: this.token
+                                    }
+                                }
+                            ).then(res => {
+                            	if(wxopenid){
+                            		jsApiMpPay(res.data.data.options,"{:url('order/success')}" + '?id=' + res.data.data.id);                            		
+                            	}else{
+                            		window.location.href = res.data.data.options;
+                            	}
+                                 
+                            }).catch(error => {
+                                mui.alert(error)
+                            })
+                        }else {
+                            mui.alert(res.data.msg, function () {
+                                window.location.href = "{:url('order/success')}" + '?id=' + res.data.data.id;
+                            });
+                        }
+                    } else {
+                        mui.alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    mui.alert(error)
+                });
+            },
+            chosepayment(obj) {
+                if (obj.code == 1000) {
+                    this.pay_type = 1;
+                } else {
+                    this.pay_type = 2;
+                }
+                this.pay_code = obj.code;
+            },
+            //显示门店信息
+            showInputList(obj) {
+                this.shipping_type = obj.value;
+                if (this.shipping_type == 1) {
+                    this.isShow = true;
+                }
+                else {
+                    this.isShow = false;
+                }
+            },
+            changestore() {
+                if (this.storeindex == -1) {
+                    this.store_id = '';
+                    this.address = '';
+                    return false;
+                }
+                this.store_id = this.storeInfo[this.storeindex].id;
+                this.address = this.storeInfo[this.storeindex].province_name + this.storeInfo[this.storeindex].city_name + this.storeInfo[this.storeindex].district_name + this.storeInfo[this.storeindex].address;
+            },
+            //地址
+            dizhi(){
+                window.location.href="{:url('user/address')}?type=1"
+            }
+        }
+    });
+
+
+    var dtpicker = new mui.DtPicker({
+        type: "datetime",//设置日历初始视图模式
+        beginDate: new Date(2015, 04, 25),//设置开始日期
+        endDate: new Date(2026, 04, 25),//设置结束日期
+        labels: ['年', '月', '日', '时', '分'],//设置默认标签区域提示语
+        value: "2018-01-01 12:00"
+    })
+    dtpicker.hide();
+
+    function showDate() {
+        dtpicker.show(function (e) {
+            vm.date = e.text;
+        })
+    }
+</script>
+
+</html>

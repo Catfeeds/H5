@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>{$agent.name}</title>
+<meta name="auther" content="www.btbzb.com" />
+<meta name="copyright" content="Copyright©2016-2066 Powered By BTBZB.COM" />
+<script src="__MOBILE__/js/jquery.min.js"></script>
+</head>
+<body>
+<span >客户对话</span>
+<div id="J_div"></div>
+<!--[if lt IE 9]>
+<script src="https://g.alicdn.com/aliww/ww/json/json.js" charset="utf-8"></script>
+<![endif]-->
+<!-- 自动适配移动端与pc端 -->
+<script src="https://g.alicdn.com/aliww/??h5.openim.sdk/1.0.6/scripts/wsdk.js,h5.openim.kit/0.3.3/scripts/kit.js" charset="utf-8"></script>
+<script>
+     window.onload = function(){    	
+    	WKIT.init({
+    		container: document.getElementById('J_div'),
+    	    width: 300,
+    	    height: 420,
+    	    uid: "{$imusername}",
+    	    appkey: {$kfappkey},
+    	    credential: "123",
+    	    touid: "{$kfusername}",
+    	    //groupId:{$kfgroupid},
+    	    sendBtn:true,
+    	    sendMsgToCustomService: true,
+    	    //logo: 'http://img.alicdn.com/tps/i3/TB12LD9IFXXXXb3XpXXSyFWJXXX-82-82.png',
+    	    //pluginUrl: 'http://www.taobao.com/market/seller/openim/plugindemo.php',
+    	    onLoginSuccess:function(){    	    	
+    	    	$('.wkit-powered-by').hide();
+    	    	$(".wkit-title").html("<h1 id='J_wkitTitle' onclick='window.history.back()' ><返回</h1>");
+    	    }
+    	});  
+    	
+    } 
+    
+    
+  
+    
+    
+</script>
+
+</body>
+</html>

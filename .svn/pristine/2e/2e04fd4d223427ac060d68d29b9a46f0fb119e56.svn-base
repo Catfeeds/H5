@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <style type="text/css">
+        body,
+        .mui-content {
+            background-color: white;
+        }
+
+        .login-main {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            top: 10%;
+        }
+
+        .logo {
+            background: #F52B9D;
+            border-radius: 40px;
+            height: 80px;
+            width: 80px;
+            line-height: 80px;
+            margin: auto;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .logo .icon {
+            width: 60%;
+            height: 60%;
+            color: white !important;
+            font-size: 55px;
+        }
+
+
+        .tool-bar {
+            color: gray;
+            position: relative;
+            width: 80%;
+            margin: 10px auto;
+        }
+
+        .tool-bar div:first-child {
+            float: left;
+        }
+
+        .tool-bar div:last-child {
+            float: right;
+        }
+
+        .login-btn {
+            position: relative;
+            margin-top: 50px;
+        }
+
+        .mui-active {
+            color: #F52B9D;
+        }
+
+        .link-area {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+            color: gray;
+            font-size: 14px;
+        }
+
+        .true {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mui-content login-main">
+        <div class="logo">
+            <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-icon_Buyers-certification"></use>
+            </svg>
+        </div>
+        <form id='login-form' class="font-size_14">
+            <div class="username userinput">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-iconfontdianhua"></use>
+                </svg>
+                <input id='account' type="tel" class="mui-input-clear mui-input" placeholder="请输入账号">
+            </div>
+            <div class="mui-input-row password userinput">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-zhanghuanquan"></use>
+                </svg>
+                <input id='password' style="font-size: 14px;" type="password" class="mui-input-password" placeholder="请输入密码">
+            </div>
+        </form>
+        <form class="tool-bar font-size_14">
+            <div class="auto-login" id="autoLogin">
+                <svg class="icon false" aria-hidden="true">
+                    <use xlink:href="#icon-duoxuankuang"></use>
+                </svg>
+                <svg class="icon true" aria-hidden="true">
+                    <use xlink:href="#icon-duoxuankuang1"></use>
+                </svg>
+                记住密码
+            </div>
+            <div class="forget page-tool">
+                <span class="icon myiconfont" onclick="wjpassword()">
+                    忘记密码
+                </span>
+            </div>
+        </form>
+        <button id='login' class="mui-btn mui-btn-block login-btn">登录</button>
+        <div class="link-area">还没有账户?
+            <a href="reg.html" style="color:#F52B9D;">立即注册</a>
+        </div>
+        <!--<div class=" other_login">
+        <p>使用社交账号登录</p>
+        <div class="wrap_qq_weix clear">
+            <a href="#">
+                <span>
+                	
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-QQ"></use>
+                    </svg>
+                </span>
+                <span>QQ登录</span>
+            </a>
+            <a href="#">
+                <span>
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-weixin"></use>
+                    </svg>
+                </span>
+                <span>微信登录</span>
+            </a>
+        </div>
+    </div>-->
+    </div>
+</body>
+<script>
+    $(function () {
+        $("#autoLogin").click(function () {
+            if ($("#autoLogin").hasClass('mui-active')) {
+                $("#autoLogin").removeClass('mui-active');
+                $(".false").css("display", "inline-block");
+                $(".true").css("display", "none");
+            } else {
+                $("#autoLogin").addClass('mui-active');
+                $(".false").css("display", "none");
+                $(".true").css("display", "inline-block");
+            }
+        });
+        var openid = getOpenId();
+        if (openid) {
+            $(".mui-title").text("绑定系统用户");
+        }
+        var username = getUrlParam("username");
+        console.info(username)
+        if (username) {
+            $("#account").val(username);
+        }
+
+        var rememberinfo = localStorage.getItem('remember_user');
+        if (rememberinfo) {
+            var info = JSON.parse(rememberinfo);
+            $("#account").val(info[0].username);
+            $('#password').val(info[0].password);
+            $('#autoLogin').addClass('mui-active');
+            $(".false").css("display", "none");
+            $(".true").css("display", "inline-block");
+        }
+        $("#login").click(function () {
+            var _username = $('#account').val();
+            var _password = $('#password').val();
+
+            if (_username == '') {
+                showErrorMsg('用户名不能为空!');
+                return false;
+            }
+            if (!(/^1[34578]\d{9}$/.test(_username))) {
+                showErrorMsg("手机号码格式有误，请重填");
+                return false;
+            }
+            if (_password == '') {
+                showErrorMsg('密码不能为空!');
+                return false;
+            }
+            if (!(/^[\w]{6,20}$/.test(_password))) {
+                showErrorMsg("密码格式有误，请重填");
+                return false;
+            }
+            $.ajax({
+                type: 'post',
+                data: {
+                    username: _username,
+                    password: _password
+                },
+                headers: {
+                    Aid: getAId()
+                },
+                url: __apiurl + '/com/login',
+                success: function (res) {
+                    var resa = eval("(" + res + ")");
+                    //console.log(resa)
+                    if (resa.status == 100) {
+                        //記住密碼
+                        if ($('#autoLogin').hasClass('mui-active')) {
+                            var tmp = [];
+                            tmp.push({
+                                username: _username,
+                                password: _password
+                            });
+                            localStorage.setItem('remember_user', JSON.stringify(tmp));
+                        } else {
+                            localStorage.removeItem('remember_user');
+                        }
+
+                        //保存本地信息并且检查绑定
+                        setUserInfo(resa.data);
+                        var token = getToken();
+                        if (openid && token) {
+                            $.ajax({
+                                url: __apiurl + "/com/setuserbyopenid",
+                                type: "POST",
+                                data: {
+                                    "openid": openid
+                                },
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("Token", token);
+                                },
+                                dataType: 'json'
+                            });
+                        }
+
+                        mui.alert(resa.msg, function () {
+                            $r_url = getUrlParam("r_url");
+                            console.info($r_url);
+                            if ($r_url) {
+                                window.location.href = $r_url;
+                            } else {
+                                window.location.href = "{:url('/mobile/index')}";
+                            }
+                        })
+                    } else {
+                        mui.toast(resa.msg)
+                    }
+                },
+                error: function (error) {
+                    mui.toast('错误' + error.status)
+                }
+            })
+        })
+
+    });
+
+    function showErrorMsg(msg) {
+        mui.toast(msg, function () {});
+    }
+
+    function wjpassword() {
+        window.location.href = "{:url('com/wjpassword')}"
+    }
+</script>
+
+</html>

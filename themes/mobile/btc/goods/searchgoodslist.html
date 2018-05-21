@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <style type="text/css">
+    	.mui-bar-nav {
+		    top: 0;
+		    -webkit-box-shadow: 0 1px 6px #fff;
+		    box-shadow: 0 1px 6px #fff;
+		}	
+		.mui-content {
+		    padding-top: 0px!important;
+		}
+		.mui-search .mui-placeholder {
+		    font-size: 13px;
+		    line-height: 50px;
+		}
+		.mui-search .mui-placeholder .mui-icon {
+		    color: #F430B6;
+		    margin-right: 1px;
+		}
+		.mui-bar {
+		    height: 50px;
+		    line-height: 50px;
+		    padding-right: 0px;
+		    padding-left: 0px;
+		}
+		.mui-pull-left{
+			width: 10%;
+			float: left;
+			line-height: 30px;
+		}	
+		.mui-input-row {
+		    clear: right;
+		}
+		.mui-search {
+		    margin-left: 2%;
+		    width: 85%;
+		    float: left;
+		    margin-left: 10px;
+		    
+		}
+		.mui-bar input[type=search] {
+		    height: 35px;
+		    margin: 6px 0;
+		    background-color: #F0F0F0;
+		    border-radius: 40px;
+		}
+		.mui-search:before{
+			top: 40%;
+		}
+		.mui-search.mui-active:before{
+			left: 15px;
+			height: 25px;
+    		line-height: 25px;
+			color: #F430B6;
+		}
+		.mui-search.mui-active input[type='search']{
+			padding-left: 40px;
+		}
+		.mui-icon-clear {
+		    height: 30px;
+		    line-height: 30px;
+		}
+		.nodata button {
+		    margin-right: 0;
+		}
+		.list_bottom{
+			display: block;
+		}
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>    	
+        <header class="mui-bar mui-bar-nav">
+        	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<div class="mui-input-row mui-search">
+	            <input type="search" placeholder="搜索商品" class="mui-input-clear" id="search_input" v-model="searchInput">
+	        </div>
+        </header>
+        <div class="mui-content">
+            <!--中间商品列表-->
+            <div class="goods_all_list">
+                <ul class="clear">
+                    <li v-for="item in productList" @click="godetail(item)">
+                        <div>
+                        	<div class="wrap_img" v-if="item.thumb == null || item.thumb==''">
+                                <img src="__IMG__/banner_05.jpg" alt="">
+                            </div>
+                            <div class="wrap_img" v-else-if="item.thumb.indexOf('http://myzbfx.com/') != -1">
+                                <img :src="item.thumb.replace('http://myzbfx.com/','')" alt="">
+                            </div>
+                            <div class="wrap_img" v-else>
+                                <img :src="item.thumb" alt="">
+                            </div>
+                            <!--<div class="wrap_img">
+                                <img :src="item.thumb" alt="">
+                            </div> -->                           
+                            <div class="wrap_text">
+                                <p id="aaa">{{item.name}}</p>
+                                <p>￥<span class="price" v-text="item.price_seller.replace(/,/g, '')"></span></p>
+                            </div>
+                        </div>
+                    </li>
+                    
+                </ul>
+            </div>
+            <div class="nodata">
+	        	<img src="__IMG__/nodata.png"/>
+	        	<p>暂无相关商品数据!</p>
+	        	<button @click="go_index">首页逛逛</button>
+	        </div>
+	        <div class="list_bottom">
+				—————— 下拉加载更多 ——————
+			</div>
+	        <img v-show="showImg" src="__IMG__/timg_01.gif" alt="" style="display: block;width: 30px;margin: auto;">
+
+            <div class="nomorelist">
+            	—————  &nbsp;&nbsp;已经到底了&nbsp;&nbsp;  —————
+            </div>
+
+        </div>
+    </div>
+
+</body>
+<script>
+	    Vue.use(VueLazyload, {
+	        preLoad: 1.3,
+	        error: "", //请求失败后显示的图片
+	        loading: '__IMG__/timg_01.gif', //加载的loading过渡效果
+	        attempt: 1
+	    });
+	    //判断是否在数组里面
+	    function in_array(search, array) {
+	        for (var i in array) {
+	            if (array[i] == search) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    }
+	    //查找指定的元素在数组中的位置
+	    Array.prototype.indexOf = function(val) {
+			for (var i = 0; i < this.length; i++) {
+				if (this[i] == val){ 
+					return i;
+				}
+			}
+			return -1;
+		};
+		//去删除这个元素
+		Array.prototype.remove = function(val) {
+			var index = this.indexOf(val);
+			if (index > -1) {
+				this.splice(index, 1);
+			}
+		};
+	    var tokenMsg;
+	    var vm = new Vue({
+	        el: '#app',
+	        data: {
+	        	url:'',//当前页面的网址信息
+	            page:1,
+	            searchInput:'',
+	            searchList:[],
+				pagesize:10,
+	            productList: [],
+	            showImg: false, // loading 缓冲图片
+	            moreStatus: true // 判断更多数据
+	        },
+	        created: function () { 
+	        	 this.url = document.URL,   //获取当前页面的网址信息			 	 
+			     
+	        	this.token = getToken();
+	            tokenMsg = this.token;
+	            //解码
+	            this.searchInput =  decodeURI(getUrlParam("search"));
+	            if(JSON.parse(localStorage.getItem("searchList"))){
+	        		this.searchList = JSON.parse(localStorage.getItem("searchList"));//获取本地搜索条件      
+	        	}
+	            //console.info(this.searchList);
+	            this.goodsList();
+	        },
+	        methods: {
+				go_index:function(){
+					window.location.href = '../index/index.html';
+				},
+				search:function(){
+					this.goodsList();
+					if (in_array(this.searchInput,this.searchList)) { //判断this.searchInput是否在数组中
+	                    this.searchList.remove(this.searchInput);//获取搜索内容
+	                    this.searchList.unshift(this.searchInput);//获取搜索内容
+	                }else{
+	                	this.searchList.unshift(this.searchInput);//获取搜索内容
+	                }
+					localStorage.setItem("searchList", JSON.stringify(this.searchList));//本地存储搜索内容
+					//console.info(this.searchList)
+					
+				},
+	            goodsList: function () {
+	                axios({
+	                    method: 'GET',
+	                    url: __apiurl + '/goods/search',
+	                    headers: {
+	                        Accept: "application/json; charset=utf-8",
+	                        Token: tokenMsg,
+	                        Aid:getAId()
+	                    },
+	                    params: {
+							keyword: this.searchInput,
+							page:this.page,
+							pagesize:this.pagesize
+							
+	                    }
+	                }).then(function (response)  {	                  
+	                    if(response.data.data.length >0 ){
+	                    	vm.productList = response.data.data;	
+	                    	$(".list_bottom").css("display","block");
+	                    	 $(".nodata").css("display","none");
+	                    }else{
+	                    	 $(".nodata").css("display","block");
+	                    	 $(".list_bottom").css("display","none");
+	                    }
+	                })
+	                .catch(function (error) {
+	                    mui.alert(error);
+	                })       
+	            },
+	            godetail: function (item) {
+	                if (item.type == 4 && item.supply_goods_id > 0) {
+	                    window.location.href = 'xdtdetails.html?id=' + item.id;
+	                } else if(item.type == 0 || item.type == 1){
+	                	 window.location.href = 'diamondinfo.html?id=' + item.id+'&supply_gtype='+item.supply_gtype;
+	                }else{
+	                    window.location.href = 'details.html?id=' + item.id;
+	                }
+	            }
+	        }
+	    })
+		//点击搜索
+		$("#search_input").keypress(function(e) {
+			if(e.which == 13) {
+				if(vm.searchInput.replace(/(^\s*)|(\s*$)/g, "") !== ""){
+					var num = vm.url.indexOf("=");  //获取＃在的位置信息
+					
+					if (num){
+				        var URL = vm.url.substring(0,num+1);  //截取网址信息
+				        
+				        history.pushState(null,null,encodeURI(encodeURI(URL+vm.searchInput)));  //将网址设置
+				    }
+					vm.search();
+				}else{
+					mui.alert("请输入搜索内容");
+				}
+			}		
+		});
+		mui("body").on("swipeup", ".mui-content", swipeUp);
+		//监听列表上滑事件事件
+		function swipeUp() {
+			if (vm.moreStatus == false) {
+	            return false;
+	        }
+			console.info($(".mui-content").height())
+			console.info($(".list_bottom").offset().top)
+			if($(".mui-content").height() == $(".list_bottom").offset().top) {
+				$(".list_bottom").html("加载中...");
+				vm.showImg = true;
+	            vm.page += 1;
+	            axios({
+	                method: 'GET',
+	                url: __apiurl + '/goods/search',
+	                headers: {
+	                    Accept: "application/json; charset=utf-8",
+	                    Token: tokenMsg,
+	                    Aid:getAId()
+	                },
+	                params: {
+						keyword: vm.searchInput,
+						page:vm.page,
+						pagesize:vm.pagesize
+						
+	                }
+	            }).then(function (response)  {
+	            	vm.showImg = false;
+	            	
+	                //console.info(response.data.data.length);
+	                if(response.data.data.length >0 ){
+	                	var newProductList = response.data.data;
+	                	vm.productList = vm.productList.concat(newProductList)	
+	                	$(".nomorelist").css("display","none");
+	                	$(".list_bottom").css("display","block");
+	                }else{
+	                	$(".nomorelist").css("display","block");
+	                    $(".list_bottom").css("display","none");
+	                    vm.moreStatus = false;
+	                }
+	            })
+	            .catch(function (error) {
+	                mui.alert(error);
+	            }) 
+			}
+		}
+		/*监听丢失的图片*/
+	    $("img").on('error', function () {
+	        console.info(111)
+	        $(this).attr('src', '__IMG__/banner_03.jpg');
+	    })
+</script>
+

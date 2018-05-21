@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body>
+<header class="mui-bar mui-bar-nav">
+    <h1 class="mui-title">登录</h1>
+</header>
+<div class="mui-content">
+    <form id='login-form' class="mui-input-group font-size_14">
+        <div class="mui-input-row">
+            <label>账号</label>
+            <input id='account' style="font-size: 14px;" type="number" class="mui-input-clear mui-input" placeholder="请输入账号">
+        </div>
+        <div class="mui-input-row">
+            <label>密码</label>
+            <input id='password' style="font-size: 14px;" type="password" class="mui-input-clear mui-input" placeholder="请输入密码">
+        </div>
+    </form>
+    <form class="mui-input-group font-size_14">
+        <ul class="mui-table-view mui-table-view-chevron">
+            <li class="mui-table-view-cell">
+                记住密码
+                <div id="autoLogin" class="mui-switch">
+                    <div class="mui-switch-handle"></div>
+                </div>
+            </li>
+        </ul>
+    </form>
+    <div class="mui-content-padded font-size_14">
+        <button id='login' class="mui-btn mui-btn-block mui-btn-primary">登录</button>
+        <div class="link-area">还没有账户?
+            <a href="reg.html" style="color:#007aff;">立即注册</a>
+            <a class="fr" href="wjpassword.html">忘记密码</a>
+        </div>
+    </div>
+    <!--<div class=" other_login">
+        <p>使用社交账号登录</p>
+        <div class="wrap_qq_weix clear">
+            <a href="#">
+                <span>
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-QQ"></use>
+                    </svg>
+                </span>
+                <span>QQ登录</span>
+            </a>
+            <a href="#">
+                <span>
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-weixin"></use>
+                    </svg>
+                </span>
+                <span>微信登录</span>
+            </a>
+        </div>
+    </div>-->
+</div>
+</body>
+<script>
+    $(function () {
+    	var openid=getOpenId();    	
+    	if(openid){
+    		$(".mui-title").text("绑定系统用户");
+    	}
+    	var username=getUrlParam("username");
+    	if(username){
+    		$("#account").val(username);
+    	}
+    	
+        var rememberinfo = localStorage.getItem('remember_user');
+        if (rememberinfo) {
+            var info = JSON.parse(rememberinfo);
+            $("#account").val(info[0].username);
+            $('#password').val(info[0].password);
+            $('#autoLogin').addClass('mui-active');
+        }
+        $("#login").click(function () {
+            var _username = $('#account').val();
+            var _password = $('#password').val();
+
+            if (_username == '') {
+                showErrorMsg('用户名不能为空!');
+                return false;
+            }
+            if (!(/^1[34578]\d{9}$/.test(_username))) {
+                showErrorMsg("手机号码格式有误，请重填");
+                return false;
+            }
+            if (_password == '') {
+                showErrorMsg('密码不能为空!');
+                return false;
+            }
+            if (!(/^[\w]{6,20}$/.test(_password))) {
+                showErrorMsg("密码格式有误，请重填");
+                return false;
+            }
+            $.ajax({
+                type: 'post',
+                data: {
+                    username: _username,
+                    password: _password
+                },
+                url: __apiurl + '/com/login',
+                success: function (res) {
+                    var resa = eval("(" + res + ")");
+                    //console.log(resa)
+                    if (resa.status == 100) {
+                        //記住密碼
+                        if ($('#autoLogin').hasClass('mui-active')) {
+                            var tmp = [];
+                            tmp.push({username: _username, password: _password});
+                            localStorage.setItem('remember_user', JSON.stringify(tmp));
+                        } else {
+                            localStorage.removeItem('remember_user');
+                        } 
+                        
+                        //保存本地信息并且检查绑定
+                        setUserInfo(resa.data);
+                        var token=getToken();
+                        if(openid&&token){ 
+                	    	$.ajax({    	    		  
+              	    		  url: __apiurl+"/com/setuserbyopenid",
+              	    		  type:"POST",
+              	    		  data: {"openid":openid},
+              	    		  beforeSend: function (xhr) {  
+              	              	xhr.setRequestHeader("Token", token);  
+              	          	  },  
+              	    		  dataType: 'json'
+              	    		});
+                        }
+                        
+                        mui.alert(resa.msg, function () {
+                        	$r_url=getUrlParam("r_url");
+                        	if($r_url){
+                        		 window.location.href =$r_url;
+                        	}else{
+                        		window.location.href = "{:url('/mobile/index')}";
+                        	}                            
+                        })
+                    } else {
+                        mui.alert(resa.msg)
+                    }
+                },
+                error: function (error) {
+                    mui.alert('错误' + error.status)
+                }
+            })
+        })
+
+    });
+
+    function showErrorMsg(msg) {
+        mui.alert(msg, function () {
+        });
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="__CSS__/mint-ui.css" />
+
+<head>
+    {include file="public/base" /}
+		<style>		
+			body,.mui-content,.nodetail{
+				background: white;
+			}
+			.mui-row.mui-fullscreen>[class*="mui-col-"] {
+				height: 100%;
+			}
+			.mui-col-xs-9 {
+				overflow-y: auto;
+				width: 100%;
+			}
+			
+			.mui-segmented-control .mui-control-item {
+				line-height: 50px;
+				width: 100%;
+			}
+			
+			.mui-control-content {
+				display: block;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+				background-color: #fff;
+			}
+			.mui-back{
+				position: fixed;
+				line-height: 30px;
+			    width: 30px;
+			    height: 30px;
+			    margin: 10px;
+			    border-radius: 50%;
+			   	background: rgba(0,0,0,0.4);
+    			color: white;
+			    z-index: 11;		    
+			}
+			.mui-segmented-control.mui-segmented-control-vertical .mui-control-item {
+			    display: inline-block; 
+			    width: 25%;
+			    height: 50px;
+    			line-height: 50px;
+			    float: left;
+			    border-bottom:none!important;
+			    border-left-width: 0;
+			}
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+			    color:#F52B9D;
+			    border-bottom: 2px solid #F52B9D!important;
+			    background: 0 0;
+			}
+			#segmentedControls {
+			    background: rgb(255,255,255);
+			    position: fixed;
+			    z-index: 10;
+			    opacity: 0;			    
+			}
+			#segmentedControls a:first-child{
+				margin-left: 60px;
+			}
+			.mint-swipe-indicator {
+	            background: white;
+	            opacity: 1;
+	        }
+	
+	        .mint-swipe-indicator.is-active {
+	            background:#F52B9D;
+	        }
+	
+	        .noshow {
+	            background: #ccc;
+	        }
+	        #details{
+	        	margin-bottom: 55px;
+	        }
+	        .group-warp{
+	        	width: 100%;
+	        	padding:10px;
+	        	font-size: 14px;
+	        }
+	        .group-warp span:last-child{
+	        	float: right;
+	        }
+	        .close {
+		        float: right;
+				padding: 5px 10px;
+			}
+	        .specifications_detail,.Parameter_detail{
+	        	position: fixed;
+	        	bottom: 0px;
+	        	z-index: 20;
+	        	height: 80%;
+	        	width: 100%;
+	        	border: 1px solid #eee;
+	        	background: white;
+	        }
+	        .detai_title {
+			    padding: 10px 0 10px 126px;
+			    position: relative;
+			}
+			.detai_img {
+			    width: 100px;
+			    height: 100px;
+			    position: absolute;
+			    top: -28px;
+			    left: 10px;
+			    border-radius: 4px;
+			    overflow: hidden;
+			    border: 1px solid rgba(0,0,0,.1);
+			    padding: 1px;
+			    background-color: #fff;
+			    border-radius: 4px;
+			}
+			.detai_img img {
+			    width: 100%;
+			    height: 100%;
+			    border-radius: 4px;
+			}
+			.detai_text {
+		        color: #333;
+			    font-size: 12px;
+			    line-height: 18px;
+			    padding-right: 20px;
+			    padding-top: 8px;
+			}
+			.detai_text .price-wrap {
+			    width: 210px;
+			}
+			.detai_text .price-wrap .price {
+			    font-family: arial;
+			    font-size: 18px;
+			    color: #F52B9D;
+			    word-wrap: break-word;
+			}
+			.detai_text .select-info {
+			    display: -webkit-box;
+			    -webkit-line-clamp: 2;
+			    -webkit-box-orient: vertical;
+			    height: 36px;
+			    overflow: hidden;
+			    color: red;
+			}
+			.detai_text .select-info span {
+			    margin-right: 5px;
+			}
+			.select-close {
+			    position: absolute;
+			    top: 6px;
+			    right: 10px;
+			}
+			.select-close img{
+				width: 20px;
+				height: 20px;				
+			}
+			.detai_main {
+			    padding: 0 15px 10px;
+			    position: absolute;
+			    bottom: 48px;
+			    top: 93px;
+			    left: 0;
+			    right: 0;
+			    overflow: auto;
+			}
+			.main-item{
+				border-top: 1px solid rgba(0,0,0,.1);
+				border-bottom: 1px solid rgba(0,0,0,.1);
+			}
+			.detai_main .select_list li {			   
+			    padding-top: 15px;
+			    border-bottom: 1px solid rgba(0,0,0,.1);
+			    padding-bottom: 10px;
+			}
+			.detai_main .select_list .select_title{
+			    color: #888888;
+			    font-size: 14px;
+			    font-weight: 400;
+			    padding-bottom: 10px;
+			    padding-top: 10px;
+			}
+			.select_list .select_list_items a {
+			    position: relative;
+			    display: inline-block;
+			    border: 1px solid #888888;
+			    /* background-color: #F0F0F0; */
+			    border-radius: 8px;
+			    font-size: 13px;
+			    /*margin: 0 8px 8px 0;*/
+			    margin-right: 15px;
+			    color: #333;
+			    width: 28%;
+			    /* padding: 0px 10px; */
+			    max-height: 35px;
+			    line-height: 35px;
+			    overflow: hidden;
+			    text-align: center;
+			}
+			.select_list .select_list_items a.active {
+			    color: white;
+			    border-color: #F52B9D;
+			    background: #F52B9D;
+			}
+			.number-wrap .number-line {
+			    padding-bottom: 10px;
+			    padding-top: 10px;
+			    line-height: 36px;
+			}
+			.number-wrap label {
+			    color: #666;
+			    font-size: 13px;
+			    font-weight: 400;
+			}
+			.number-wrap .number {
+			    height: 36px;
+			    width: 100px;
+			    border-radius: 3px;
+			    float: right;
+			}
+			.number-wrap .number button {
+				float: left;
+			    border: none;
+			    outline: 0;
+			    padding: 0;
+			    line-height: 32px;
+			    height: 34px;
+			    width: 30px;
+			    font-size: 24px;
+			    border: 1px solid #f5f5f5;
+			    background-color: #f5f5f5;
+			}
+			.number-wrap .number .decrease {
+			    border-right: 1px solid #fff;
+			}
+			.number-wrap .number .increase {
+			    border-left: 1px solid #fff;
+			}
+			.number-wrap .number .disabled {
+			    color: #cfcfcf;
+			}
+			.number-wrap .number input[type=number] {
+				float: left;
+			    line-height: 32px;
+			    height: 34px;
+			    width: 36px;
+			    text-align: center;
+			    font-size: 13px;
+			    font-weight: 700;
+			    border: 1px solid #f5f5f5;
+			    background-color: #f5f5f5;
+			    box-sizing: border-box;
+			    margin: 0;
+			    padding: 0;
+			}
+			.detai_footer{
+				display: block;
+			    display: -webkit-box;
+			    display: flex;
+			    height: 48px;
+			    text-align: center;
+			    line-height: 48px;
+			    color: #FFF;
+			    width: 100%;
+			    position: absolute;
+			    bottom: 0;
+			}
+			.detai_footer a{
+				background: #F52B9D !important;
+			    color: #FFF;
+			    font-size: 16px;
+			    text-align: center;
+			    border: 1px solid #F52B9D;
+			}
+			.detai_footer a.addcart{
+				background: #FBAA1C!important;
+			    color: #FFF;
+			    text-align: center;
+			    border: 1px solid #FBAA1C;
+			}
+			.s_mask,.p_mask,.peishi_mask{
+				position: fixed;
+			    width: 100%;
+			    height: 100%;
+			    right: 0;
+			    z-index: 19;
+			    background: #000000;
+			    opacity: 0.5;
+			    overflow: auto;
+			}
+			.Parameter_detail{
+				height: 60%;
+			}
+			.Parameter_main{
+				bottom: 48px;
+			}
+			.top_title h2{
+				font-size: 14px;
+			    padding: 10px;
+			    color: #555;
+			}
+			.Parameter_detail .detai_main{
+				top: 40px;
+			}
+			.Parameter_detail .detai_main .select_list li {
+			    padding: 5px 0;
+			}
+			.Parameter_detail .detai_main .select_list li:last-child{
+				border-bottom: none;
+			}
+			.Parameter_detail  .title_text {
+			    color: #666;
+			    width: 20%;
+			    float: left;
+			    overflow: hidden;
+			    font-size: 13px;
+			    font-weight: 400;
+			    line-height: 30px;
+			}
+			.Parameter_detail .select_list_items{
+				width: 80%;
+				float: right;
+			}
+			.Parameter_detail .select_list_items span{
+				margin-right: 10px;
+    			font-size: 12px;
+    			line-height: 30px;
+			}
+			#content2{
+				padding: 10px;
+				color: black;				
+			}
+			#content2 ul li{
+				font-size: 12px;
+				color: #999999;
+				padding: 10px;
+				border-bottom: 1px solid #eee;
+			}
+			.eval_top{
+				margin-bottom: 10px;
+			}
+			.eval_user_msg{
+				width: 100%;
+			    height: 35px;
+			    line-height: 35px;			    
+			}
+			.eval_user_img{
+				float: left;
+			    width: 35px;
+			    height: 35px;
+			    text-align: center;
+			    line-height: 35px;
+			    background: #F52B9D;
+			    border-radius: 50%;
+			    margin-right: 10px;
+			}
+			.eval_user_img .icon {
+			    width: 60%;
+			    height: 60%;
+			    color: white!important;
+			    font-size: 55px;
+			}
+			.eval_user_name{
+				float: left;
+			}
+			.eval_user_score{
+				float: right;
+			}
+			.eval_content{
+				color: black;
+				line-height: 20px;			    
+			    margin: 10px 0px;
+			}
+			.look_eval_list{
+				padding: 10px 0px;
+				text-align: center;
+				margin-top: 10px;
+				font-size: 12px;
+			}
+			.look_eval_list a{
+				color: #F52B9D;
+			    padding: 6px 15px;
+			    border-radius: 40px;
+			    border: 1px solid #F52B9D;
+			}
+			#content3{
+				/*padding: 10px;*/
+				background: #EEEEEE;
+				text-align: center;
+			}
+			#content3 img{
+				max-height: 150px;
+			    max-width: 100%;
+			    min-width: 100%;
+			    min-height: 150px;
+			    margin-bottom: 5px;
+			    border-radius: 10px;
+			    border: 1px solid #eee;
+			}
+			.goodscontent{
+				background: white;
+			}
+			.end,.content_title,.nolist,.nopei{
+				padding: 20px 0px;
+				text-align: center;
+				background: #EEEEEE;
+				font-size: 14px;
+  				color: #999999;
+			}
+			.content_title,.nodetail{
+				padding: 10px 0px;
+			}
+			.nolist{
+				background: white;
+			}
+			.cartLogo{
+				position: fixed;
+			    line-height: 35px;
+			    text-align: center;
+			    width: 30px;
+			    height: 30px;
+			    margin-top: 10px;
+			    margin-left: 90%;
+			    border-radius: 50%;
+			    background: rgba(0,0,0,0.4);
+			    color: white;
+			    z-index: 11;
+			}
+			.cartLogo .icon{
+				width: 70%;
+    			height: 70%;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content mui-row mui-fullscreen"  id="details" v-cloak>	
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-back"></a>
+			<a class="mui-icon mui-pull-right cartLogo" href="{:url('cart/index')}">
+				<svg class="icon" aria-hidden="true" style="font-size: 26px;">
+                    <use xlink:href="#icon-gouwuche1-copy"></use>
+                </svg>
+			</a>
+			<!--<span class="mui-title-text">商品详情</span>-->
+			<div id="segmentedControls" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-vertical">
+				
+				<a class="mui-control-item mui-active" data-index="0" href="#content1">商品</a>
+				<a class="mui-control-item" data-index="1" href="#content2">评价</a>
+				<a class="mui-control-item" data-index="2" href="#content3">详情</a>
+			</div>
+			<div id="segmentedControlContents" class="mui-col-xs-9" style="border-left: 1px solid #c8c7cc;">
+				<div id="content1" class="mui-control-content">
+					<!--轮播-->
+		            <div>
+		                <mt-swipe :auto="4000" style="height: 300px">
+		                    <mt-swipe-item v-for="item in goodsImage">
+		                        <img :src="item.big" width="100%" height="100%" />
+		                    </mt-swipe-item>
+		                </mt-swipe>
+		            </div>
+		
+		            <!--产品详情-->
+		            <div class="goods_name">
+		                <p>{{goodsName}}</p>
+		                <p class="new_price">
+		                	<span>￥</span>
+		                	<span v-text="goodsPrice.replace(',','').replace('.00','')"></span>
+		                </p>
+		                <p class="tagStr">
+		                	<span v-if="tagStr" v-text="tagStr.replace(/,/g, '')"></span>
+		                </p>
+		                <!--<p class="old_price">
+		                    <span>专柜价</span>	
+		                    <span>￥</span>
+		                    <span v-text="goodsPrice.replace(',','').replace('.00','')">￥{{goodsPrice}}</span>
+		                </p>-->
+		            </div>
+		            <div class="black"> </div>
+		            <!--产品规格-->
+		            <div class="group-warp pro_specifications" @click="Showspecifications">
+		            	<span>请选择产品规格</span>
+		            	<span class="mui-icon mui-icon-more"></span>
+		            </div>	
+		            <div class="black"> </div>
+		            <!--产品参数-->	
+		            <div class="group-warp pro_parameter" @click="parameter">
+		            	<span>产品参数</span>
+		            	<span class="mui-icon mui-icon-more"></span>
+		            </div>	
+		            <div class="black"> </div>
+		         
+				</div>
+				<div id="content2" class="mui-control-content">
+					<div class="eval_top">
+						商品评价（{{evalList.length}}）
+					</div>
+					<ul  v-if="evalList.length>0">
+						<li v-for="(item,index) in evalList"  v-if="index<2">
+							<div class="eval_user_msg">
+								<div class="eval_user_img">
+									<svg class="icon" aria-hidden="true">
+			                            <use xlink:href="#icon-icon_Buyers-certification"></use>
+			                        </svg>
+								</div>
+								<div class="eval_user_name">
+									匿名
+								</div>
+								<span class="eval_user_score" >
+									<span v-for="index in item.score" v-id="index">
+										<svg class="icon" aria-hidden="true" >
+				                            <use xlink:href="#icon-star"></use>
+				                       </svg>				                        
+									</span>
+								</span>
+							</div>
+							<div class="eval_content mui-ellipsis-2" v-text="item.content"></div>
+							<div class="eval_time" v-text="item.create_time"></div>
+						</li>	
+						<div class="look_eval_list">
+							<a :href="'{:url('goods/evaluation')}?goods_id='+id">查看更多评价</a>
+						</div>
+					</ul>
+					<div class="nolist" v-else>
+			        	该商品暂无评价！
+			        </div>
+				</div>
+				
+				<div id="content3" class="mui-control-content">	
+					<div class="content_title">————— 商品详情 —————</div>
+					<div class="goodscontent" v-if="goodsMsg.content">
+						<div class="" v-html="goodsMsg.content">						
+						</div>
+					</div>
+					<div class="nodetail" v-else>
+						<p>
+							暂无商品详细信息
+						</p>
+						<p>敬请等待，后期更新</p>
+					</div>
+					<div class="black"> </div>
+					<div class="end">————— 已经到底了 —————</div>
+				</div>
+				
+			</div>
+			<!-- 区分成品还是定制 若为成品可以立即购买 若为定制商品需要选择配托 -->
+	        <div class="nav_footer mui-row">
+	        	<span class="mui-col-sm-6 mui-col-xs-6 footer_left">
+	            	<a href="{:url('com/kefu')}" class="mui-col-sm-4 mui-col-xs-4" style="border-right: 1px solid #CCCCCC;">
+	                    <span class="icon_style">
+	                    	<svg class="icon" aria-hidden="true" style="font-size: 26px;">
+	                            <use xlink:href="#icon-kefu"></use>
+	                        </svg>
+	                    </span>
+	                    <span>客服</span>
+	                </a>
+	                <a href="javascript:;" class="mui-col-sm-4 mui-col-xs-4 collect" @click="collect" style="border-right: 1px solid #CCCCCC;">
+	                    <span class="icon_style">
+	                        <svg class="icon cf" aria-hidden="true" style="font-size: 26px;">
+	                            <use xlink:href="#icon-shoucangxing"></use>
+	                        </svg>
+	                        <svg class="icon ct" aria-hidden="true" style="font-size: 26px;color: red;display: none;">
+	                            <use xlink:href="#icon-shoucangxing2"></use>
+	                        </svg>
+	                    </span>
+	                    <span>收藏</span>
+	                </a>
+	                <a href="{:url('cart/index')}" class="mui-col-sm-4 mui-col-xs-4">
+	                    <span class="icon_style">
+	                        <svg class="icon" aria-hidden="true" style="font-size: 26px;">
+	                            <use xlink:href="#icon-gouwuche1-copy"></use>
+	                        </svg>
+	
+	                    </span>
+	                    <span>购物车</span>
+	                    <span class="mui-badge mui-badge-danger my-badge">{{cartnum}}</span>
+	                </a>
+	            </span>
+	            <span  class="mui-col-sm-6 mui-col-xs-6">
+	            	<a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 click_cart"  @click="Showspecifications">
+	                    <span>加入购物车</span>
+	                </a>
+	                <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 click_buy" v-show="goodstype == 3" @click="Showspecifications">
+		                <span>立即购买</span>
+		            </a>
+		            <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 custom-btn" v-show="goodstype == 4" v-if="showStone" @click="Showspecifications">
+		                <span>在线配石</span>
+		            </a>
+		            <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 shop_now" v-show="goodstype == 1 || goodstype == 0" @click="Showspecifications">
+		                <span>去配戒托</span>
+		            </a>
+		            <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 custom-btn" v-show="ifStone" @click="Showspecifications">
+		                <span>确认匹配</span>
+		            </a>
+	            </span>
+	        </div>
+			
+			<!--规格选项弹框-->
+			<div v-show="specificationsdetailsShow">
+				<div class="s_mask" @click="buttom_alert"></div>
+				<div class="specifications_detail">					
+	            	<div class="detai_title">
+	            		<div class="detai_img">
+	            			<img :src="thumb" class="w4rem" alt="">
+	            		</div>
+	            		<div class="detai_text">
+	            			<div class="price-wrap">
+	            				<span class="price">
+	            					<span>￥</span>
+		                			<span v-text="goodsPrice.replace(',','').replace('.00','')"></span>
+	            				</span>
+	            			</div>
+	            			<div class="stock">
+	            				库存{{goodsStockNum}}件
+	            			</div>
+	            			<div class="select-info" v-show="goodstype == 4 || goodstype == 0 || goodstype == 1">
+	            				   该商品限购1件
+	            			</div>
+	            		</div>
+	            		<span class="select-close"  @click="buttom_alert">
+		            		<img src="__IMG__/close.png"/>
+		            	</span>
+	            	</div>
+	            	<div class="detai_main">
+	            		<div class="main-item">
+	            			<ul class="select_list">
+	            				<li v-for="(item,index) in goodsAttr">
+	            					<h2 class="select_title">{{item.attrname}}</h2>
+	            					<div class="select_list_items">
+	            						<a href="#" v-for="(list,listIndex) in goodsAttr[index].sub_attr_id" @click="liListClick(list,listIndex,index,list.isshow,list.isactive)"
+		                            	:class="{active:list.isactive==true,noshow:list.isshow==false}">{{list.attrvaluename}}</a>	            					
+	            					</div>
+	            				</li>
+	            				
+			                 	<li v-if="GoodsDiamondMatching" v-show="showStone" >
+			                 		<h2 class="select_title">可选主石</h2>
+		                        	<div class="select_list_items">
+	            						<a v-for="(item,index) in GoodsDiamondMatching" @click="changeshape(index,item.shape,item.weight)" :class="{active:index == isactive}">
+	            							{{item.shape_name}} {{item.weight}}CT
+	            						</a>	            					
+	            					</div>
+		                            
+		                        </li>
+	            				
+	            			</ul>
+			                 <ul  class="select_list" >
+			                 	
+			                 </ul>
+			                
+	            			<div class="number-wrap">
+	            				<div class="number-line">
+	            					<label>购买数量</label>
+	            					<div class="number">
+	            						<button class="decrease disabled" @click="pro_num_jian">-</button>
+	            						<input type="number" v-model="num" disabled/>
+	            						<button class="increase" @click="pro_num_jia">+</button>
+	            					</div>
+	            				</div>
+	            			</div>
+	            		</div>
+	            	</div>
+					<div class="detai_footer">
+						<a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 addcart" @click="addcart(0)">
+		                    <span>加入购物车</span>
+		                </a>
+		                <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 shop_now" v-show="goodstype == 3" @click="addcart(1)">
+			                <span>立即购买</span>
+			            </a>
+			            <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 custom-btn" v-show="goodstype == 4" v-if="showStone" @click="peiShiShowAlert">
+			                <span>在线配石</span>
+			            </a>
+			            <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 custom-btn" v-show="ifStone" @click="diamondPiPei">
+			                <span>确认匹配</span>
+			            </a>
+			            <a href="javascript:;" class="mui-col-sm-6 mui-col-xs-6 shop_now" v-show="goodstype == 0 || goodstype == 1" @click="peijietuo">
+			                <span>去配戒托</span>
+			            </a>
+					</div>
+				</div>
+			</div>
+			<!--参数详情弹框-->
+			<div v-show="parameterdetailsShow">
+				<div class="p_mask" @click="buttom_alert"></div>
+				<div class="Parameter_detail">
+					<div class="top_title">
+						<h2>参数详情</h2>
+					</div>
+					<div class="detai_main">
+						<div class="main-item">
+							<ul class="select_list">
+								<li class="clear">
+									<h2 class="title_text">商品名称</h2>
+									<div class="select_list_items">
+	            						<span>{{goodsMsg.name}}</span>
+	            					</div>
+								</li>
+								<li class="clear">
+									<h2 class="title_text">商品价格</h2>
+									<div class="select_list_items">
+	            						<span>{{goodsMsg.price_seller}}</span>
+	            					</div>
+								</li>
+								<li class="clear">
+									<h2 class="title_text">商品编号</h2>
+									<div class="select_list_items">
+	            						<span>{{goodsMsg.code}}</span>
+	            					</div>
+								</li>
+								<li class="clear">
+									<h2 class="title_text">上新时间</h2>
+									<div class="select_list_items">
+	            						<span>{{goodsMsg.create_time}}</span>
+	            					</div>
+								</li>
+								<li class="clear">
+									<h2 class="title_text">商品类型</h2>
+									<div class="select_list_items">
+	            						<span v-if="goodsMsg.type==0">白钻</span>
+	            						<span v-if="goodsMsg.type==1">彩钻</span>
+	            						<span v-if="goodsMsg.type==2">散货</span>
+	            						<span v-if="goodsMsg.type==3">成品</span>
+	            						<span v-if="goodsMsg.type==4">定制</span>
+	            					</div>
+								</li>
+	            				<li class="clear"  v-for="(item,index) in goodsAttr">
+	            					<h2 class="title_text">{{item.attrname}}</h2>
+	            					<div class="select_list_items">
+	            						<span v-for="(list) in goodsAttr[index].sub_attr_id">{{list.attrvaluename}}</span>
+	            					</div>
+	            				</li>
+	            				
+	            			</ul>
+						</div>
+					</div>
+					<div class="detai_footer">
+						<a href="#" @click="buttom_alert" style="width: 100%;">确定</a>
+					</div>
+				</div>
+			</div>
+			<!-- 点击配托弹出层 -->
+	        <div v-show="detailsShow">
+	            <div class="peishi_mask" @click="buttom_alert"></div>
+		            <div class="peishi_box">
+		                <div v-if="peishiList.length>0">
+		                	<div class="top_title clear">
+								<h2>在线配石</h2>
+								<div class="select-close"  @click="buttom_alert_specificationsdetailsShow">
+				            		<img src="__IMG__/close.png"/>
+				            	</div>
+								<ul class="peishi_list_top clear">
+									<li style="width: 15%;">状态</li>
+				                    <li style="width: 18%;">形状</li>
+				                    <li>钻重</li>
+				                    <li style="width: 18%;">净度</li>
+				                    <li>颜色</li>
+				                    <li style="width: 25%;">价格</li>
+				                </ul>
+							</div>
+			                <div class="detai_main">	                	
+				                <ul class="clear" v-for="(item,index) in peishiList" @click="selectDiamond(index,item.goods_id)" :class="{active:index == isActive}">
+				                	<li style="width: 15%;" v-if="item.supply_gtype==0">
+			                            订货
+			                        </li>
+			                        <li style="width: 15%;text-align: left;padding-left: 5px;overflow: visible;" v-else="item.supply_gtype">
+			                            现货 <img v-if="item.supply_gtype == 1" src="__IMG__/su.png" alt="">
+			                        </li>
+				                    <li style="width: 18%;">{{item.shape}}</li>
+				                    <li>{{item.weight}}</li>
+				                    <li style="width: 18%;">{{item.clarity}}</li>
+				                    <li>{{item.color}}</li>
+				                    <li style="width: 25%;">￥{{item.price}}</li>
+				                </ul>
+			                </div>
+			                <div class="detai_footer">
+			                    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 custom-btn" style="width:100%" @click="pipei">
+			                        <span>确认匹配</span>
+			                    </a>
+			                </div>
+		                </div>
+		                <div class="nopei" v-else>
+			            	没有可匹配钻石
+			            </div>
+	                </div>
+	                
+	            
+	        </div>
+	
+	        <!-- 当确认匹配显示所选的托和匹配到的钻 -->
+	        <div class="matching" v-show="isShow">
+	            <div class="buttom_alert" @click="buttom_alert"></div>
+	            <div class="queRen">
+	            	<div class="top_title">
+						<p>精品定制</p>
+						<div class="select-close"  @click="buttom_alert_detailsShow">
+		            		<img src="__IMG__/close.png"/>
+		            	</div>
+					</div>
+	                <div class="detai_main tops">
+	                    <ul class="ma-box clear">
+	                        <li class="clear">
+	                            <div class="fl good-img">
+	                                <img :src="thumb" class="w4rem" alt="">
+	                            </div>
+	                            <div class="good-title">
+	                                <p class="good-title_top">
+	                                    <span>{{goodsName}}</span>
+	                                    <button @click="ringAgain">重选</button>
+	                                </p>
+	                                <p>{{jietuoList.name}}</p>
+	                                <p class="rmb"></p>
+	                                <p class="rmb">
+	                                	<span class="rmb_price">￥{{jietuoList.goods_price}}</span>
+	                                	<span class="rmb_num">数量：X {{num}}</span>
+	                                </p>
+	                            </div>
+	                            <div class="clearfix"></div>
+	                        </li>
+	
+	                        <li class="clear">
+	                            <div class="fl good-img">
+	                                <img src="__IMG__/zuanjie.png" class="w4rem" alt="">
+	                            </div>
+	                            <div class="good-title">
+	                                <p class="good-title_top">
+	                                    <span>{{chosediamond.goods_name}}</span>
+	                                    <button @click="diamondAgain">重选</button>
+	                                </p>
+	                                <p>{{chosediamond.shape}}&nbsp;/&nbsp;{{chosediamond.weight}}Ct&nbsp;/&nbsp;{{chosediamond.clarity}}&nbsp;/&nbsp;{{chosediamond.color}}</p>
+	                                <p class="rmb">
+	                                	<span class="rmb_price">￥{{chosediamond.price_seller}}</span>
+	                                	<span class="rmb_num">数量：X {{chosediamond.goods_number}}</span>
+	                                </p>
+	                            </div>
+	                            <div class="clearfix"></div>
+	                        </li>
+	                        <div class="clearfix"></div>
+	                    </ul>	                    
+	                	<div class="detai_main_foot">
+	                		共2件商品，总价：<span class="rmb_price">￥<span v-text="goodsPrice.replace(',','')*num + chosediamondprice*chosediamond.goods_number"></span></span>
+	                	</div>
+	                </div>
+	                <div class="detai_footer">
+                    	<a class="custom-btn" @click="queRenButton">确认定制</a>
+                    </div>
+	            </div>
+	        </div>
+		</div>		
+		
+	</body>
+	<script src="__MOBILE__/js/mint-ui.js?__Version__"></script>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+		/*图片懒加载*/
+	    Vue.use(VueLazyload, {
+	        preLoad: 1.3,
+	        error: "错误",
+	        loading: '',
+	        attempt: 1
+	    });
+
+    let vm = new Vue({
+        el: '#details',
+        components: {},
+        data() {
+            return {
+                number: 0,
+                num: 1,
+                id: '',
+                goodsMsg:[],
+                goodsName: '',
+                goodsPrice: '',
+                goodstype: '',
+                goodsImage: [],
+                goodsCode: '',
+                goodsStockNum: '',
+                tagStr:'',
+                token: '',
+                goodsAttr: [],
+                evalList: [],//评价列表
+                goodsId: '',
+                str: [],
+                attrIndex: [],
+                skuObj: [],
+                skuProduct: '',
+                showArr: [],
+                allattr: [],
+                cartnum: 0,
+                goodsIdList: [],
+                goodsIdList01: [],
+                detailsShow: false,
+                specificationsdetailsShow:false,//规格选项详情显示
+                parameterdetailsShow:false,//参数详情详情显示
+                peishiList: '',
+                type: 0, //购物车类型  1为立即购买
+                GoodsDiamondMatching: [],
+                shape: '',
+                weight: '',
+                isactive: -1,
+                diamond_id: '', //已选择的钻石goods_id
+                character_carving: '',
+                isActive: -1,
+                isShow: false,
+                jietuoList: '',
+                chosediamond: '',
+                chosediamondprice:'',
+                thumb: '',
+                showStone: true,
+                ifStone: false
+               
+            }
+        },
+        filters: {
+            //保留2位小数点过滤器 不四舍五入
+            number(value) {
+                let toFixedNum = Number(value).toFixed(3);
+                let realVal = toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                return realVal;
+            }
+        },
+        created() {
+            this.token = getToken();
+            this.id = getUrlParam("id");
+            this.diamond_id = getUrlParam("diamond_id");
+			
+            // 如果是钻石配托 进入详情页 显console.info( this.diamond_id);示确认定制 并且没有可选主石
+            if (this.diamond_id !== null) {
+            	//this.detailsShow
+                this.showStone = false;
+                this.ifStone = true
+            }            
+            /*轮播图片ajax*/
+            axios.get(__apiurl2 + '/goods/getgoodsinfo', {
+                params: {
+                    id: this.id,
+                },
+                headers: {
+                    Aid: getAId()
+                },
+            }).then(res => {
+                //console.log(res);
+                this.goodsMsg = res.data.data;
+                this.goodsName = res.data.data.name;                
+                this.goodsImage = res.data.data.image;
+                this.goodsCode = res.data.data.code;
+                this.goodsPrice = res.data.data.price_seller;
+                this.tagStr = res.data.data.tagStr;
+                console.info(this.tagStr);
+                if(this.tagStr){
+                	$(".tagStr").css("opacity","1");
+                }else{
+                	$(".tagStr").css("opacity","0");
+                }
+                this.goodstype = res.data.data.type;
+                this.thumb = res.data.data.thumb;
+                this.goodsStockNum = res.data.data.stock_num;
+                this.GoodsDiamondMatching = res.data.data.GoodsDiamondMatching;
+                /*获取产品规格数据*/
+                this.goodsAttr = res.data.data.skuattr; //前台遍历属性
+                //console.info(this.goodsAttr);
+                for (var index in this.goodsAttr) {
+                    for (var key in this.goodsAttr[index].sub_attr_id) {
+                        this.$set(this.goodsAttr[index].sub_attr_id[key], 'isshow', true); //加上显示标识
+                        this.$set(this.goodsAttr[index].sub_attr_id[key], 'isactive', false);
+                    }
+                }
+                //成品也不显示可选主石
+                if (this.goodstype == 3) {
+                    this.showStone = false;
+                }
+            }).catch(error => {
+                mui.alert(error)
+            })
+            /*商品评价*/
+			axios.get(__apiurl + '/order/evalList', {
+                params: {
+                    goods_id: this.id
+                },
+                headers: {
+                    Aid: getAId()
+                }
+          }).then(function (response) {          		
+          		//console.info(response);
+                if (response.status == 200) {                	
+                   if(response.data.data){
+                   	 vm.evalList = response.data.data;
+                   }
+                }
+            }).catch(function (error)  {
+                mui.alert(error)
+            })
+            
+            //购物车数据  只取购物车总数
+            axios({
+                method: 'GET',
+                url: __apiurl2 + '/cart/index',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token,
+                    Aid: getAId()
+                },
+            }).then(res => {
+            	//console.log(res);            	
+                if (res.data.status == 100) {                    
+                    this.cartnum = res.data.data.total_num;
+                }
+            }).catch(error => {
+                // mui.alert(error)
+            })
+            //获取sku规格
+            this.getDetailsData();
+            //获取收藏列表
+            axios({
+                method: 'POST',
+                url: __apiurl + '/user/getUserGoodsCollectionList',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token,
+                    Aid:getAId()
+                },
+            }).then(res => {
+            	//console.log(res);
+                if(res.data.data){
+                	var _this = this;
+	                this.goodsIdList = res.data.data.data;
+	                var newarray = [];
+	                for (var i in this.goodsIdList) {
+	                    newarray = this.goodsIdList[i].goods_id;
+	                    _this.goodsIdList01.push(newarray);
+	                }
+	                if (in_array(_this.id, _this.goodsIdList01)) { //判断this.id是否在数组中
+	                    $(".ct").css("display","inline-block");
+		                $(".cf").css("display","none");
+	                }else{
+	                	$(".ct").css("display","none");
+	                    $(".cf").css("display","inline-block");
+	                }
+                }
+            }).catch(error => {
+                mui.alert(error)
+            })
+        },
+        methods: {
+            //获取SKU规格
+            getDetailsData() {
+                axios.get(__apiurl2 + '/goods/getgoodssku', {
+                    params: {
+                        id: this.id
+                    },
+                    headers: {
+                        Aid: getAId()
+                    },
+                }).then(response => {
+                    this.skuProduct = response.data.data;
+                    var temp = [];
+                    for (var i in response.data.data) {
+                        var tmp = response.data.data[i].attributes.split('^');
+                        for (var j in tmp) {
+                            temp.push(tmp[j]);
+                        }
+                        this.skuObj.push(response.data.data[i].attributes);
+                    }
+
+                    for (var i = 0; i < temp.length; i++) {
+                        if (this.allattr.indexOf(temp[i]) == -1) { //判断在数组中是否存在，不存在则push到this.showArr数组中
+                            this.allattr.push(temp[i]);
+                        }
+                    }
+                }).catch(error => {
+                    mui.alert(error)
+                })
+            },
+            
+            pro_num_jian() {
+                if (this.ischosesku() != undefined) {
+                    if (this.num <= 1) { 
+                    	$(".decrease").addClass("disabled");
+                    	mui.toast('已经不能再少了')
+                        this.num = 1;
+                        return
+                    }
+                    this.num--;
+                } else {
+                    mui.alert('请先选择规格')
+                }
+            },
+            pro_num_jia() {
+                if (this.ischosesku() != undefined) {
+                	if(this.goodstype == 4 || this.goodstype == 0 || this.goodstype == 1){
+                		this.num = 1;
+                		$(".decrease").removeClass("disabled")
+                		mui.alert("该商品限购1件")
+                	}else{
+                		if (this.num >= this.goodsStockNum) {
+	                		mui.toast('该商品库存不足');
+	                        this.num = this.goodsStockNum;
+	                        $(".increase").addClass("disabled");
+	                    } else {
+	                        this.num++;
+	                    }
+	                    if(this.num>1){
+	                    	$(".decrease").removeClass("disabled")
+	                    }
+                	}
+                	
+                } else {
+                    mui.alert('请先选择规格')
+                }
+            },
+            //判断是否选择有sku 并返回选择的sku
+            ischosesku() {
+                //无规格的不用判断sku选择
+                if (this.skuObj.length == 0) {
+                    return '';
+                }
+                var newstr = '';
+                for (var index in this.str) {
+                    newstr += index + ':' + this.str[index] + '^';
+                }
+                newstr = newstr.substr(0, newstr.length - 1);
+                if (in_array(newstr, this.skuObj)) {
+                    return newstr;
+                }
+            },
+            // 匹配戒托
+            peijietuo: function () {
+                window.location.href = "{:url('goods/custom')}" + '?diamond_id=' + this.id;
+            },
+            addcart(index) {
+            	//alert(this.num);
+            	this.type = index;
+                __checkLogin();
+                var sku = this.ischosesku();
+                if (sku == undefined) {
+                    mui.alert('请选择规格');
+                    return false;
+                }
+                if (this.num > this.goodsStockNum || this.num == 0) {
+                    mui.alert('该商品库存不足');
+                    return false;
+                }
+                axios({
+                    url: __apiurl + '/Cart/addToCart',
+                    method: 'post',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token,
+                        Aid:getAId()
+                    },
+                    data: {
+                        goods_id: this.id,
+                        goods_num: this.num,
+                        type: this.type,
+                        spec_key: sku,
+                        diamond_id: this.diamond_id,
+                        character_carving: this.character_carving
+                    },
+                }).then(res => {
+                	//console.info(res);
+                	if (this.type == 1) {
+                        window.location.href = "{:url('order/confirm')}";
+                        return false;
+                    }else{
+                    	if(res.data.status == 100){
+	                		mui.alert(res.data.msg);
+	                        this.cartnum += 1;
+	                		
+	                	}else {
+	                        mui.alert(res.data.msg)
+	                    }
+                    }
+                    
+                }).catch(function (error) {
+                    mui.alert("error init" + error)
+                })
+            },
+            /*产品规格LI点击事件*/
+            liListClick(product, index, sIndex, isshow, isactive) {
+
+                if (isactive) {
+                    this.inverseli(product);
+                    return false;
+                }
+                if (isshow == false) {
+                    return false;
+                }
+
+                this.str[product.attr_id] = product.attr_value_id;
+
+                this.attrIndex[sIndex] = index;
+                let _this = this;
+                _this.number = index;
+                /*获取商品价格*/
+                var newstr = '';
+                for (var index in _this.str) {
+                    if (index == product.attr_id) {
+                        if (_this.str[index] != product.attr_value_id) {
+                            _this.str[index] = product.attr_value_id;
+                        }
+                    }
+                    newstr += index + ':' + _this.str[index] + '^';
+                }
+
+                _this.showliorther(product, _this.str, 1); //查找对应sku里面属性
+
+                for (var i in this.skuProduct) {
+                    if (newstr.substr(0, newstr.length - 1) == this.skuProduct[i].attributes) {
+                        this.goodsPrice = this.skuProduct[i].price_seller;
+                        this.goodsStockNum = this.skuProduct[i].goods_number;
+                        if (this.num >= this.goodsStockNum && this.goodsStockNum != 0) {
+                            this.num = this.goodsStockNum;
+                        }
+                    }
+                }
+            },
+            showliorther(obj, str, type) { //点击当前属性时查找对应sku里面属性   注:对比当前选择的属性与sku
+                var thisli = obj.attr_id + ':' + obj.attr_value_id;
+                var showarr = [];
+                var strarr = [];
+                for (var index in str) {
+                    var nowli = index + ':' + str[index];
+                    strarr.push(nowli);
+                    var tmp = [];
+                    var selfattr = []; //当前规格集合
+                    for (var i in this.skuObj) {
+                        if (this.skuObj[i].indexOf(nowli) != -1) {
+                            tmp.push(this.skuObj[i]); //取出不包含当前属性的sku
+                        }
+                        var temp = this.skuObj[i].split("^");
+
+                        for (var j in temp) {
+                            var tts = temp[j].split(":");
+                            if (tts[0] == index) {
+                                selfattr.push(temp[j]);
+                            }
+                        }
+                    }
+                    var lasttmp = [];
+                    for (var i in tmp) {
+                        var temp = tmp[i].split("^");
+                        for (var j in temp) {
+                            var tmm = temp[j].split(':');
+                            if (tmm[0] != index) {
+                                selfattr.push(temp[j]);
+                            }
+                        }
+                    }
+                    //去重
+                    var linshi = [];
+                    for (var i = 0; i < selfattr.length; i++) {
+                        if (linshi.indexOf(selfattr[i]) == -1) { //判断在数组中是否存在，不存在则push到this.showArr数组中
+                            linshi.push(selfattr[i]);
+                        }
+                    }
+                    for (var i in this.allattr) {
+                        if (!in_array(this.allattr[i], linshi)) {
+                            showarr.push(this.allattr[i]);
+                        }
+                    }
+                }
+                for (var i in this.goodsAttr) {
+                    for (var j in this.goodsAttr[i].sub_attr_id) {
+                        var tmp = this.goodsAttr[i].sub_attr_id[j].attr_id + ':' + this.goodsAttr[i].sub_attr_id[
+                            j].attr_value_id;
+                        if (!in_array(tmp, showarr)) { //设置不能点击
+                            this.goodsAttr[i].sub_attr_id[j].isshow = true;
+                        } else {
+                            this.goodsAttr[i].sub_attr_id[j].isshow = false;
+                        }
+                        if (type == 2 && thisli == tmp) {
+                            // console.log(this.goodsAttr[i].sub_attr_id[j].isactive );
+                            this.goodsAttr[i].sub_attr_id[j].isactive = false;
+                        } else {
+                            if (in_array(tmp, strarr)) {
+                                this.goodsAttr[i].sub_attr_id[j].isactive = true;
+                            } else {
+                                this.goodsAttr[i].sub_attr_id[j].isactive = false;
+                            }
+                        }
+                    }
+                }
+            },
+            inverseli(obj) { //当前选中li取消选择
+                var nowli = obj.attr_id + ':' + obj.attr_value_id;
+                var newstr = [];
+                for (var index in this.str) {
+                    var tmp = index + ':' + this.str[index]
+                    if (tmp != nowli) {
+                        newstr[index] = this.str[index]
+                    }
+                }
+                this.str = newstr;
+                this.showliorther(obj, this.str, 2);
+            },
+            //收藏按钮
+            collect() {
+                __checkLogin();
+                if($(".cf").css("display") == "none"){
+                    axios({
+                        method: 'POST',
+                        url: __apiurl + '/user/delusergoodscollection',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token,
+                            Aid:getAId()
+                        },
+                        data: {
+                            goods_id: this.id
+                        }
+                    }).then(res => {
+                        if (res.data.status == 100) {
+                             mui.toast(res.data.msg);
+                            $(".ct").css("display","none");
+                        	$(".cf").css("display","inline-block");
+                        }
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                } else {
+                    axios({
+                        method: 'POST',
+                        url: __apiurl + '/user/addusergoodscollection',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token,
+                            Aid:getAId()
+                        },
+                        data: {
+                            goods_id: this.id
+                        }
+                    }).then(res => {
+                        if (res.data.status == 100) {
+                            mui.toast(res.data.msg);
+                            $(".ct").css("display","inline-block");
+                        	$(".cf").css("display","none");
+                        }
+                        console.log(res)
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                }
+                // }
+
+            },
+
+            parameter(){
+                this.parameterdetailsShow= true;
+            },
+			Showspecifications(){				
+				this.specificationsdetailsShow = true;
+				this.iss_mask = true;
+			},
+			buttom_alert_detailsShow(){
+				if(getUrlParam("diamond_id")){
+					this.specificationsdetailsShow = true;
+					this.isShow = false;
+				}else{
+					this.detailsShow = true;
+					this.isShow = false;
+				}
+				
+			},
+			buttom_alert_specificationsdetailsShow(){
+				this.specificationsdetailsShow = true
+				this.detailsShow = false;
+			},
+            buttom_alert() {
+            	this.detailsShow = false;
+            	this.parameterdetailsShow= false;
+            	this.specificationsdetailsShow = false;
+                this.isShow = false;
+            },
+            // 点击在线配石
+            peiShiShowAlert() {
+                var that = this;
+                // 判断是否选择参数
+                var newstr = '';
+                for (var index in that.str) {
+                    newstr += index + ':' + that.str[index] + '^';
+                }
+                var spestr = newstr.substr(0, newstr.length - 1); //判断是否选中规格
+                if (!in_array(spestr, that.skuObj)) {
+                    mui.alert('请选择产品规格')
+                    return false;
+                }
+                if (!that.shape) {
+                    mui.alert('请选择主石规格')
+                    return false;
+                }
+				
+                axios({
+                    url: __apiurl2 + '/goods/gettpzlist',
+                    method: "get",
+                    params: {
+                        shape: that.shape,
+                        weight: that.weight
+                    },
+                    headers: {
+                        Aid: getAId()
+                    },
+                }).then(res => {
+                    that.peishiList = res.data.data;
+                    console.info("peishiList")
+					console.info(res.data.data);
+                   	that.detailsShow = true;
+                    vm.specificationsdetailsShow= false;
+                })
+
+            },
+            changeshape(index, shape, weight) {
+                this.isactive = index;
+                this.shape = shape;
+                this.weight = weight;
+            },
+
+            // 在线配石
+            selectDiamond(index, goods_id) {
+                this.isActive = index;
+                this.diamond_id = goods_id;
+            },
+
+            // 托配钻
+            pipei(type) {
+            	
+            	if(this.detailsShow == true){
+            		if($(".peishi_box .detai_main ul.active").length>0){
+	                // 判断选择的规格
+	                var newstr = '';
+	                for (var index in this.str) {
+	                    newstr += index + ':' + this.str[index] + '^';
+	                }
+	                //console.log(index)
+	                var spestr = newstr.substr(0, newstr.length - 1); //选中规格
+	                for (var i in this.skuProduct) {
+	                    if (spestr == this.skuProduct[i]['attributes']) {
+	                        this.jietuoList = this.skuProduct[i];
+	                        //console.info(this.jietuoList);
+	                    }
+	                }
+	                if (type != 1) {
+	                    this.chosediamond = this.peishiList[this.isActive]; //选中的钻石详情(托配钻)
+	                    this.chosediamondprice = this.chosediamond.price_seller;
+	                    console.log(this.chosediamondprice)
+	                }
+	
+	                this.detailsShow = false;
+	                this.isShow = true;
+	               }else{
+	               		mui.alert("请选择匹配的钻石");
+	               }
+            	}else{
+            		// 判断选择的规格
+	                var newstr = '';
+	                for (var index in this.str) {
+	                    newstr += index + ':' + this.str[index] + '^';
+	                }
+	                //console.log(index)
+	                var spestr = newstr.substr(0, newstr.length - 1); //选中规格
+	                for (var i in this.skuProduct) {
+	                    if (spestr == this.skuProduct[i]['attributes']) {
+	                        this.jietuoList = this.skuProduct[i];
+	                        //console.info(this.jietuoList);
+	                    }
+	                }
+	                if (type != 1) {
+	                    this.chosediamond = this.peishiList[this.isActive]; //选中的钻石详情(托配钻)
+	                    this.chosediamondprice = this.chosediamond.price_seller;
+	                    console.log(this.chosediamondprice)
+	                }
+	
+	                this.specificationsdetailsShow = false;
+	                this.isShow = true;
+            	}
+            },
+
+            // 戒指重选
+            ringAgain() {
+                history.go(-1);
+            },
+
+            // 钻石重选
+            diamondAgain() {
+                if (this.diamond_id != null) {
+                    window.location.href = "{:url('Goods/diamond')}";
+                } else {
+                    this.detailsShow = true;
+                    this.isShow = false;
+                }
+            },
+
+            // 钻配托
+            diamondPiPei() {
+                // 判断是否选择参数
+                var newstr = '';
+                for (var index in this.str) {
+                    newstr += index + ':' + this.str[index] + '^';
+                }
+                var spestr = newstr.substr(0, newstr.length - 1);
+                if (!in_array(spestr, this.skuObj)) {
+                    mui.alert('请选择规格')
+                    return false;
+                }
+                this.getdiamondinfo()
+                this.pipei(1);
+            },
+
+            // 确认定制后提交到订单页
+            queRenButton() {
+            	//alert(this.num);
+                this.addcart(1);
+                /*window.location.href = "{:url('cart/index')}";*/
+            },
+
+            getdiamondinfo() {
+                var _this = this;
+                request({
+                    url: __apiurl2 + '/goods/getdiamondinfo',
+                    type: "get",
+                    data: {
+                        diamond_id: this.diamond_id
+                    }
+                }, function (res) {
+                    _this.chosediamond = res.data;
+                    _this.chosediamondprice = res.data.price_seller.replace(',','');
+                }, false)
+            }
+
+        }
+    });
+
+
+    //判断是否在数组里面
+    function in_array(search, array) {
+        for (var i in array) {
+            if (array[i] == search) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+		setTimeout(
+			(function() {
+				var controlsElem = document.getElementById("segmentedControls");
+				var contentsElem = document.getElementById("segmentedControlContents");
+				var controlListElem = controlsElem.querySelectorAll('.mui-control-item');
+				var contentListElem = contentsElem.querySelectorAll('.mui-control-content');
+				var controlWrapperElem = controlsElem;
+				var controlWrapperHeight = controlWrapperElem.offsetHeight;
+				
+				var controlMaxScroll = controlWrapperElem.scrollHeight - controlWrapperHeight;//左侧类别最大可滚动高度
+				//console.info(controlMaxScroll)
+				var maxScroll = contentsElem.scrollHeight - contentsElem.offsetHeight;//右侧内容最大可滚动高度
+				
+				
+				var controlHeight = controlListElem[0].offsetHeight;//左侧类别每一项的高度
+				var controlTops = []; //存储control的scrollTop值
+				var contentTops = [0]; //存储content的scrollTop值
+				var length = contentListElem.length;
+				for (var i = 0; i < length; i++) {
+					controlTops.push(controlListElem[i].offsetTop + controlHeight);
+				}				
+				for (var i = 1; i < length; i++) {
+					var offsetTop = contentListElem[i].offsetTop;
+					if (offsetTop + 100 >= maxScroll) {
+						var height = Math.max(offsetTop+100 - maxScroll, 100);
+						var totalHeight = 0;
+						var heights = [];
+						for (var j = i; j < length; j++) {
+							var offsetHeight = contentListElem[j].offsetHeight;
+							totalHeight += offsetHeight;
+							heights.push(totalHeight);
+						}
+						for (var m = 0, len = heights.length; m < len; m++) {
+							contentTops.push(parseInt(maxScroll - (height - heights[m] / totalHeight * height)));
+						}
+						break;
+					} else {
+						contentTops.push(parseInt(offsetTop));
+					}
+				}
+				//console.info(contentTops)
+				contentsElem.addEventListener('scroll', function() {
+					var scrollTop = contentsElem.scrollTop+60;
+					//改变top的rgba
+			        var t = document.getElementById("segmentedControlContents").scrollTop; //获取距离页面顶部的距离
+			        //alert(t);
+			        //如果小于220像素改变rgba
+			        var changeRgba = (t / 200) > 1 ? 1 : t / 200;
+			        var changeRgba1 = (t / 200) > 1 ? 0 : 0.4;
+			        document.getElementById("segmentedControls").style.opacity = changeRgba;		        
+			        if(t>100){
+			        	document.getElementsByClassName("mui-back")[0].style.background = 'rgba(0,0,0,0)';
+			        	document.getElementsByClassName("mui-back")[0].style.color = "#000000";
+			        	document.getElementsByClassName("cartLogo")[0].style.background = 'rgba(0,0,0,0)';
+			        	document.getElementsByClassName("cartLogo")[0].style.color = "#000000";
+			        	
+			        }else{
+			        	document.getElementsByClassName("mui-back")[0].style.background = 'rgba(0,0,0,0.4)';
+			        	document.getElementsByClassName("mui-back")[0].style.color = "white";
+			        	document.getElementsByClassName("cartLogo")[0].style.background = 'rgba(0,0,0,0.4)';
+			        	document.getElementsByClassName("cartLogo")[0].style.color = "white";
+			        }
+			        
+					for (var i = 0; i < length; i++) {
+						var offsetTop = contentTops[i];
+						var offset = Math.abs(offsetTop - scrollTop);
+						//console.info(offset)
+						if (scrollTop < offsetTop) {
+							if (scrollTop >= maxScroll) {
+								onScroll(length - 1);
+							} else {
+								onScroll(i - 1);
+							}
+							break;
+						} else if (offset < 20) {
+							onScroll(i);
+							break;
+						}else if(scrollTop >= maxScroll){
+							onScroll(length - 1);
+							break;
+						}
+					}
+				});
+				var lastIndex = 0;
+				//监听content滚动
+				var onScroll = function(index) {
+					
+					if (lastIndex !== index) {
+						lastIndex = index;
+						var lastActiveElem = controlsElem.querySelector('.mui-active');
+						lastActiveElem && (lastActiveElem.classList.remove('mui-active'));
+						var currentElem = controlsElem.querySelector('.mui-control-item:nth-child(' + (index + 1) + ')');
+						currentElem.classList.add('mui-active');
+						//简单处理左侧分类滚动，要么滚动到底，要么滚动到顶
+						var controlScrollTop = controlWrapperElem.scrollTop;
+						//console.info(controlScrollTop)
+						if (controlScrollTop + controlWrapperHeight < controlTops[index]) {
+							controlWrapperElem.scrollTop = controlMaxScroll-controlWrapperHeight;
+						} else if (controlScrollTop > controlTops[index] - controlHeight) {
+							controlWrapperElem.scrollTop = 0;
+						}
+					}
+				};
+				//滚动到指定content
+				var scrollTo = function(index) {
+					contentsElem.scrollTop = contentTops[index]-52;
+				};
+				mui(controlsElem).on('tap', '.mui-control-item', function(e) {
+					scrollTo(this.getAttribute('data-index'));
+					return false;
+				});
+			}),500);
+		/*监听丢失的图片*/
+	    $("img").on('error', function () {
+	        $(this).attr('src', '__IMG__/700.jpg');
+	    })
+	</script>
+</html>

@@ -1,0 +1,37 @@
+/**
+ * 
+ */
+
+//登录后设置用户信息
+function setUserInfo(user){	 
+	 sessionStorage.setItem("user",user);
+	 sessionStorage.setItem("token",user.token); 
+}
+
+function getUserInfo(){
+	return sessionStorage.getItem("user");
+}
+
+
+//设置求青值token
+function setHeaderToken(xhr){
+	var tokenVal = sessionStorage.getItem("token");
+    if(tokenVal) {
+    	xhr.beforeSend = function() {
+    		xhr.headers['Token'] = tokenVal
+      }
+    }
+    return xhr; 
+}
+
+function getToken(){
+	return sessionStorage.getItem("token");
+}
+
+function setOpenId(openid){
+	sessionStorage.setItem("openid",openid);
+}
+
+function getOpenId(){
+	return sessionStorage.getItem("openid");
+}

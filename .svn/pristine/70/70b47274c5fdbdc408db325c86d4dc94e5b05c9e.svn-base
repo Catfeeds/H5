@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+<style>
+    .mui-popup {
+        z-index: 99999999999999999999 !important;
+    }
+
+    .mui-popup.mui-popup-in {
+        border: 1px solid #f786a3;
+        background: #f786a3;
+    }
+</style>
+
+<body>
+    <div id="diamond">
+
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">现货钻石</h1>
+            <div class="mui-btn mui-btn-blue mui-btn-link mui-pull-right" @click="cart">购物车</div>
+        </header>
+        <div class="mui-content">
+            <div class="wrap_btn clear">
+                <button type="button" class="mui-btn mui-btn-primary fl" :class="{active:isShowTitle}" @click="toggleClick">白钻
+                </button>
+                <button type="button" class="mui-btn mui-btn-primary fr" :class="{active:isShowTitle01}" @click="toggleClick01">彩钻
+                </button>
+            </div>
+            <!--白钻数据-->
+            <div class="box_01" v-show="isShow">
+                <div class="t_header">
+                    <ul class="clear">
+                        <li>状态</li>
+                        <li>形状</li>
+                        <li>钻重</li>
+                        <li>颜色</li>
+                        <li>净度</li>
+                        <li>切工</li>
+                        <li>价格</li>
+                        <li @click="clickImg">
+                            <img src="__IMG__/more-ss.png" alt="">
+                        </li>
+                    </ul>
+                </div>
+                <div class="t_body">
+                    <ul class="clear" v-for="item in diamondList" @click="isShowAlert(item,item.goods_id)">
+                        <li style="width: 15%" v-if="item.inventory_type==2">
+                            <img v-if="item.supply_gtype == 1" src="__IMG__/su.png" alt="">
+                            订货
+                        </li>
+                        <li style="width: 15%" v-else="item.inventory_type">
+                            <img v-if="item.supply_gtype == 1" src="__IMG__/su.png" alt="">
+                            现货
+                        </li>
+                        <li>{{item.shape}}</li>
+                        <li>{{item.weight}}</li>
+                        <li>{{item.color}}</li>
+                        <li>{{item.clarity}}</li>
+                        <li>{{item.cut}}</li>
+                        <li style="width: 25%; color: #f786a3;">￥{{item.goods_price | number }}</li>
+                    </ul>
+                </div>
+            </div>
+            <!--彩钻数据-->
+            <div class="box_02" v-show="isShow01">
+                <div class="t_header">
+                    <ul class="clear">
+                        <li>状态</li>
+                        <li style="width: 20%">形状</li>
+                        <li>钻重</li>
+                        <li style="width: 20%">颜色</li>
+                        <li>净度</li>
+                        <li style="width: 20%;">价格</li>
+                        <li @click="clickImg01" style="width: 10%;">
+                            <img src="__IMG__/more-ss.png" alt="">
+                        </li>
+                    </ul>
+                </div>
+                <div class="t_body">
+                    <ul class="clear" v-for="item in diamondColorList" @click="isShowAlert(item,item.goods_id)">
+                        <li style="width: 15%">
+                            <img v-if="item.supply_gtype == 1" src="__IMG__/su.png" alt="">
+                            订货
+                        </li>
+                        <li style="width: 15%" v-else="item.inventory_type">
+                            <img v-if="item.supply_gtype == 1" src="__IMG__/su.png" alt=""> 
+                            现货
+                        </li>
+                        <li style="width: 20%">{{item.shape}}</li>
+                        <li>{{item.weight}}</li>
+                        <li style="width: 20%">{{item.color}}</li>
+                        <li>{{item.clarity}}</li>
+                        <li style="width: 25%;color: #f786a3">￥{{item.goods_price | number(item) }}</li>
+                    </ul>
+                </div>
+            </div>
+            <!--底部内容-->
+            <div class="clear buttom_msg">
+                <img v-show="showImg" src="__IMG__/timg_01.gif" alt="" style="display: block;width: 30px;margin: auto;">
+                <p>
+                    <span>
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-dianhua1"></use>
+                        </svg>
+                    </span>
+                    <span>15986798251</span>
+                    <span class="fr">查看官方网站(网页版)</span>
+                </p>
+                <p>© 2010-2019 钻明珠宝交易平台 版权所有
+                    <br>粤ICP备xxxxxx号</p>
+            </div>
+        </div>
+        <!--侧边弹出from 白钻-->
+        <div v-show="isOk">
+            <div class="w_mask" @click="w_mask"></div>
+            <div class="all_dialist">
+                <div class="content_list whiteDiamond">
+                    <h4 value="shape">形状</h4>
+                    <ul>
+                        <li value="ROUND">圆形</li>
+                        <li value="OVAL">椭圆</li>
+                        <li value="MARQUISE">马眼</li>
+                        <li value="HEART">心形</li>
+                        <li value="PEAR">水滴</li>
+                        <li value="PRINCESS">方形</li>
+                        <li value="EMERALD">祖母绿</li>
+                        <li value="CUSHION">枕形</li>
+                        <li value="RADIANT">蕾蒂恩</li>
+                        <li value="BAGUETTE">梯方</li>
+                        <li value="SQUARE EMERALD">方形祖母绿</li>
+                    </ul>
+                    <h4 value="Priceinterval">价格</h4>
+                    <ul>
+                        <li value="0-5000">0-5000</li>
+                        <li value="5000-10000">5000-10000</li>
+                        <li value="10000-20000">10000-20000</li>
+                        <li value="20000-50000">2万-5万</li>
+                        <li value="50000-10000">5万-10万</li>
+                        <li value="100000-500000">10万-50万</li>
+                        <li value="500000-999900000">50万-9999万</li>
+                    </ul>
+                    <h4 value="Weightinterval">钻重</h4>
+                    <ul>
+                        <li value="0-0.3">0-0.3</li>
+                        <li value="0.30-0.50">0.30-0.50</li>
+                        <li value="0.50-0.70">0.50-0.70</li>
+                        <li value="0.70-1">0.70-1克拉</li>
+                        <li value="1-2">1克拉-2克拉</li>
+                        <li value="2-3">2克拉-3克拉</li>
+                        <li value="3-999">3克拉以上</li>
+                    </ul>
+                    <h4 value="color">颜色</h4>
+                    <ul>
+                        <li value="D">D</li>
+                        <li value="E">E</li>
+                        <li value="F">F</li>
+                        <li value="G">G</li>
+                        <li value="H">H</li>
+                        <li value="I">I</li>
+                        <li value="J">J</li>
+                        <li value="K">K</li>
+                        <li value="L">L</li>
+                        <li value="M">M</li>
+                        <li value="N">N</li>
+                    </ul>
+
+                    <h4 value="clarity">净度</h4>
+                    <ul>
+                        <li value="FL">FL</li>
+                        <li value="IF">IF</li>
+                        <li value="VVS1">VVS1</li>
+                        <li value="VVS2">VVS2</li>
+                        <li value="VS1">VS1</li>
+                        <li value="VS2">VS2</li>
+                        <li value="SI1">SI1</li>
+                        <li value="SI2">SI2</li>
+                    </ul>
+                    <h4 value="cut">切工</h4>
+                    <ul>
+                        <li value="EX">EX</li>
+                        <li value="VG">VG</a>
+                        </li>
+                        <li value="GOOD">GOOD</li>
+                    </ul>
+                    <h4 value="polish">抛光</h4>
+                    <ul>
+                        <li value="EX">EX</li>
+                        <li value="VG">VG</a>
+                        </li>
+                        <li value="GOOD">GOOD</li>
+                    </ul>
+                    <h4 value="symmetry">对称</h4>
+                    <ul>
+                        <li value="EX">EX</li>
+                        <li value="VG">VG</a>
+                        </li>
+                        <li value="GD">GD</li>
+                    </ul>
+                    <h4 value="fluor">荧光</h4>
+                    <ul>
+                        <li value="F">F</li>
+                        <li value="N">N</li>
+                        <li value="S">S</li>
+                    </ul>
+                    <h4 value="certificate_type">证书</h4>
+                    <ul>
+                        <li value="GIA">GIA</li>
+                        <li value="HRD">HRD</li>
+                        <li value="IGI">IGI</li>
+                        <li value="国检">国检</li>
+                    </ul>
+                    <h4 value="milk">奶咖</h4>
+                    <ul>
+                        <li value="无奶">无奶</li>
+                        <li value="无咖">无咖</li>
+                    </ul>
+                </div>
+                <div class="options">
+                    <button type="button" @click="reset">重置</button>
+                    <button type="button" @click="confirm">确定</button>
+                </div>
+            </div>
+        </div>
+        <!--侧边弹出from 彩钻-->
+        <div v-show="isOk01">
+            <div class="w_mask" @click="confirm01"></div>
+            <div class="all_dialist">
+                <div class="content_list colorDiamond">
+                    <h4 value="color">颜色</h4>
+                    <ul>
+                        <li value="YELLOW">黄钻</li>
+                        <li value="PINK">粉钻</li>
+                        <li value="ORANGE">橙钻</li>
+                        <li value="GREEN">绿钻</li>
+                        <li value="BROWN">棕色</li>
+                        <li value="VIOLET">紫罗兰</li>
+                        <li value="PURPLE">紫钻</li>
+                        <li value="GRAY">灰钻</li>
+                        <li value="BLACK">黑钻</li>
+                        <li value="RED">红钻</li>
+                        <li value="BLUE">蓝钻</li>
+                    </ul>
+                    <h4 value="shape">形状</h4>
+                    <ul>
+                        <li value="ROUND">圆形</li>
+                        <li value="OVAL">椭圆</li>
+                        <li value="MARQUISE">马眼</li>
+                        <li value="HEART">心形</li>
+                        <li value="PEAR">水滴</li>
+                        <li value="PRINCESS">方形</li>
+                        <li value="EMERALD">祖母绿</li>
+                        <li value="CUSHION">枕形</li>
+                        <li value="RADIANT">蕾蒂恩</li>
+                        <li value="BAGUETTE">梯方</li>
+                        <li value="SQUARE EMERALD">方形祖母绿</li>
+                    </ul>
+                    <h4 value="Priceinterval">价格</h4>
+                    <ul>
+                        <li value="0-5000">0-5000</li>
+                        <li value="5000-10000">5000-10000</li>
+                        <li value="10000-20000">10000-20000</li>
+                        <li value="20000-50000">2万-5万</li>
+                        <li value="50000-100000">5万-10万</li>
+                        <li value="100000-500000">10万-50万</li>
+                        <li value="500000-999900000">50万-9999万</li>
+                    </ul>
+                    <h4 value="Weightinterval">钻重</h4>
+                    <ul>
+                        <li value="0-0.3">0-0.3</li>
+                        <li value="0.30-0.50">0.30-0.50</li>
+                        <li value="0.50-0.70">0.50-0.70</li>
+                        <li value="0.70-1">0.70-1克拉</li>
+                        <li value="1-2">1克拉-2克拉</li>
+                        <li value="2-3">2克拉-3克拉</li>
+                        <li value="3-999">3克拉以上</li>
+                    </ul>
+                    <h4 value="Intensity">色度</h4>
+                    <ul class="Intensity">
+                        <li value="FAINT">微 FAINT</li>
+                        <li value="VERY LIGHT">很淡VERY LIGHT</li>
+                        <li value="LIGHT">淡 LIGHT</li>
+                        <li value="FANCY LIGHT">淡彩 FANCY LIGHT</li>
+                        <li value="FANCY">彩 FANCY</li>
+                        <li value="FANCY INTENSE">浓彩 FANCY INTENSE</li>
+                        <li value="FANCY DEEP">深彩 FANCY DEEP</li>
+                        <li value="FANCY DARK">暗彩 FANCY DARK</li>
+                        <li value="FANCY VIVD">艳彩 FANCY VIVD</li>
+                    </ul>
+                    <h4 value="clarity">净度</h4>
+                    <ul>
+                        <li value="FL">FL</li>
+                        <li value="IF">IF</li>
+                        <li value="VVS1">VVS1</li>
+                        <li value="VVS2">VVS2</li>
+                        <li value="VS1">VS1</li>
+                        <li value="VS2">VS2</li>
+                        <li value="SI1">SI1</li>
+                        <li value="SI2">SI2</li>
+                    </ul>
+                    <h4 value="polish">抛光</h4>
+                    <ul>
+                        <li value="EX">EX</li>
+                        <li value="VG">VG</a>
+                        </li>
+                        <li value="GOOD">GOOD</li>
+                    </ul>
+                    <h4 value="symmetry">对称</h4>
+                    <ul>
+                        <li value="EX">EX</li>
+                        <li value="VG">VG</a>
+                        </li>
+                        <li value="GD">GD</li>
+                    </ul>
+                    <h4 value="fluor">荧光</h4>
+                    <ul>
+                        <li value="F">F</li>
+                        <li value="N">N</li>
+                        <li value="S">S</li>
+                    </ul>
+                    <h4 value="certificate_type">证书</h4>
+                    <ul>
+                        <li value="GIA">GIA</li>
+                        <li value="HRD">HRD</li>
+                        <li value="IGI">IGI</li>
+                        <li value="国检">国检</li>
+                    </ul>
+                    <h4 value="milk">奶咖</h4>
+                    <ul>
+                        <li value="无奶">无奶</li>
+                        <li value="无咖">无咖</li>
+                    </ul>
+                </div>
+                <div class="options">
+                    <button type="button" @click="reset">重置</button>
+                    <button type="button" @click="confirm01">确定</button>
+                </div>
+            </div>
+        </div>
+        <!--点击商品后弹出购物详情-->
+        <div v-show="detailsShow">
+            <div class="buttom_alert" @click="buttom_alert"></div>
+            <div class="buttom_box">
+                <p>详情参数：</p>
+                <ul>
+                    <li>
+                        <span>证书编号：</span>
+                        <span>{{listObj.certificate_number}}</span>
+                    </li>
+                    <li>
+                        <span>证书类型：</span>
+                        <span>{{listObj.certificate_number}}</span>
+                    </li>
+                    <li>
+                        <span>形状：</span>
+                        <span>{{listObj.shape}}</span>
+                    </li>
+                    <li>
+                        <span>荧光：</span>
+                        <span>{{listObj.fluor}}</span>
+                    </li>
+                    <li>
+                        <span>重量：</span>
+                        <span>{{listObj.weight}}</span>
+                    </li>
+                    <li>
+                        <span>全深比：</span>
+                        <span>{{listObj.dia_depth}}</span>
+                    </li>
+                    <li>
+                        <span>颜色：</span>
+                        <span>{{listObj.color}}</span>
+                    </li>
+                    <li>
+                        <span>台宽比：</span>
+                        <span>{{listObj.dia_table}}</span>
+                    </li>
+                    <li>
+                        <span>净度：</span>
+                        <span>{{listObj.clarity}}</span>
+                    </li>
+                    <li>
+                        <span>奶色：</span>
+                        <span>{{listObj.milk}}</span>
+                    </li>
+                    <li>
+                        <span>切工：</span>
+                        <span>{{listObj.cut}}</span>
+                    </li>
+                    <li>
+                        <span>咖色：</span>
+                        <span>{{listObj.coffee}}</span>
+                    </li>
+                    <li>
+                        <span>抛光：</span>
+                        <span>{{listObj.polish}}</span>
+                    </li>
+                    <li>
+                        <span>编号：</span>
+                        <span>{{listObj.goods_number}}</span>
+                    </li>
+                    <li>
+                        <span>对称：</span>
+                        <span>{{listObj.symmetry}}</span>
+                    </li>
+                    <li>
+                        <span>价格：</span>
+                        <span>￥{{listObj.goods_price | number}}</span>
+                    </li>
+                    <li>
+                        <span>尺寸：</span>
+                        <span>{{listObj.diaSize}}</span>
+                    </li>
+                    <li>
+                        <span>所在地：</span>
+                        <span>{{listObj.location}}</span>
+                    </li>
+                </ul>
+                
+                <!-- 判断为普通 -->
+                <div class="nav_footer mui-row" v-if = "listObj.supply_gtype != 1">
+                    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 collect">
+                        <span class="icon_style my-span-background"></span>
+                        <span>收藏</span>
+                    </a>
+                    <a href="{:url('cart/index')}" class="mui-col-sm-3 mui-col-xs-3">
+                        <span class="icon_style">
+                            <svg class="icon" aria-hidden="true" style="font-size: 30px;">
+                                <use xlink:href="#icon-gouwuche1-copy"></use>
+                            </svg>
+
+                        </span>
+                        <span>购物车</span>
+                        <span class="mui-badge mui-badge-danger my-badge">0</span>
+                    </a>
+                    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 addcart" @click="addcart">
+                        <span>加入购物车</span>
+                    </a>
+                    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 shop_now" @click="pipei">
+                        <span>去配戒托</span>
+                    </a>
+                </div>
+                <!-- 判断为速订购 -->
+                <div class="nav_footer mui-row" v-if = "listObj.supply_gtype == 1">
+                    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 shop_now suAddCart" @click="suAddCart">
+                        <span>立即购买</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    //判断是否在数组里面
+    function in_array(search, array) {
+        for (var i in array) {
+            if (array[i] == search) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    var vm = new Vue({
+        el: '#diamond',
+        data() {
+            return {
+                isShowTitle: true,
+                isShowTitle01: false,
+                isOk: false,
+                isOk01: false,
+                isShow: true,
+                isShow01: false,
+                detailsShow: false,
+                diamondList: [], //白钻数据
+                diamondColorList: [], //彩钻数据
+                goodsId: '',
+                papvals: [],
+                attrObj: [],
+                addList: '',
+                page: 1,
+                cartnum: 0,
+                listObj: '',
+                token: '',
+                showImg: false,
+                str: '',
+                goodsIdList: [],
+            }
+        },
+        filters: {
+            //保留2位小数点过滤器 不四舍五入
+            number(value) {
+                let toFixedNum = Number(value).toFixed(3);
+                let realVal = toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                return realVal;
+            }
+        },
+        created() {
+            /*获取token*/
+            this.token = getCookie('Token');
+            var _this = this;
+            this.id = getUrlParam("category_id");
+            /*白钻数据*/
+            axios.get(__apiurl + '/goods/diamond', {
+                params: {
+                    goods_attr_filter: 'type:0',
+                    page: this.page
+                }
+            }).then(response => {
+                _this.diamondList = response.data.data.data;
+                _this.page = response.data.data.page;
+
+            }).catch(error => {
+                mui.alert(error);
+            });
+            //收藏数据
+            axios({
+                method: 'POST',
+                url: __apiurl + '/user/getUserGoodsCollectionList',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                }
+            }).then(res => {
+                var _this = this;
+                var aa = [];
+                if (res.data.status == 100) {
+                    this.dataList = res.data.data.data;
+                    for (var i in this.dataList) {
+                        aa.push(this.dataList[i].goods_id);
+                        _this.goodsIdList = aa;
+                        // console.log(  _this.goodsIdList)
+                    }
+                }
+            }).catch(error => {
+                mui.alert(error)
+            })
+
+        },
+        methods: {
+
+            clickImg() {
+                this.isOk = true;
+            },
+            clickImg01() {
+                this.isOk01 = true;
+            },
+            w_mask() {
+                this.isOk = false;
+            },
+            //白钻搜索确定
+            confirm() {
+                var _this = this;
+                _this.str = '';
+                for (var index in _this.attrObj) {
+                    for (var i in _this.attrObj[index]) {
+                        var tmp = _this.attrObj[index][i].substr(1);
+                        if (tmp) {
+                            _this.str += i + ':' + tmp + ';';
+                        }
+                    }
+                }
+
+                /*筛选后接口数据*/
+                axios.get(__apiurl + '/goods/diamond', {
+                    params: {
+                        // goods_attr_filter: 'Shape:ROUND;Weightinterval:0.90-1.2;type:0' //拼接数据格式
+                        goods_attr_filter: _this.str + 'type:0;'
+                    }
+                }).then(response => {
+                    if (response.data.data.data == '') {
+                        mui.alert('该条件没有数据')
+                    } else {
+                        _this.diamondList = response.data.data.data;
+                    }
+                }).catch(error => {
+                    mui.alert(error);
+                });
+                _this.isOk = false; //关闭这个搜索页
+            },
+            //彩钻搜索确定
+            confirm01() {
+                // this.isOk01 = false;
+                let _this = this;
+                _this.str = '';
+                for (var index in _this.attrObj) {
+                    for (var i in _this.attrObj[index]) {
+                        var tmp = _this.attrObj[index][i].substr(1);
+                        if (tmp) {
+                            _this.str += i + ':' + tmp + ';';
+                        }
+                    }
+                }
+                // if (!_this.str) {
+                //     mui.alert('未选择数据');
+                //     return false;
+                // }
+                /*筛选后接口数据*/
+                axios.get(__apiurl + '/goods/diamond', {
+                        params: {
+                            // goods_attr_filter: 'Shape:ROUND;Weightinterval:0.90-1.2;type:0'
+                            goods_attr_filter: _this.str + 'type:1;'
+                        }
+                    }).then(response => {
+                        _this.diamondColorList = response.data.data.data;
+                        if (response.data.data.data == '') {
+                            mui.alert('该条件没有数据')
+                        } else {
+                            _this.diamondColorList = response.data.data.data;
+                            _this.page = response.data.data.page;
+                            //滚动事件触发
+                            var page = _this.page;
+                            var colorStr = _this.str;
+                            window.onscroll = function () {
+                                if (getScrollTop() + getClientHeight() == getScrollHeight()) {
+                                    setTimeout(function () {
+                                        _this.showImg = true;
+                                    }, 1000)
+                                    page++;
+                                    /*彩钻数据*/
+                                    axios.get(__apiurl + '/goods/diamond', {
+                                        params: {
+                                            goods_attr_filter: colorStr + 'type:1',
+                                            page: page
+                                        }
+                                    }).then(response => {
+                                        if (response.status == 200) {
+                                            _this.showImg = false;
+                                            var diamondList01 = response.data.data.data;
+                                            _this.diamondColorList = _this.diamondColorList.concat(
+                                                diamondList01)
+                                        }
+
+                                    }).catch(error => {
+                                        mui.alert(error);
+                                    });
+                                }
+                            }
+
+                        }
+                    })
+                    .catch(error => {
+                        mui.alert(error);
+                    });
+                _this.isOk01 = false; //关闭这个搜索页
+            },
+            //重置
+            reset() {
+                let _this = this;
+                $('li').each(function (i, el) {
+                    if ($(el).hasClass('active')) {
+                        $(el).removeClass('active');
+                        var papval = $(el).parent().prev().attr('value');
+                        for (var index in _this.attrObj) {
+                            for (var i in _this.attrObj[index]) {
+                                if (i == papval) {
+                                    var temp = [];
+                                    temp[papval] = '';
+                                    _this.attrObj[index] = temp;
+                                }
+                            }
+                        }
+                    }
+                })
+                // _this.attrObj = [];
+                _this.str = '';
+            },
+            //白钻按钮
+            toggleClick() {
+                this.isShow = true;
+                this.isShow01 = false;
+                this.isShowTitle = true;
+                this.isShowTitle01 = false;
+                // this.attrObj = [];
+                for (var index in this.attrObj) {
+                    for (var i in this.attrObj[index]) {
+                        this.attrObj[index][i] = '';
+                    }
+                }
+                this.str = '';
+            },
+            //彩钻按钮
+            toggleClick01() {
+                var _this = this;
+                this.isShow01 = true;
+                this.isShow = false;
+                this.isShowTitle01 = true;
+                this.isShowTitle = false;
+                for (var index in this.attrObj) {
+                    for (var i in this.attrObj[index]) {
+                        this.attrObj[index][i] = '';
+                    }
+                }
+                this.str = '';
+                /*彩钻数据*/
+                axios.get(__apiurl + '/goods/diamond', {
+                        params: {
+                            goods_attr_filter: 'type:1',
+                            page: _this.page
+                        }
+                    })
+                    .then(response => {
+                        this.diamondColorList = response.data.data.data;
+                        _this.page = response.data.data.page;
+                        //滚动事件触发
+                        var page = _this.page
+                        window.onscroll = function () {
+                            if (getScrollTop() + getClientHeight() == getScrollHeight()) {
+                                setTimeout(function () {
+                                    _this.showImg = true;
+                                }, 1000)
+                                page++;
+                                /*彩钻数据*/
+                                axios.get(__apiurl + '/goods/diamond', {
+                                    params: {
+                                        goods_attr_filter: _this.str + 'type:1',
+                                        page: page
+                                    }
+                                }).then(response => {
+                                    _this.showImg = false;
+                                    var diamondList01 = response.data.data.data;
+                                    _this.diamondColorList = _this.diamondColorList.concat(
+                                        diamondList01)
+                                }).catch(error => {
+                                    mui.alert(error);
+                                });
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        mui.alert(error);
+                    });
+            },
+            buttom_alert() {
+                this.detailsShow = false;
+            },
+            isShowAlert(obj, id) {
+                this.goodsId = id;
+                let _this = this;
+                _this.detailsShow = true;
+                axios({
+                    url: __apiurl + '/goods/getdiamondinfo',
+                    method: "get",
+                    params: {
+                        id: id
+                    }
+                }).then(res => {
+                    _this.listObj = res.data.data;
+                    _this.listObj.goods_price = obj.goods_price;
+
+                    //收藏判断
+                    if (in_array(_this.goodsId, _this.goodsIdList)) { //判断this.id是否在数组中
+                        $('.my-span-background').addClass('active');
+                    }
+                }).catch(error => {
+                    mui.alert(error.status)
+                })
+            },
+            //添加购物车
+            addcart() {
+                this.detailsShow = false;
+                if (this.token == '') {
+                    mui.alert('请先注册登录', function () {
+                        window.location.href = "{:url('com/login')}";
+                    });
+                } else {
+                    axios({
+                        method: 'post',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        },
+                        data: {
+                            goods_id: this.goodsId,
+                            goods_num: 1,
+                            type: 0
+                        },
+                        url: __apiurl + '/Cart/addToCart',
+                    }).then(res => {
+                        if (res.data.status == 100) {
+                            this.cartnum += 1;
+                            $('.my-badge').html(this.cartnum);
+                        }
+                        mui.alert(res.data.msg);
+                    }).catch(function (error) {
+                        mui.alert(error)
+                    })
+                }
+            },
+            // 匹配戒托
+            pipei () {
+                this.detailsShow = false;
+                var _this = this;
+                if (this.token == '') {
+                    mui.alert('请先注册登录', function () {
+                        window.location.href = "{:url('com/login')}";
+                    });
+                } else {
+                    console.log(_this.goodsId);
+                    window.location.href = "{:url('goods/custom')}"+'?diamond_id='+_this.goodsId;
+                    // axios.get(__apiurl + '/goods/goodslist', {
+                    //     params: {
+                    //         goods_type: 4,
+                    //     }
+                    // })
+                    // .then(response => {
+                    //     _this.goodsCategory = response.data.category_id;
+                    //     console.log(_this.goodsCategory)
+                    // })
+                    // .catch(error => {
+                    //     console.log(error);
+                    //     mui.alert('网络错误，不能访问');
+                    // })
+                }
+            },
+
+             // 速订购直接提交订单页
+            suAddCart () {
+                this.detailsShow = false;
+                if (this.token == '') {
+                    mui.alert('请先注册登录', function () {
+                        window.location.href = "{:url('com/login')}";
+                    });
+                } else {
+                    axios({
+                        method: 'post',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        },
+                        data: {
+                            goods_id: this.goodsId,
+                            goods_num: 1,
+                            type: 1
+                        },
+                        url: __apiurl + '/Cart/addToCart',
+                    }).then(res => {
+                        if (res.data.status == 100) {
+                            window.location.href = "{:url('order/confirm')}";
+                        }
+                    }).catch(function (error) {
+                        mui.alert(error)
+                    })
+                }
+            },
+            choseli(obj) {
+                var sonval = obj.attr('value');
+                var papval = obj.parent().prev().attr('value');
+                if (obj.hasClass('active')) {
+                    obj.removeClass('active');
+                    for (var index in this.attrObj) {
+                        for (var i in this.attrObj[index]) {
+                            if (papval == i) {
+                                var tmp = this.attrObj[index][i].replace("," + sonval, "");
+                                if (tmp) {
+                                    this.attrObj[index][i] = tmp;
+                                } else {
+                                    var temp = [];
+                                    temp[papval] = '';
+                                    this.attrObj[index] = temp;
+                                    // delete(this.attrObj[index]);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    obj.addClass('active');
+                    if (this.papvals.indexOf(papval) == -1) { //判断是否选中了该父属性
+                        this.papvals.push(papval);
+                        var str = [];
+                        str[papval] = ',' + sonval;
+                        this.attrObj.push(str);
+                    } else {
+                        for (var index in this.attrObj) { //遍历父元素数组
+                            for (var i in this.attrObj[index]) {
+                                if (papval == i) {
+                                    //改变价格li和钻重li的单选颜色
+                                    if (i == 'Priceinterval' || i == 'Weightinterval') {
+                                        this.attrObj[index][i] = ',' + sonval;
+                                        obj.siblings().removeClass('active');
+                                    } else {
+                                        if (sonval != this.attrObj[index][i]) {
+                                            this.attrObj[index][i] = this.attrObj[index][i] + ',' + sonval;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                console.log(this.attrObj);
+            },
+            //top 上购物车按钮点击事件
+            cart() {
+                window.location.href = "{:url('cart/index')}";
+            },
+            //收藏按钮
+
+            collect() {
+                if (this.token == '') {
+                    mui.alert('请登录后再收藏', function () {
+                        window.location.href = "{:url('com/login')}";
+                    })
+                } else {
+
+                    if ($('.my-span-background').hasClass('active')) {
+                        axios({
+                            method: 'POST',
+                            url: __apiurl + '/user/delusergoodscollection',
+                            headers: {
+                                Accept: "application/json; charset=utf-8",
+                                Token: this.token
+                            },
+                            data: {
+                                goods_id: this.goodsId
+                            }
+                        }).then(res => {
+                            if (res.data.status == 100) {
+                                mui.alert(res.data.msg, function () {
+                                    $('.my-span-background').removeClass('active');
+                                })
+                            }
+                        }).catch(error => {
+                            mui.alert(error)
+                        })
+                    } else {
+                        axios({
+                            method: 'POST',
+                            url: __apiurl + '/user/addusergoodscollection',
+                            headers: {
+                                Accept: "application/json; charset=utf-8",
+                                Token: this.token
+                            },
+                            data: {
+                                goods_id: this.goodsId
+                            }
+                        }).then(res => {
+                            if (res.data.status == 100) {
+                                mui.alert(res.data.msg, function () {
+                                    $('.my-span-background').addClass('active');
+                                })
+                            }
+                        }).catch(error => {
+                            console.log(error)
+                        })
+                    }
+                }
+
+            }
+
+        }
+    });
+    //收藏按钮
+    $('.collect').click(function () {
+        vm.collect();
+    });
+    /*点击li*/
+    $('.content_list ul li').click(function () {
+        vm.choseli($(this));
+    })
+    //--------------上拉加载更多---------------
+    //获取滚动条当前的位置
+    function getScrollTop() {
+        var scrollTop = 0;
+        if (document.documentElement && document.documentElement.scrollTop) {
+            scrollTop = document.documentElement.scrollTop;
+        } else if (document.body) {
+            scrollTop = document.body.scrollTop;
+        }
+        return scrollTop;
+    }
+
+    //获取当前可视范围的高度
+    function getClientHeight() {
+        var clientHeight = 0;
+        if (document.body.clientHeight && document.documentElement.clientHeight) {
+            clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight);
+        } else {
+            clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight);
+        }
+        return clientHeight;
+    }
+
+    //获取文档完整的高度
+    function getScrollHeight() {
+        return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    }
+
+
+    //滚动事件触发
+    var page = vm.page;
+    window.onscroll = function () {
+        if (getScrollTop() + getClientHeight() == getScrollHeight()) {
+            setTimeout(function () {
+                vm.showImg = true;
+            }, 1000)
+            page++;
+            /*白钻数据*/
+            axios.get(__apiurl + '/goods/diamond', {
+                params: {
+                    goods_attr_filter: vm.str + 'type:0',
+                    page: page
+                }
+            }).then(response => {
+                vm.showImg = false;
+                var diamondList01 = response.data.data.data;
+                vm.diamondList = vm.diamondList.concat(diamondList01)
+            }).catch(error => {
+                mui.alert(error);
+            });
+        }
+    }
+    //-----------------结束--------------------
+</script>
+
+</html>

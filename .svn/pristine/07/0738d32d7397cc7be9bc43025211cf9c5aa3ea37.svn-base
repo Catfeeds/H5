@@ -1,0 +1,43 @@
+<?php
+namespace app\mobile\controller;
+use think\Db;
+use function think\name;
+use app\common\controller\MobileBase;
+
+class Com extends MobileBase
+{    
+    
+    /**
+     * 登录 *    
+     */
+    public function login(){
+        return $this->fetch();
+    }
+    
+    /**
+     * 注册 *
+     */
+    public function reg(){
+        return $this->fetch();
+    }
+    /**
+     * 忘记密码 *
+     */
+    public function wjpassword(){
+        return $this->fetch();
+    }
+
+    /**
+     * 登出 *
+     */
+    public function logout(){
+        return $this->fetch();
+    }
+    
+    /**
+     * 在线客服 *
+     */
+    public function kefu(){
+        return $this->fetch();
+    }    
+}

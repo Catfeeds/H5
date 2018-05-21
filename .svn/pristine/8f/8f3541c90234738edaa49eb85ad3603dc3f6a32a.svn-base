@@ -1,0 +1,191 @@
+<?php
+namespace app\common\model;
+
+use think\Model;
+use think\db;
+
+class Template extends Model
+{
+    //获取模板配置项
+    public function getComListByPage($agent_id,$config_id,$page='index'){
+       $data=M('template_com_item')
+        ->alias('a')
+        ->join('zm_template_com w','a.pid = w.id')
+        ->join('zm_template t','w.template_id = t.id')
+        ->where("w.page",$page)
+        ->where("t.agent_id",$agent_id)
+        ->where("t.config_id",$config_id)
+        ->where("a.status",1)
+        ->field("a.images,a.title,a.type,a.url,w.code,a.sort,a.id")
+        ->order("a.id desc")
+        ->select();      
+         
+        return $data;
+        
+    }    
+    
+    //获取模板自定义内容
+    public function getComHtmlListByCode($agent_id,$config_id,$code,$page='index',$sort=0){
+        $data=M('template_com_html')
+        ->alias('a')
+        ->join('zm_template_com w','a.pid = w.id')
+        ->join('zm_template t','w.template_id = t.id')
+        ->where("w.page",$page)
+        ->where("t.agent_id",$agent_id)
+        ->where("t.config_id",$config_id)        
+        ->field("a.id,a.html,a.sort")
+        ->select();
+         
+        return $data;
+    }    
+	
+	
+	/**
+	 * 获取模板组件详情 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-23
+	**/
+	public function getTemplateComInfo($param=""){
+		$data = db('template_com')->where($param)->find();      
+        return $data;
+	}
+	
+	/**
+	 * 获取模板组件列表 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-23
+	**/
+	public function getTemplateComlist($agent_id,$type="",$tcfType="",$tplid){
+		if(!empty($type) && $type != 10){ $where["tc.type"] = $type; }else{ $where["tc.type"] = array("neq","4"); }
+		if($tcfType !== ""){ $where["tcf.type"] = $tcfType; }
+		$where["tc.agent_id"] = $agent_id;
+		$where['tc.template_id'] = $tplid;
+		$order = "tcf.type asc,tc.id asc";
+		$data = db('template')->alias("t")
+		->join('template_config tcf','tcf.id=t.config_id')
+		->join('template_com tc','tc.template_id=t.id')
+		->where($where)
+		->order($order)
+		->field("tc.*,tcf.type as tcfType")
+		->select();
+		foreach($data as $key=>$val){		//屏蔽产品右边广告图
+			if($val["page"]=="product" && $val["code"]=="right"){
+				unset($data[$key]);
+			}
+		}
+        return $data;
+	}
+	
+	/**
+	 * 获取模版明细项列表 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-23
+	**/
+	public function getTemplateComItemList($param=""){
+		$data = db('template_com_item')->alias('tci')
+        ->join('template_com tc','tc.id = tci.pid')
+        ->where($param)      
+        ->field("tci.*,tc.title as templateComTitle")
+        ->select();  
+        return $data;	
+	}
+	
+	/**
+	 * 添加模版明细项 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-23
+	**/
+	public function addTemplateComItemInfo($data){
+		$action	= db('template_com_item')->insert($data);
+		if($action){ return true; }else{ return false; }
+	}
+	
+	/**
+	 * 获取模版明细项详情 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-24
+	**/
+	public function getTemplateComItemInfo($param){
+		$data = db('template_com_item')->where($param)->find();      
+        if($data){ return $data; }else{ return false; }
+	}
+	
+	/**
+	 * 修改模版明细项 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-24
+	**/
+	public function saveTemplateComItemInfo($data){
+		$action	= db('template_com_item')->update($data);
+		if($action){ return true; }else{ return false; }
+	}
+
+	/**
+	 * 删除模版明细项 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-24
+	**/
+	public function delTemplateComItem($id){
+		$action	= db('template_com_item')->delete($id);
+		if($action){ return true; }else{ return false; }
+	}
+	
+	
+	
+
+	/**
+	 * 获取模版明细项列表（广告位类型html模式） 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-24
+	**/
+	public function getTemplateComHtmlInfo($param=""){
+		$data = db('template_com_html')->where($param)->find();      
+        return $data;	
+	}
+	
+	/**
+	 * 获取模版明细项列表（广告位类型html模式） 
+	 * auth	：zengmm
+	 * @param：$param 筛选参数
+	 * time	：2017-11-24
+	**/
+	public function saveTemplateComHtmlInfo($param=""){
+		if($param["id"]){
+			$action	= db('template_com_html')->update($param);
+		}else{
+			$action	= db('template_com_html')->insert($param);
+		}
+		if($action){ return true; }else{ return false; }	
+	}
+	
+	/**
+	 * 获取广告列表
+	 * zhy	find404@foxmail.com
+	 * 2017年11月22日 10:40:58
+	 */
+	public function GetAdvertList($agent_id,$template_id,$page,$code,$limit){
+		return Db::name('template_com')
+				->alias('ztc')
+				->join('template_com_item ztci','ztc.id=ztci.pid','Left')
+				->field('ztci.images,ztci.url,ztci.title')
+				->where(['ztc.agent_id'		=>$agent_id
+						//,'ztc.template_id'	=>$template_id
+						,'ztc.page'			=>$page
+						,'ztc.code'			=>$code
+						,'ztci.status'		=>1])
+				->limit(0,$limit)		
+				->order('ztci.sort asc')			
+				->select();
+	}
+	 
+	
+	
+}

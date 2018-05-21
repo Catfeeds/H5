@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+</head>
+
+<body>
+<div class="user">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">个人中心</h1>
+        <div class="web-top-right">
+            <a href="#">
+                <img src="__IMG__/msg_icon.png" class="msg-icon" alt="">
+            </a>
+        </div>
+    </header>
+    <div class="mui-content">
+        <div class="personal">
+            <div class="number">
+                <span>尊敬的{{userName}}</span>
+            </div>
+        </div>
+        <div class="user-main-list">
+            <ul>
+                <li>
+                    <a href="order.html?type=0">
+                        <img src="__IMG__/user_icon_01.png" alt="" class="fl"/>
+                        <span class="fl">我的订单</span>
+                        <span class="viewOrder fr">查看全部订单</span>
+                    </a>
+                </li>
+                <!--我的订单 start-->
+                <div class="order-item">
+                    <div class="order-box">
+                        <a href="order.html?type=1">
+                            <img src="__IMG__/order-icon-01.png" alt=""/>
+                            <span>待付款</span>
+                        </a>
+                    </div>
+                    <div class="order-box">
+                        <a href="order.html?type=2">
+                            <img src="__IMG__/order-icon-02.png" alt=""/>
+                            <span>待发货</span>
+                        </a>
+                    </div>
+                    <div class="order-box">
+                        <a href="order.html?type=3">
+                            <img src="__IMG__/order-icon-03.png" alt=""/>
+                            <span>待收货</span>
+                        </a>
+                    </div>
+                    <div class="order-box">
+                        <a href="order.html?type=4">
+                            <img src="__IMG__/order-icon-04.png" alt=""/>
+                            <span>已完成</span>
+                        </a>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div class="user-main-list">
+            <li>
+                <a href="collection.html">
+                    <img src="__IMG__/user_icon_01.png" alt="" class="fl"/>
+                    <span class="fl">我的收藏</span>
+                </a>
+            </li>
+            <li>
+                <a href="goodsview.html">
+                    <img src="__IMG__/user_icon_02.png" alt="" class="fl"/>
+                    <span class="fl">浏览记录</span>
+                </a>
+            </li>
+        </div>
+        <div class="user-main-list">
+            <li style="margin-top: .5rem;">
+                <a href="passwordset.html">
+                    <img src="__IMG__/user_icon_03.png" alt="" class="fl"/>
+                    <span class="fl">重置密码</span>
+                </a>
+            </li>
+            <li>
+                <a href="address.html">
+                    <img src="__IMG__/user_icon_04.png" alt="" class="fl"/>
+                    <span class="fl">地址管理</span>
+                </a>
+            </li>
+        </div>
+    </div>
+    <div class="quit">
+        <button type="button" class="quit_btn" @click="quitout">退出</button>
+    </div>
+</div>
+{include file="public/nav"/}
+</body>
+
+<script>
+    new Vue({
+        el: '.user',
+        data: {
+            userName: '',
+            token: '',
+        },
+        created() {
+            let _this = this;
+            this.token = getCookie('Token');
+            console.log(this.token)
+            if (this.token == '') {
+                mui.alert('你还未登录请登录', function () {
+                    window.location.href = "{:url('com/login')}";
+                })
+            } else {
+                axios({
+                    method: 'get',
+                    url: __apiurl + '/user/getuserinfo',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                }).then(response => {
+                    _this.userName = response.data.data.username;
+                })
+                    .catch(error => {
+                        mui.alert(error);
+                    })
+            }
+        },
+        methods: {
+            quitout() {
+                setCookie('Token', '');
+                window.location.href = "{:url('/mobile/index')}";
+            }
+        },
+    });
+</script>
+
+</html>

@@ -1,0 +1,47 @@
+
+<div class="nav_footer mui-row">
+    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 collect">
+        <span class="icon_style my-span-background"></span>
+        <span >收藏</span>
+    </a>
+    <a href="{:url('cart/index')}" class="mui-col-sm-3 mui-col-xs-3">
+        <span class="icon_style">
+            <svg class="icon" aria-hidden="true" style="font-size: 30px;">
+                <use xlink:href="#icon-gouwuche1-copy"></use>
+            </svg>
+
+        </span>
+        <span >购物车</span>
+        <span class="mui-badge mui-badge-danger my-badge">0</span>
+    </a>
+    <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 addcart">
+        <span >加入购物车</span>
+    </a>
+    <a href="#" class="mui-col-sm-3 mui-col-xs-3 shop_now" >
+        <span >立即购买</span>
+    </a>
+</div>
+<script>
+    $(function(){
+        if (getCookie('Token')) {
+            $.ajax({
+                headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: getCookie('Token')
+                    },
+                type:'get',
+                url:__apiurl+'/cart/index',
+                success:function(res){
+                    var res = eval("("+res+")");
+                    if (res.status == 1016 || res.status == -1) {
+                        $('.my-badge').html(0);
+                    } else {
+                        $('.my-badge').html(res.data.total_num);
+                        // vm.cartnum = res.data.total_num;
+                    }
+                }
+            })
+        }
+    })
+
+</script>

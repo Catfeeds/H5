@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+</head>
+
+<body>
+<div id="goodView">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">浏览记录</h1>
+    </header>
+    <div style="margin-top:60px"></div>
+    <div class="shoucang">
+        <div class="goodsList" v-for="(item,index) in goodsList">
+            <!--<span class="time">{{item.create_time}}</span>-->
+            <div class="goods">
+                <img :src="item.thumb" alt="">
+                <span>{{item.name}}</span>
+                <b class="red">￥{{item.price}}</b>
+            </div>            
+        </div>
+        <div class="nodata">
+        	<img src="__IMG__/nodata.png"/>
+        	<div>您还没有浏览过商品</div>
+        	<p>快去看看有哪些喜欢的</p>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    new Vue({
+        el: '#goodView',
+        data: {
+            goodsList: [],
+            token: '',
+        },
+        created:function() {
+            __checkLogin();
+            this.token = getToken();
+            var that = this;
+            axios.get(__apiurl + '/user/getGoodsViewList', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: that.token
+                }
+            })
+                .then(function (response)  {
+                    that.goodsList = response.data.data.data;
+                })
+                .catch(function (error) {
+                  $(".nodata").css("display","block");
+                  $(".goodsList").css("display","none");
+                })
+        }
+    });
+</script>
+
+</html>

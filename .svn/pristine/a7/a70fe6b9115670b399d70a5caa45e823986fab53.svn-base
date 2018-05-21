@@ -1,0 +1,65 @@
+<?php
+namespace app\newapi\controller\v1;
+
+use app\newapi\controller\Base;
+use think\Db;
+
+class Goods extends Base
+{
+	public $agent_id = '';
+	protected function _initialize()
+    {
+    	$this->agent_id = get_agent_id();
+        parent::_initialize();       
+    }  
+
+	//获取定制分类 by sxm
+	public function customcat()
+	{
+		// $test = GoodsCategory::GetListByAgent();
+		$listcat= model('GoodsCategory')->GetListByAgent($this->agent_id,'0',4);
+		$listcattree=array2treesingle($listcat);
+		$listcat ? $result = ['status'=>100,'msg'=>'success','data'=>$listcattree] : $result = ['status'=>101,'msg'=>'没有定制分类','data'=>''];
+		return json($result);
+	}
+
+ 	//获取分类下面的属性 by wxh
+    public function getattrsbycat($category_id,$goods_type=4){        
+        if(is_numeric($category_id)&&$category_id>0){
+            $data = logic('GoodsAttr')->GetAttrsByCat($category_id,$goods_type);
+            $result = $data ? ['status'=>100,'msg'=>'获取属性成功','data'=>$data] : ['status'=>101,'msg'=>'该分类下属性为空','data'=>''];
+            return json($result);
+        } else {
+        	return json(['status'=>101,'msg'=>'参数不正确','data'=>'']);
+        }
+    }  
+
+	//获取定制商品列表 by sxm
+	public function getcustomgoods()
+	{
+		$data['agent_id'] = $this->agent_id; //分销商
+        $data['type'] = 4; //成品 定制
+        $data['category_id'] = I('category_id') ? I('category_id') : 0; //分类
+        $data['keyword'] = I('keyword') ? I('keyword') : ''; //搜索
+        $data['goods_attr_filter'] = I('goods_attr_filter') ? I('goods_attr_filter') : ''; //属性搜索
+        $data['orderby'] = I('orderby') ? I('orderby') : ''; //排序
+
+        //?PC端需要这个?
+        $data['diamond_id'] = I('diamond_id') ? I('diamond_id') : '';// 定制钻配托 goods表 ID
+        $data['shape'] = I('shape') ? I('shape') : ''; // 定制钻配托 形状
+        $data['weight'] = I('weight') ? I('weight') : ''; // 定制钻配托 重量
+
+        $page = I('page')>0?I('page'):1;
+        $pagesize = I('pagesize')?I('pagesize'):20;
+
+        $res = logic("Goods")->getGoodsListCustomized($data,$page,$pagesize);
+        // //判断登录，获取收藏
+        if ($this->checkuserinfo()) {
+        	$res["data"] = logic("DataProcessing")->get_check_goods_collection($res["data"],$this->checkuserinfo());
+        }
+        $res ? $result = ['status'=>100,'msg'=>'获取列表成功','data'=>$res] : $result = ['status'=>101,'msg'=>'无定制商品','data'=>''];
+        return json($result);
+	}
+
+
+}

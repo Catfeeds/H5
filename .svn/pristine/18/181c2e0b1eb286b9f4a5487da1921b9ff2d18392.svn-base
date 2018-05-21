@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--[if lte IE 8]>
+    <script type="text/javascript"
+            src="https://resource.dinghuo123.com/dist/js/lib/respond.js?v=1526301761199"></script>
+    <![endif]-->
+    <title>商品列表</title>
+    {include file="public/base" /}
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="__CSS__/element-ui.css?__Version__">
+    <!-- 引入组件库 -->
+    <script src="__JS__/element-js.js"></script>
+    <style>
+        .el-input--small .el-input__inner {
+            height: 24px;
+            line-height: 32px;
+            position: absolute;
+            top: -34px;
+            z-index: 10;
+            width: 100px;
+            /* border: none; */
+            border-right: none;
+        }
+
+        .el-slider__runway.show-input {
+            margin-right: 0;
+        }
+
+        .layout-slider {
+            width: 475px;
+        }
+
+        .el-slider__bar {
+            background-color: #00b8d2;
+        }
+
+        .el-slider__button {
+            border: 2px solid #00b8d2;
+        }
+
+        .my-sin-btn {
+            background: #00b8d2;
+            color: white;
+        }
+        .luozuan{height:40px;line-height:40px;margin-bottom: 20px;}
+    </style>
+</head>
+
+
+<body>
+<div id="single-diamond">
+    <!--<div class="side-wrap" style="min-height:430px;">
+        <h1 class="logo">
+            <a title=" 速易宝, 让生意更简单！" href="/">
+                <img src="/public/mobile/single/img/logo.png" alt="易订货">
+            </a>
+        </h1>
+        <div class="side-menu">
+            <ul>
+                <li class="side-menu-li" id="order">
+                    <a code="WBO_ORDER" class="order side-menu-a menu1"
+                       href="#">钻石</a>
+                    <div class="float-menu"></div>
+                </li>
+                <li class="side-menu-li" id="product">
+                    <a code="WBO_PRODUCT" class="product side-menu-a menu1"
+                       href="#">商品</a>
+                    <div class="float-menu"></div>
+                    <input type="hidden" id="isUseProductImage" value="true" autocomplete="off">
+                </li>
+                <li class="side-menu-li" id="pay">
+                    <a code="WBO_FUND" class="pay side-menu-a menu1"
+                       href="#">资金</a>
+                    <div class="float-menu"></div>
+                </li>
+
+                <li class="side-menu-li" id="promotion">
+                    <a code="WBO_PROMOTION" class="promotion side-menu-a menu1"
+                       href="#">促销</a>
+                </li>
+                <li class="side-menu-li" id="message">
+                    <a code="WBO_NOTIFY" class="message side-menu-a menu1" href="#">通知</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="r-wrap">
+        <div class="header_manage agent-header">
+            <div class="header_wrap_manage">
+                <img id="subLogo" src="__IMG__/suyibao_01.png" alt="">
+                <h2 id="headerTip" data-hasqtip="0">钻明钻石</h2><span class="h2-spec">订货系统</span>
+                <ul class="options">
+                    <li class="entry"><a href="#"
+                                         class="try-link">供货方体验</a></li>
+                    <li class="cart">
+                        <i></i>
+                        购物车<span class="shoppingcartNum lite-red"></span>
+                        <span code="WBO_SHOPPINGCART" class="menu1 new-con-p"></span>
+                    </li>
+                    <li class="info">
+                        <i></i><span class="infoNum hide">0</span>
+                        <span class="menu1" code="WBO_MESSAGE">消息</span>
+
+                    </li>
+                    <li class="user"><span class="bindMobile"></span>
+                        <i></i>
+                        <span class="userName">杨雪剑</span>
+                        <span class="menu1 new-con-p"></span>
+                    </li>
+                    <li class="setting">
+                        <i></i>
+                        <span class="menu1" code="WBO_SETTING">设置</span>
+                    </li>
+                    <li class="headerService  header-feedback">
+                        <i></i>
+                        <span code="WBO_FEEDBACK" class="menu1">反馈</span>
+                    </li>
+                </ul>
+                <div class="header-shop-close-tip" id="shopCloseTip"></div>
+                <div class="cb"></div>
+
+                <div class="search-box unfocus-search-box">
+                    <div class="fr search-con">
+                        <a class="advance-search-link" id="advanceSearchLink" href="javascript:;">高级<br>搜索</a>
+                        <span class="ui-combo-wrap" id="searchComboWrap" style="width: 98px;">
+                        <input type="text" class="input-txt" placeholder="请搜索" style="cursor: default; width: 75px;"><i
+                                class="trigger"></i>
+                        </span>
+                        <input type="text" class="ui-input search" id="search" placeholder="请输入商品名称" autocomplete="off">
+                        <a class="ui-search-ico" id="op-search" href="javascript:;" title="查找">查找</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main-wrap clear">
+        <div class="agent-product">
+            &lt;!&ndash;begin map&ndash;&gt;
+            <div class="map">
+                <a class="product" href="#">钻石</a>
+            </div>
+            &lt;!&ndash;end map&ndash;&gt;
+
+            &lt;!&ndash;新加的东西&ndash;&gt;
+            <div class="mallhot diamond">
+                <div class="my-dia-info clear">
+                    <div class=" iTitle fl">
+                        <p class="luozuan">裸钻颜色</p>
+                    </div>
+                    <ul class="kuang t5 clear my-dia-ul fl">
+                        <li class="fl" @click="whiteDiamond">
+                            <a href="javascript:;">
+                                <div class="common-style" :class="{'active':whiteD==true}" style="width: 150px;"></div>
+                                <span>白钻</span>
+                            </a>
+                        </li>
+                        <li class="fl" @click="colorDiamond">
+                            <a href="javascript:;">
+                                <div class="common-style" :class="{'active':colorD==true}" style="width: 150px"></div>
+                                <span>彩钻</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                    <div class="cl-b"></div>
+                </div>
+                &lt;!&ndash;白钻数据&ndash;&gt;
+                <div class="clear" v-show="whiteD">
+                    <div  class="diamond_content_bg info">
+                        <div  class="searchBg">
+                            <div class="searchBg_2">
+                                <div class="searchWeight">
+                                    <input type="text" class="search_border_all searchWeight_borderL" value="0.3"/>
+                                    <input type="text" class="search_border_all searchWeight_borderR" value="20"/>
+                                    <div class="searchWeightImg">钻重</div>
+                                    <div class="searchWeightSlider">
+                                        <div class="layout-slider">
+                                            <div class="block">
+                                                <el-slider v-model="inputValue01" :max="20" :show-input="true"
+                                                           :step="0.1" :show-input-controls="false"
+                                                           :show-tooltip="false"></el-slider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="searchPrice">
+                                    <input type="text" class="search_border_all searchPrice_borderL" value="1000">
+                                    <input type="text" class="search_border_all searchPrice_borderR"/>
+                                    <div class="searchPriceImg">价格</div>
+                                    <div class="searchPriceSlider">
+                                        <div class="layout-slider">
+                                            <div class="block">
+                                                <el-slider v-model="inputValue02" :max="500000" :show-input="true"
+                                                           :step="1000" :show-input-controls="false"
+                                                           :show-tooltip="false"></el-slider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <div class="filter clear fl">
+                        <div class="filterContent">
+                            <div class="info">
+                                <div class="fl iTitle shapeT">
+                                    <p>形状</p>
+                                </div>
+                                <ul class="shape">
+                                    <li>
+                                        <i class="shapeIco shapeIco12"></i>
+                                    </li>
+                                    <li>
+                                        <i class="shapeIco shapeIco11"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco10"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco9"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco8"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco7"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco5"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco2"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco4"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco1"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList" style="width: 62px;">
+                                        <i class="shapeIco shapeIco6"></i>
+
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>颜色</p>
+                                    </div>
+                                    <ul class="kuang t8 t9">
+                                        <li name="Clarity" ref="D" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="D">D</span>
+                                        </li>
+                                        <li name="Clarity" ref="E" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="E">E</span>
+                                        </li>
+                                        <li name="Clarity" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="F">F</span>
+                                        </li>
+                                        <li name="Clarity" ref="G" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="G">G</span>
+                                        </li>
+                                        <li name="Clarity" ref="H" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="H">H</span>
+                                        </li>
+                                        <li name="Clarity" ref="I" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="I">I</span>
+                                        </li>
+                                        <li name="Clarity" ref="J" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="J">J</span>
+                                        </li>
+                                        <li name="Clarity" ref="K" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="K">K</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>切工</p>
+
+                                    </div>
+                                    <ul class="kuang tt3">
+                                        <li name="Cut" ref="Ideal" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Ideal</span>
+                                        </li>
+                                        <li name="Cut" ref="EX" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>EX</span>
+                                        </li>
+                                        <li name="Cut" ref="VG" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>VG</span>
+                                        </li>
+                                        <li name="Cut" ref="GD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>GD</span>
+                                        </li>
+                                        <li name="Cut" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Fair</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>净度</p>
+                                    </div>
+                                    <ul class="kuang t8 t9" >
+                                        <li name="Clarity" ref="FL" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="FL">Fl</span>
+                                        </li>
+                                        <li name="Clarity" ref="IF" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="IF">IF</span>
+                                        </li>
+                                        <li name="Clarity" ref="VVS1" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VVS1">VVS1</span>
+                                        </li>
+                                        <li name="Clarity" ref="VVS2" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VVS2">VVS2</span>
+                                        </li>
+                                        <li name="Clarity" ref="VS1" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VS1">VS1</span>
+                                        </li>
+                                        <li name="Clarity" ref="VS2" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VS2">VS2</span>
+                                        </li>
+                                        <li name="Clarity" ref="SI1" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="SI1">SI1</span>
+                                        </li>
+                                        <li name="Clarity" ref="SI2" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="SI2">SI2</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>对称</p>
+                                    </div>
+                                    <ul class="kuang tt3" >
+                                        <li name="Symmetry" ref="Ideal" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Ideal</span>
+                                        </li>
+                                        <li name="Symmetry" ref="EX" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>EX</span>
+                                        </li>
+                                        <li name="Symmetry" ref="VG" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>VG</span>
+                                        </li>
+                                        <li name="Symmetry" ref="GD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>GD</span>
+                                        </li>
+                                        <li name="Symmetry" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Fair</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>荧光</p>
+                                    </div>
+                                    <ul class="kuang t8 guat" >
+                                        <li name="Fluor" ref="N" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="N">N</span>
+                                        </li>
+                                        <li name="Fluor" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="F">F</span>
+                                        </li>
+                                        <li name="Fluor" ref="M" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="M">M</span>
+                                        </li>
+                                        <li name="Fluor" ref="S" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="S">S</span>
+                                        </li>
+                                        <li name="Fluor" ref="VS" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VS">VS</span>
+                                        </li>
+                                        <li name="Fluor" ref="其他" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="其他">其他</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>抛光</p>
+                                    </div>
+                                    <ul class="kuang tt3" >
+                                        <li name="Polish" ref="Ideal" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Ideal</span>
+                                        </li>
+                                        <li name="Polish" ref="EX" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>EX</span>
+                                        </li>
+                                        <li name="Polish" ref="VG" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>VG</span>
+                                        </li>
+                                        <li name="Polish" ref="GD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>GD</span>
+                                        </li>
+                                        <li name="Polish" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Fair</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>所在地</p>
+                                    </div>
+                                    <ul class="kuang t8 t10" >
+                                        <li name="Location" ref="国内" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="国内">国内</span>
+                                        </li>
+                                        <li name="Location" ref="国外" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="国外">国外</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>奶咖</p>
+                                    </div>
+                                    <ul class="kuang  t11" >
+                                        <li name="Location" ref="有咖" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="国内">有咖</span>
+                                        </li>
+                                        <li name="Location" ref="无咖" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="无咖">无咖</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>证书</p>
+                                    </div>
+                                    <ul class="kuang t12" >
+                                        <li name="Cert" ref="GIA" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="GIA">GIA</span>
+                                        </li>
+                                        <li name="Cert" ref="HRD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="HRD">HRD</span>
+                                        </li>
+                                        <li name="Cert" ref="IGI" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="IGI">IGI</span>
+                                        </li>
+                                        <li name="Cert" ref="NGTC" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="NGTC">国检</span>
+                                        </li>
+                                    </ul>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="buttom-fold">
+                            <p class="my-fold">收起筛选条件</p>
+                            <button>清空筛选器</button>
+                        </div>
+                    </div>
+                </div>
+                &lt;!&ndash;彩钻数据&ndash;&gt;
+                <div class="clear" v-show="colorD">
+                    <div  class="diamond_content_bg info">
+                        <div  class="searchBg">
+                            <div class="searchBg_2">
+                                <div class="searchWeight">
+                                    <input type="text" class="search_border_all searchWeight_borderL" value="0.3"/>
+                                    <input type="text" class="search_border_all searchWeight_borderR" value="20"/>
+                                    <div class="searchWeightImg">钻重</div>
+                                    <div class="searchWeightSlider">
+                                        <div class="layout-slider">
+                                            <div class="block">
+                                                <el-slider v-model="inputValue01" :max="20" :show-input="true"
+                                                           :step="0.1" :show-input-controls="false"
+                                                           :show-tooltip="false"></el-slider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="searchPrice">
+                                    <input type="text" class="search_border_all searchPrice_borderL" value="1000">
+                                    <input type="text" class="search_border_all searchPrice_borderR"/>
+                                    <div class="searchPriceImg">价格</div>
+                                    <div class="searchPriceSlider">
+                                        <div class="layout-slider">
+                                            <div class="block">
+                                                <el-slider v-model="inputValue02" :max="500000" :show-input="true"
+                                                           :step="1000" :show-input-controls="false"
+                                                           :show-tooltip="false"></el-slider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <div class="filter clear fl">
+                        <div class="filterContent">
+                            <div class="info">
+                                <div class="fl iTitle shapeT">
+                                    <p>形状</p>
+                                </div>
+                                <ul class="shape">
+                                    <li>
+                                        <i class="shapeIco shapeIco12"></i>
+                                    </li>
+                                    <li>
+                                        <i class="shapeIco shapeIco11"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco10"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco9"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco8"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco7"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco5"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco2"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco4"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList">
+                                        <i class="shapeIco shapeIco1"></i>
+
+                                    </li>
+                                    <li name="Shape" class="selectList" style="width: 62px;">
+                                        <i class="shapeIco shapeIco6"></i>
+
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>颜色</p>
+                                    </div>
+                                    <ul class="kuang t8 t9">
+                                        <li name="Clarity" ref="D" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="D">D</span>
+                                        </li>
+                                        <li name="Clarity" ref="E" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="E">E</span>
+                                        </li>
+                                        <li name="Clarity" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="F">F</span>
+                                        </li>
+                                        <li name="Clarity" ref="G" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="G">G</span>
+                                        </li>
+                                        <li name="Clarity" ref="H" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="H">H</span>
+                                        </li>
+                                        <li name="Clarity" ref="I" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="I">I</span>
+                                        </li>
+                                        <li name="Clarity" ref="J" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="J">J</span>
+                                        </li>
+                                        <li name="Clarity" ref="K" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="K">K</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>切工</p>
+
+                                    </div>
+                                    <ul class="kuang tt3">
+                                        <li name="Cut" ref="Ideal" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Ideal</span>
+                                        </li>
+                                        <li name="Cut" ref="EX" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>EX</span>
+                                        </li>
+                                        <li name="Cut" ref="VG" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>VG</span>
+                                        </li>
+                                        <li name="Cut" ref="GD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>GD</span>
+                                        </li>
+                                        <li name="Cut" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Fair</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>净度</p>
+                                    </div>
+                                    <ul class="kuang t8 t9" >
+                                        <li name="Clarity" ref="FL" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="FL">Fl</span>
+                                        </li>
+                                        <li name="Clarity" ref="IF" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="IF">IF</span>
+                                        </li>
+                                        <li name="Clarity" ref="VVS1" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VVS1">VVS1</span>
+                                        </li>
+                                        <li name="Clarity" ref="VVS2" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VVS2">VVS2</span>
+                                        </li>
+                                        <li name="Clarity" ref="VS1" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VS1">VS1</span>
+                                        </li>
+                                        <li name="Clarity" ref="VS2" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VS2">VS2</span>
+                                        </li>
+                                        <li name="Clarity" ref="SI1" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="SI1">SI1</span>
+                                        </li>
+                                        <li name="Clarity" ref="SI2" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="SI2">SI2</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>对称</p>
+                                    </div>
+                                    <ul class="kuang tt3" >
+                                        <li name="Symmetry" ref="Ideal" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Ideal</span>
+                                        </li>
+                                        <li name="Symmetry" ref="EX" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>EX</span>
+                                        </li>
+                                        <li name="Symmetry" ref="VG" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>VG</span>
+                                        </li>
+                                        <li name="Symmetry" ref="GD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>GD</span>
+                                        </li>
+                                        <li name="Symmetry" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Fair</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>荧光</p>
+                                    </div>
+                                    <ul class="kuang t8 guat" >
+                                        <li name="Fluor" ref="N" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="N">N</span>
+                                        </li>
+                                        <li name="Fluor" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="F">F</span>
+                                        </li>
+                                        <li name="Fluor" ref="M" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="M">M</span>
+                                        </li>
+                                        <li name="Fluor" ref="S" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="S">S</span>
+                                        </li>
+                                        <li name="Fluor" ref="VS" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="VS">VS</span>
+                                        </li>
+                                        <li name="Fluor" ref="其他" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="其他">其他</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>抛光</p>
+                                    </div>
+                                    <ul class="kuang tt3" >
+                                        <li name="Polish" ref="Ideal" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Ideal</span>
+                                        </li>
+                                        <li name="Polish" ref="EX" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>EX</span>
+                                        </li>
+                                        <li name="Polish" ref="VG" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>VG</span>
+                                        </li>
+                                        <li name="Polish" ref="GD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>GD</span>
+                                        </li>
+                                        <li name="Polish" ref="F" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span>Fair</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>所在地</p>
+                                    </div>
+                                    <ul class="kuang t8 t10" >
+                                        <li name="Location" ref="国内" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="国内">国内</span>
+                                        </li>
+                                        <li name="Location" ref="国外" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="国外">国外</span>
+                                        </li>
+                                        <div class="clear"></div>
+                                    </ul>
+                                </div>
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>奶咖</p>
+                                    </div>
+                                    <ul class="kuang  t11" >
+                                        <li name="Location" ref="有咖" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="国内">有咖</span>
+                                        </li>
+                                        <li name="Location" ref="无咖" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="无咖">无咖</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="info">
+                                <div class="fl num-01">
+                                    <div class="fl iTitle">
+                                        <p>证书</p>
+                                    </div>
+                                    <ul class="kuang t12" >
+                                        <li name="Cert" ref="GIA" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="GIA">GIA</span>
+                                        </li>
+                                        <li name="Cert" ref="HRD" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="HRD">HRD</span>
+                                        </li>
+                                        <li name="Cert" ref="IGI" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="IGI">IGI</span>
+                                        </li>
+                                        <li name="Cert" ref="NGTC" class="selectList">
+                                            <div class="common-style"></div>
+                                            <span ref="NGTC">国检</span>
+                                        </li>
+                                    </ul>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="buttom-fold">
+                            <p class="my-fold">收起筛选条件</p>
+                            <button>清空筛选器</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="datalist clear">
+                    <div class="row"></div>
+                    <div class="panel panel-default border-radiusno" style="border: none">
+                        <div class="diamond-nav">
+                            <div class="col-md-10" style="padding-left: 0;">
+                                <ul>
+                                    <li class="orderby">
+                                        价格
+                                        <i class="glyphicon  glyphicon-menu-down" data-value="dia_global_price"></i>
+                                    </li>
+                                    <li class="orderby">
+                                        钻重
+                                        <i class="glyphicon  glyphicon-menu-down " data-value="weight"></i>
+                                    </li>
+                                    <li class="orderby">
+                                        颜色
+                                        <i class="glyphicon  glyphicon-menu-down " data-value="color"></i>
+                                    </li>
+                                    <li class="orderby">
+                                        净度
+                                        <i class="glyphicon  glyphicon-menu-down " data-value="clarity"></i>
+                                    </li>
+                                    <li style="width: 120px;">
+                                        钻石比较(50)
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-2 text-right">
+                                共搜到
+                                <span>30</span>件商品
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="gmap-street-view">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox">
+                                            </th>
+                                            <th>来源</th>
+                                            <th>形状</th>
+                                            <th>证书</th>
+                                            <th>钻重</th>
+                                            <th>颜色</th>
+                                            <th>净度</th>
+                                            <th>切工</th>
+                                            <th>抛光</th>
+                                            <th>对称</th>
+                                            <th>荧光</th>
+                                            <th>奶色</th>
+                                            <th>咖色</th>
+                                            <th>价格</th>
+                                            <th>
+                                                <button class="btn btn-default my-sin-btn">购买</button>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="luozuan_table">
+                                        &lt;!&ndash;<tr v-for="item in diamondData">&ndash;&gt;
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox">
+                                            </td>
+                                            <td>深圳</td>
+                                            <td>圆形</td>
+                                            <td>
+                                                <a href="#">GIA 6251723795</a>
+                                            </td>
+                                            <td>1.54</td>
+                                            <td>G</td>
+                                            <td>FL</td>
+                                            <td>EX</td>
+                                            <td>EX</td>
+                                            <td>EX</td>
+                                            <td>N</td>
+                                            <td>无奶</td>
+                                            <td>无咖</td>
+                                            <td class="red">￥1234215.3</td>
+                                            <td>
+                                                <div class="my-flex">
+                                                    <button class="btn btn-default btn-sm  btn-success">详情</button>
+                                                    <button class="btn btn-default btn-sm  my-sin-btn">购买</button>
+                                                    <button class="btn btn-default btn-sm  btn-warning">选托</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="pages text-center">
+                            <nav>
+                                <ul class="pagination">
+                                    <strong class="pagination pull-left"
+                                            style="margin-top: 8px; margin-right: 5px;">15090条记录
+                                        1/1509页</strong>
+                                    <li>
+                                        <a href="#">
+                                            <span>上一页</span>
+                                        </a>
+                                    </li>
+                                    <li class="active">
+                                        <a href="#">1</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">2</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">3</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">4</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">下一页</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <span>尾页</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <span>GO</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+-->
+
+    <ul>
+        <li v-for="item in diamondData">
+            {{item.id}}
+        </li>
+
+    </ul>
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        //点击收起筛选条件
+        $('.my-fold').click(function () {
+            $('.filterContent').toggleClass('active');
+        })
+
+        //筛选li的点击事件
+        $('.info li').click(function () {
+            if ($(this).find('.common-style').hasClass('active')) {
+                $(this).find('.common-style').removeClass('active');
+            } else {
+                $(this).find('.common-style').toggleClass('active');
+            }
+
+        })
+        $('#Shape li').click(function () {
+            if ($(this).hasClass('active')) {
+                $(this).removeClass('active');
+            } else {
+                $(this).toggleClass('active');
+            }
+
+        })
+
+
+        //打印结果上面的点击事件
+        $('.orderby').click(function () {
+            $(this).find('i').toggleClass('glyphicon-menu-up');
+        });
+
+    })
+</script>
+<script>
+    new Vue({
+        el: '#single-diamond',
+        data: {
+            diamondattrList: [],//钻石属性列表
+            inputValue01: 0.3,
+            inputValue02: 1000,
+            whiteD:true,
+            colorD:false,
+            diamondData:[]
+        },
+        created: function () {
+            axios({
+                url: __apiurl + '/goods/diamond',
+                method: 'get',
+                params: {
+                    type: 0,
+                    page:1,
+                    orderby:'supply_gtype asc',
+                    goods_attr_filter:''
+                },
+                headers: getHeader(true),
+            }).then(function (res) {
+                console.log(res)
+                this.diamondData=res.data.data;
+                console.log(this.diamondData)
+            }).catch(function (error) {
+
+            })
+        },
+        methods: {
+            //白钻按钮
+            whiteDiamond:function(){
+                this.whiteD=true;
+                this.colorD=false;
+
+            },
+            //彩钻按钮
+            colorDiamond:function () {
+                this.whiteD=false;
+                this.colorD=true;
+            }
+        }
+    })
+</script>

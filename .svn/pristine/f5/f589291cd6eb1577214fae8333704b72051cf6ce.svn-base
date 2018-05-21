@@ -1,0 +1,133 @@
+<?php
+namespace app\api\controller;
+
+use think\Controller;
+use think\Session;
+use app\common\controller\ApiBase;
+use Pay\PayHelper;
+use app\common\logic\Agent;
+
+/**
+ * 支付api
+ * Class Pay
+ * @package app\api\controller
+ */
+class Pay extends ApiBase
+{
+    private $config = [];
+    protected function _initialize()
+    {
+        require 'vendor/Pay/Autoload.php';
+        vendor("Pay.PayHelper");
+        $agent = new Agent();
+        $this->config = $agent->getPayConfig(get_agent_id(),$_GET['ismini']);
+    } 
+    
+    //微信支付
+    public function wxpay($order_id,$openid=null){
+        if($openid){
+            $this->wxmp($order_id,$openid);
+        }else{
+            $this->wxwap($order_id);
+        }
+    }
+    
+    
+    //微信H5支付,非微信浏览器
+    public function wxwap($order_id){     
+        $orderInfo = model("Order")->find($order_id); 
+        $out_trade_no = $orderInfo['order_sn'];
+        if (empty($out_trade_no)) {
+            $out_trade_no = date("Ymd") . '' . $order_id . '';
+        }        
+        
+        // 支付参数
+        $payOrder = [
+            'out_trade_no' => $out_trade_no, // 订单号
+            'total_fee' =>"".$orderInfo['order_amount'] * 100, // 订单金额，**单位：分**
+            'body' =>"订单描述:".$orderInfo['order_sn'], // 订单描述
+            'spbill_create_ip' => get_client_ip() // 调用 API 服务器的 IP           
+        ]; // 订单商品 ID
+        
+        // 实例支付对象
+        $pay = new PayHelper($this->config);
+        
+        try {
+            $options = $pay->driver('wechat')->gateway('wap')->apply($payOrder);
+            $data['order']=$orderInfo;
+            $data['options']=$options; 
+            $this->ajaxFormat($data);
+        } catch (\Exception $e) {
+            $this->ajaxFormat(null,1011,"创建订单失败，" . $e->getMessage());
+        }
+    }
+    
+    //微信公众号支付,微信浏览器
+    public function wxmp($order_id,$openid=null){
+         
+        $orderInfo = model("Order")->find($order_id);
+        $out_trade_no = $orderInfo['order_sn'];
+        if (empty($out_trade_no)) {
+            $out_trade_no = date("Ymd") . '' . $order_id . '';
+        }
+        
+        // 支付参数
+        $payOrder = [
+            'out_trade_no' => $out_trade_no, // 订单号
+            'total_fee' =>"".$orderInfo['order_amount'] * 100, // 订单金额，**单位：分**
+            'body' =>"订单描述:".$orderInfo['order_sn'], // 订单描述
+            'spbill_create_ip' => get_client_ip(), // 调用 API 服务器的 IP
+            'openid' => $openid//当前用户openid
+        ]; // 订单商品 ID
+    
+        // 实例支付对象
+        $pay = new PayHelper($this->config);
+    
+        try {
+            $options = $pay->driver('wechat')->gateway('mp')->apply($payOrder);
+            $data['order']=$orderInfo;
+            $data['options']=$options;
+            $this->ajaxFormat($data);
+        } catch (\Exception $e) {
+            $this->ajaxFormat(null,1011,"创建订单失败，" . $e->getMessage());
+        }
+    }
+    
+    //微信小程序支付
+    public function wxminiapp($order_id,$openid=null){
+         
+        $orderInfo = model("Order")->find($order_id);
+        $out_trade_no = $orderInfo['order_sn'];
+        if (empty($out_trade_no)) {
+            $out_trade_no = date("Ymd") . '' . $order_id . '';
+        }
+    
+        // 支付参数
+        $payOrder = [
+            'out_trade_no' => $out_trade_no, // 订单号
+            'total_fee' =>"".$orderInfo['order_amount'] * 100, // 订单金额，**单位：分**
+            'body' =>"订单描述:".$orderInfo['order_sn'], // 订单描述
+            'spbill_create_ip' => get_client_ip(), // 调用 API 服务器的 IP
+            'openid' => $openid//当前用户openid
+        ]; // 订单商品 ID
+        
+        // 实例支付对象
+        $pay = new PayHelper($this->config);
+    
+        try {
+            $options = $pay->driver('wechat')->gateway('miniapp')->apply($payOrder);
+            $data['order']=$orderInfo;
+            $data['options']=$options;
+            $this->ajaxFormat($data);
+        } catch (\Exception $e) {
+            $this->ajaxFormat(null,1011,"创建订单失败，" . $e->getMessage());
+        }
+    }
+    
+    
+    //获取订单单个数据 ajax
+    public function getorderpaystatus($id){
+        $status = model('order')->where("id",$id)->column('pay_status');
+        $this->ajaxFormat($status);
+    }
+}

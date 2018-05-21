@@ -1,0 +1,28 @@
+<div class="nav_footer mui-row">
+    <a href="#" class="mui-col-sm-3 mui-col-xs-3 shop_now">
+        <span>立即购买</span>
+    </a>
+</div>
+<script>
+    $(function () {
+        if (getCookie('Token')) {
+            $.ajax({
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: getCookie('Token')
+                },
+                type: 'get',
+                url: __apiurl + '/cart/index',
+                success: function (res) {
+                    var res = eval("(" + res + ")");
+                    if (res.status == 1016 || res.status == -1) {
+                        $('.my-badge').html(0);
+                    } else {
+                        $('.my-badge').html(res.data.total_num);
+                        vm.cartnum = res.data.total_num;
+                    }
+                }
+            })
+        }
+    })
+</script>

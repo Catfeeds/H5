@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+    <style type="text/css">
+    	.nodata {
+			display: block;
+		}
+		.tab-content{
+			margin-top: 43px;
+		}
+    </style>
+</head>
+
+<body>
+<div class="order">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">订单管理</h1>
+    </header>
+    <div class="mui-content" id="order-tab">
+        <!-- tab -->
+        <div class="tabs">
+            <ul>
+                <li @click="nowIdex=0" :class="{active:nowIdex == 0}">全部</li>
+                <li @click="nowIdex=1" :class="{active:nowIdex == 1}">待付款</li>
+                <li @click="nowIdex=2" :class="{active:nowIdex == 2}">待发货</li>
+                <li @click="nowIdex=3" :class="{active:nowIdex == 3}">待收货</li>
+                <li @click="nowIdex=4" :class="{active:nowIdex == 4}">待评价</li>
+                <li @click="nowIdex=5" :class="{active:nowIdex == 5}">已完成</li>
+            </ul>
+        </div>
+        <div class="tab-content">
+            <!-- 全部订单 start -->
+            <div class="tab-all" v-show="nowIdex==0" v-if="orderList.length>=1">
+                <div class="goods-item" v-for="(item,index) in orderList">
+                    <div class="head">
+                        <span>订单编号：{{item.order_sn}}</span>
+                        <span class="fr red" v-if="item.order_status==0">待付款</span>
+                        <span class="fr red" v-if="item.order_status==3">待发货</span>
+                        <span class="fr red" v-if="item.order_status==4">待收货</span>
+                        <span class="fr red" v-if="item.order_status==5 && item.sub_order_goods[0].is_comment==0">待评价</span>
+                        <span class="fr red" v-if="item.order_status==5 &&  item.sub_order_goods[0].is_comment==1">已完成</span>
+                        <span class="fr red" v-if="item.order_status==7">已取消</span>
+                    </div>
+                    <div class="goods-layout clear" v-for="(v,k) in item.sub_order_goods">
+                    	<a :href="'orderdetail.html?id='+item.id">
+	                        <div class="goods-img">
+	                            <img :src="v.thumb" alt=""> 
+	                        </div>                        
+	                        <div class="goods-right">
+	                        	<div class="goods-list-item-text">
+	                        		<div class="goods-list-item-title mui-ellipsis-2" v-text="v.goods_name"></div>
+	                        		<div class="goods-list-item-right pro-price">￥{{v.member_goods_price}}</div>
+		                        	
+		                        </div>
+	                            <div class="goods-list-item-text">                            	
+		                            <div class="goods-list-item-title mui-ellipsis-2 pro-attribute">
+		                            	<span class="" v-for="attrList in v.spec_key_name_arr" v-text="attrList">                            	
+		                            	</span>
+		                            </div>
+		                            <div class="goods-list-item-right">x {{v.goods_num}}</div>
+	                            </div>
+	                            
+	                        </div>
+                        </a>
+                    </div>
+                    <div class="product-num-price">
+                    	<span class="product-num">共{{item.totalnum}}件商品，合计：</span>￥{{item.order_amount}}
+                    </div>
+                    <div class="foot clear">                        
+                        <span class="fr">
+                        	<a type="button" class="mui-btn order-list-btn mui-btn-outlined" :href="'orderdetail.html?id='+item.id">订单详情</a>
+	                        <a type="button" class="mui-btn order-list-btn mui-btn-danger" v-if="item.order_status==3">等待发货</a>
+	                        <a type="button" class="mui-btn order-list-btn mui-btn-danger" v-if="item.order_status==5 &&  item.sub_order_goods[0].is_comment==0" @click="evaluate(item)">评价</a>
+	                        <a type="button" class="mui-btn order-list-btn mui-btn-danger" v-if="item.order_status==5 &&  item.sub_order_goods[0].is_comment==1">订单完成</a>
+							<a type="button" class="mui-btn order-list-btn mui-btn-danger" v-if="item.order_status==4"  @click="confirmReceipt(item)">确认收货</a>							
+							<a type="button" class="mui-btn order-list-btn mui-btn-danger" v-if="item.order_status==0">付款</a>
+						</span>
+                    </div>
+                </div>
+            </div>
+            <div class="nodata" v-else>
+		        <img src="__IMG__/nodata.png"/>
+		        <div>您还没有相关订单</div>
+		        <p>快去看看有哪些喜欢的</p>
+		        <div class="btn-arr">
+		            <button @click="go_collection">我的收藏</button>
+		            <button @click="go_goodsview">我的足迹</button>
+		        </div>
+		    </div>
+            	
+            <!-- 全部订单 end -->
+
+            <!-- 待支付 start -->
+            <div class="unpaid" v-show="nowIdex==1">
+            	<div v-if="obligation.length>=1">
+	                <div class="goods-item" v-for="(item,index) in obligation">
+	                    <div class="head">
+	                        <span>订单编号：{{item.order_sn}}</span>
+	                        <span class="fr red">待付款</span>
+	                    </div>
+	                    <div class="goods-layout clear" v-for="(v,k) in item.sub_order_goods">
+	                    	<a :href="'orderdetail.html?id='+item.id">
+		                        <div class="goods-img">
+		                            <img :src="v.thumb" alt="">
+		                        </div>
+		                        <div class="goods-right">	                        	
+			                    	<div class="goods-list-item-text">
+			                    		<div class="goods-list-item-title mui-ellipsis-2" v-text="v.goods_name"></div>
+			                    		<div class="goods-list-item-right pro-price">￥{{v.member_goods_price}}</div>
+			                        	
+			                        </div>
+			                        <div class="goods-list-item-text">                            	
+			                            <div class="goods-list-item-title mui-ellipsis-2 pro-attribute">
+			                            	<span class="" v-for="attrList in v.spec_key_name_arr" v-text="attrList">                            	
+			                            	</span>
+			                            </div>
+			                            <div class="goods-list-item-right">x {{v.goods_num}}</div>
+			                        </div>		                        
+			                    </div>
+	                        </a>
+	                    </div>
+	                    <div class="product-num-price">
+	                    	<span class="product-num">共{{item.totalnum}}件商品，合计：</span>￥{{item.order_amount}}
+	                    </div>
+	                    <div class="foot clear">                        
+	                        <span class="fr">
+								<a type="button" class="mui-btn order-list-btn mui-btn-outlined">取消订单</a>
+								<a type="button" class="mui-btn order-list-btn mui-btn-danger" v-if="item.order_status==0">付款</a>
+							</span>
+	                    </div>
+	                </div>                
+	            	
+            	</div>
+            	<div class="nodata" v-else>
+			        <img src="__IMG__/nodata.png"/>
+			        <div>您还没有相关订单</div>
+			        <p>快去看看有哪些喜欢的</p>
+			        <div class="btn-arr">
+			            <button @click="go_collection">我的收藏</button>
+			            <button @click="go_goodsview">我的足迹</button>
+			        </div>
+			    </div>
+            </div>
+            
+            <!-- 待付款 end -->
+
+            <!-- 待发货 start -->
+            <div class="fahuo" v-show="nowIdex==2">
+            	<div  v-if="sendGoods.length>=1">
+            		<div class="goods-item" v-for="(item,index) in sendGoods">
+	                    <div class="head">
+	                        <span>订单编号：{{item.order_sn}}</span>
+	                        <span class="fr red">待发货</span>
+	                    </div>
+	                    <div class="goods-layout clear" v-for="(v,k) in item.sub_order_goods">
+	                        <a :href="'orderdetail.html?id='+item.id">
+		                        <div class="goods-img">
+		                            <img :src="v.thumb" alt="">
+		                        </div>
+		                        <div class="goods-right">	                        	
+			                    	<div class="goods-list-item-text">
+			                    		<div class="goods-list-item-title mui-ellipsis-2" v-text="v.goods_name"></div>
+			                    		<div class="goods-list-item-right pro-price">￥{{v.member_goods_price}}</div>
+			                        	
+			                        </div>
+			                        <div class="goods-list-item-text">                            	
+			                            <div class="goods-list-item-title mui-ellipsis-2 pro-attribute">
+			                            	<span class="" v-for="attrList in v.spec_key_name_arr" v-text="attrList">                            	
+			                            	</span>
+			                            </div>
+			                            <div class="goods-list-item-right">x {{v.goods_num}}</div>
+			                        </div>		                        
+			                    </div>
+	                        </a>
+	                    </div>
+	                    <div class="product-num-price">
+	                    	<span class="product-num">共{{item.totalnum}}件商品，合计：</span>￥{{item.order_amount}}
+	                    </div>
+	                    <div class="foot clear">
+	                        <span class="fr">
+								<a type="button" class="mui-btn order-list-btn mui-btn-danger">等待发货</a>
+							</span>
+	                    </div>
+	                </div>
+            
+            	</div>
+                <div class="nodata" v-else>
+			        <img src="__IMG__/nodata.png"/>
+			        <div>您还没有相关订单</div>
+			        <p>快去看看有哪些喜欢的</p>
+			        <div class="btn-arr">
+			            <button @click="go_collection">我的收藏</button>
+			            <button @click="go_goodsview">我的足迹</button>
+			        </div>
+			    </div>
+            </div>
+            
+            <!-- 待发货 end -->
+
+            <!-- 待收货 start -->
+            <div class="shouhuo" v-show="nowIdex==3">
+            	<div  v-if="waitReceiving.length>=1">
+	                <div class="goods-item" v-for="(item,index) in waitReceiving">
+	                    <div class="head">
+	                        <span>订单编号：{{item.order_sn}}</span>
+	                        <span class="fr red">待收货</span>
+	                    </div>
+	                    <div class="goods-layout clear" v-for="(v,k) in item.sub_order_goods">
+	                        <a :href="'orderdetail.html?id='+item.id">
+		                        <div class="goods-img">
+		                            <img :src="v.thumb" alt="">
+		                        </div>
+		                        <div class="goods-right">	                        	
+			                    	<div class="goods-list-item-text">
+			                    		<div class="goods-list-item-title mui-ellipsis-2" v-text="v.goods_name"></div>
+			                    		<div class="goods-list-item-right pro-price">￥{{v.member_goods_price}}</div>
+			                        	
+			                        </div>
+			                        <div class="goods-list-item-text">                            	
+			                            <div class="goods-list-item-title mui-ellipsis-2 pro-attribute">
+			                            	<span class="" v-for="attrList in v.spec_key_name_arr" v-text="attrList">                            	
+			                            	</span>
+			                            </div>
+			                            <div class="goods-list-item-right">x {{v.goods_num}}</div>
+			                        </div>		                        
+			                    </div>
+	                        </a>
+	                    </div>
+	                    <div class="product-num-price">
+	                    	<span class="product-num">共{{item.totalnum}}件商品，合计：</span>￥{{item.order_amount}}
+	                    </div>
+	                    <div class="foot clear">
+	                        <span class="fr">
+								<a type="button" class="mui-btn order-list-btn mui-btn-danger" @click="confirmReceipt(item)">确认收货</a>
+							</span>
+	                    </div>
+	                </div>
+                </div>
+                <div class="nodata" v-else>
+			        <img src="__IMG__/nodata.png"/>
+			        <div>您还没有相关订单</div>
+			        <p>快去看看有哪些喜欢的</p>
+			        <div class="btn-arr">
+			            <button @click="go_collection">我的收藏</button>
+			            <button @click="go_goodsview">我的足迹</button>
+			        </div>
+			    </div>
+            </div>
+            
+            <!-- 待收货 end -->
+
+            <!-- 待评价 -->
+            <div class="evaluate" v-show="nowIdex==4">
+                <div v-if="offStocks.length>=1">
+                	<div class="goods-item" v-for="(item,index) in offStocks" v-if="item.sub_order_goods[0].is_comment==0">
+	                	<div class="head">
+	                        <span>订单编号：{{item.order_sn}}</span>
+	                        <span class="fr red">待评价</span>
+	                    </div>
+	                    <a :href="'orderdetail.html?id='+item.id">
+	                    <div class="goods-layout clear" v-for="(v,k) in item.sub_order_goods">                        
+		                        <div class="goods-img">
+		                            <img :src="v.thumb" alt="">
+		                        </div>
+		                        <div class="goods-right">	                        	
+			                    	<div class="goods-list-item-text">
+			                    		<div class="goods-list-item-title mui-ellipsis-2" v-text="v.goods_name"></div>
+			                    		<div class="goods-list-item-right pro-price">￥{{v.member_goods_price}}</div>
+			                        	
+			                        </div>
+			                        <div class="goods-list-item-text">                            	
+			                            <div class="goods-list-item-title mui-ellipsis-2 pro-attribute">
+			                            	<span class="" v-for="attrList in v.spec_key_name_arr" v-text="attrList">                            	
+			                            	</span>
+			                            </div>
+			                            <div class="goods-list-item-right">x {{v.goods_num}}</div>
+			                        </div>		                        
+			                    </div>                        
+	                    </div>
+	                    </a>
+	                    <div class="product-num-price">
+	                    	<span class="product-num">共{{item.totalnum}}件商品，合计：</span>￥{{item.order_amount}}
+	                    </div>
+						<div class="foot clear">
+	                        <span class="fr">
+								<a type="button" class="mui-btn order-list-btn mui-btn-danger" @click="evaluate(item)">评价</a>
+							</span>
+	                    </div>
+	                </div>
+                
+                </div>
+                <div class="nodata" v-else>
+			        <img src="__IMG__/nodata.png"/>
+			        <div>您还没有相关订单</div>
+			        <p>快去看看有哪些喜欢的</p>
+			        <div class="btn-arr">
+			            <button @click="go_collection">我的收藏</button>
+			            <button @click="go_goodsview">我的足迹</button>
+			        </div>
+			    </div>
+            </div>    
+            
+			<!-- 待评价 end-->
+			
+           <!-- 已完成 start-->
+           
+           <div class="finish" v-show="nowIdex==5">
+                <div class="goods-item" v-for="(item,index) in offStocks" v-if="item.sub_order_goods[0].is_comment==1">
+                	<div class="head">
+                        <span>订单编号：{{item.order_sn}}</span>
+                        <span class="fr red">交易成功</span>
+                    </div>
+                    <a :href="'orderdetail.html?id='+item.id">
+                    <div class="goods-layout clear" v-for="(v,k) in item.sub_order_goods">                        
+	                        <div class="goods-img">
+	                            <img :src="v.thumb" alt="">
+	                        </div>
+	                        <div class="goods-right">	                        	
+		                    	<div class="goods-list-item-text">
+		                    		<div class="goods-list-item-title mui-ellipsis-2" v-text="v.goods_name"></div>
+		                    		<div class="goods-list-item-right pro-price">￥{{v.member_goods_price}}</div>
+		                        	
+		                        </div>
+		                        <div class="goods-list-item-text">                            	
+		                            <div class="goods-list-item-title mui-ellipsis-2 pro-attribute">
+		                            	<span class="" v-for="attrList in v.spec_key_name_arr" v-text="attrList">                            	
+		                            	</span>
+		                            </div>
+		                            <div class="goods-list-item-right">x {{v.goods_num}}</div>
+		                        </div>		                        
+		                    </div>                        
+                    </div></a>
+                    <div class="product-num-price">
+                    	<span class="product-num">共{{item.totalnum}}件商品，合计：</span>￥{{item.order_amount}}
+                    </div>
+					<div class="foot clear">
+                        <span class="fr">
+							<a type="button" class="mui-btn order-list-btn mui-btn-danger">订单完成</a>
+						</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 已完成 end -->
+            <!--
+            	<div class="nodata" v-else>
+			        <img src="__IMG__/nodata.png"/>
+			        <div>您还没有相关订单</div>
+			        <p>快去看看有哪些喜欢的</p>
+			        <div class="btn-arr">
+			            <button @click="go_collection">我的收藏</button>
+			            <button @click="go_goodsview">我的足迹</button>
+			        </div>
+			    </div>
+            -->
+        </div>
+        
+    </div>
+	
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#order-tab',
+        data: {
+            nowIdex: 0,
+            orderList: [],
+            orderName: [],
+            token: '',
+            obligation: [],   //待支付
+            sendGoods: [],   //待发货
+            waitReceiving: [],  //待收货
+            offStocks: [],      //已完成
+
+        },
+        created() {
+            this.token = getToken();
+            this.nowIdex = getUrlParam("type");
+           /* if (this.token == '') {
+                mui.alert('您还未登录，请登录', function () {
+                    window.location.href = "{:url('com/login')}";
+                })
+            } else {*/
+            __checkLogin();
+                axios({
+                    method: 'GET',
+                    url: __apiurl + '/user/getOrderList',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        // page:1,
+                        // pagesize:20,
+                        orderby: 'price desc'
+                    }
+                }).then(response => {
+						console.info(response.data.data.data);
+                    if (response.data.status == 100) {
+                        this.orderList = response.data.data.data;
+
+                        for (var i in this.orderList) {
+                            let num = 0;
+                            for (var j in this.orderList[i].sub_order_goods) {
+                                num += this.orderList[i].sub_order_goods[j].goods_num;
+                            }
+                            this.$set(this.orderList[i], 'totalnum', num)
+                        }
+
+                    } else {
+                        this.orderList = '';
+                    }
+
+                }).catch(error => {
+                    mui.alert(error);
+                })
+
+                //待支付
+                axios({
+                    method: 'GET',
+                    url: __apiurl + '/user/getOrderList',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        order_status: '待支付',
+                    }
+                }).then(response => {
+                    if (response.data.status == 100) {
+                        this.obligation = response.data.data.data;
+                        for (var i in this.obligation) {
+                            let num = 0;
+                            for (var j in this.obligation[i].sub_order_goods) {
+                                num += this.obligation[i].sub_order_goods[j].goods_num;
+                            }
+                            this.$set(this.obligation[i], 'totalnum', num)
+                        }
+                    } else {
+                        this.obligation = '';
+                    }
+
+                }).catch(error => {
+                    mui.alert(error);
+                })
+                //待发货
+                axios({
+                    method: 'GET',
+                    url: __apiurl + '/user/getOrderList',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        order_status: '待发货',
+                    }
+                })
+                    .then(response => {
+                    	//console.info(response);
+                        if (response.data.status == 100) {
+                        	
+                            this.sendGoods = response.data.data.data;
+                            //console.info(response.data.data.data);
+                            for (var i in this.sendGoods) {
+                                let num = 0;
+                                for (var j in this.sendGoods[i].sub_order_goods) {
+                                    num += this.sendGoods[i].sub_order_goods[j].goods_num;
+                                }
+                                this.$set(this.sendGoods[i], 'totalnum', num)
+                            }
+                        } else {
+                            // mui.alert(response.data.msg)
+                            this.sendGoods = '';
+                        }
+                    })
+                    .catch(error => {
+                        mui.alert(error);
+                    })
+
+                //待收货
+                axios({
+                    method: 'GET',
+                    url: __apiurl + '/user/getOrderList',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        order_status: '待收货',
+                    }
+                })
+                    .then(response => {
+                    	
+                        if (response.data.status == 100) {
+                            this.waitReceiving = response.data.data.data;
+                            for (var i in this.waitReceiving) {
+                                let num = 0;
+                                for (var j in this.waitReceiving[i].sub_order_goods) {
+                                    num += this.waitReceiving[i].sub_order_goods
+                                        [j].goods_num;
+                                }
+                                this.$set(this.waitReceiving[i], 'totalnum', num)
+                            }
+                            /*if($(".mui-table-view li").length-1<1){
+	                         	$(".nodata").css("display", "block");
+	                    		$(".tab-content").css("display", "none");
+	                        }*/
+                        } else {
+                            // mui.alert(response.data.msg)
+                            this.waitReceiving = '';
+                           
+                        }
+
+                    })
+                    .catch(error => {
+                        mui.alert(error);
+                    })
+                //已完成
+                axios({
+                    method: 'GET',
+                    url: __apiurl + '/user/getOrderList',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        order_status: '已完成',
+                    }
+                })
+                    .then(response => {
+                    	console.info(response.data.data.data);
+                        let _this=this;
+                       if (response.data.status == 100) {  
+                       		
+                           this.offStocks = response.data.data.data;
+                            for (var i in this.offStocks) {
+	                            let num = 0;
+	                            for (var j in this.offStocks[i].sub_order_goods) {
+	                                num += this.offStocks[i].sub_order_goods[j].goods_num;
+	                            }
+	                            this.$set(this.offStocks[i], 'totalnum', num)
+	                        }
+                       }
+                       
+                    })
+                    .catch(error => {
+                        mui.alert(error);
+                    })
+            // }
+        },
+        methods: {
+            //确认收货
+            confirmReceipt(obj) {
+                axios({
+                    method: 'GET',
+                    url: __apiurl + '/Order/sureOrder',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        id: obj.id,
+                    }
+                })
+                    .then(response => {
+                        if (response.data.status == 100) {
+                            mui.alert(response.data.msg, function () {
+                                window.location.href = "{:url('user/order')}?type=0"
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        mui.alert(error);
+                    })
+            },
+            //去收藏页面
+            go_collection() {
+                window.location.href = "{:url('user/collection')}";
+            },
+            //去浏览页面
+            go_goodsview() {
+                window.location.href = "{:url('user/goodsview')}";
+            },
+            //评价
+            evaluate(obj) {
+            	console.info(obj.sub_order_goods[0].order_id+"==="+obj.sub_order_goods[0].id);
+                window.location.href = "{:url('user/evaluate')}?order_id=" + obj.sub_order_goods[0].order_id+'&order_goods_id='+obj.sub_order_goods[0].id+'&thumb='+obj.sub_order_goods[0].thumb;
+            }
+        }
+    });
+</script>
+
+</html>

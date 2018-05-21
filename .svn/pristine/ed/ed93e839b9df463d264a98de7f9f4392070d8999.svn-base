@@ -1,0 +1,20 @@
+<?php
+namespace app\newapi\model;
+use think\Model;
+use think\Db;
+
+//钻石模型
+class GoodsDiamond extends Model
+{
+	//获取一条钻石数据
+	public static function getdiamondinfo($goods_id)
+	{
+		return  self::alias('gd')
+			->field('gd.*,g.thumb')
+			->join('zm_goods g','g.id=gd.goods_id','LEFT')
+			->where([
+				'gd.goods_id'=>(int)$goods_id
+				])
+			->find();
+	}
+}

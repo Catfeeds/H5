@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+</head>
+
+<body>
+<div id="addaddress">
+    <header class="mui-bar mui-bar-nav">
+        <a href="javascript:history.go(-1)" class=" mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">新建地址</h1>
+    </header>
+    <div class="mui-content">
+        <ul class="authU bgcolor">
+            <li>
+                <label class="label-title">收货人：</label>
+                <input type="text" placeholder="输入收货人的姓名" v-model="userAddress.consignee">
+            </li>
+            <li>
+                <label class="label-title">联系方式：</label>
+                <input type="number" placeholder="输入收货人的手机号" v-model="userAddress.tel">
+            </li>
+            <li>
+                <label class="label-title">所在地区:</label>
+                <div class="diqu" onclick="address()">
+                    <p>{{province}}-{{city}}-{{county}}</p>
+                    <i></i>
+                </div>
+            </li>
+            <li>
+                <label class="label-title">详细地址：</label>
+                <input type="text" placeholder="输入收货人的街道门牌" v-model="userAddress.addr">
+            </li>
+        </ul>
+        <div class="morenAddress">
+            <label class="label-title">设置默认地址：</label>
+            <div class="mui-switch mui-switch-mini my-switch">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </div>
+        <div class="quit saveAddress">
+            <button type="button" class="quit_btn" @click="saveAddress">保存地址</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    let picker = new mui.PopPicker({
+        layer: 3
+    });
+    picker.hide();
+    // picker.pickers[0].setSelectedIndex(1);
+    // picker.pickers[1].setSelectedIndex(1);
+    var vm = new Vue({
+        el: '#addaddress',
+        data: {
+            token: '',
+            regionList: [],
+            userAddress: {
+                addr: "",
+                consignee: "",
+                tel: "",
+                hasDefault: "",
+            },
+            province: '选择省',     //省
+            provinceID: '选择省',     //省ID
+            city: '选择市',     //市
+            cityID: '选择市',     //市ID
+            county: '选择区',     //区
+            countyID: '选择区',     //区ID
+            area:'',
+            is_default:0
+        },
+        mounted() {
+            this.token = getToken();
+        },
+        created() {
+            axios({ //地址数据
+                method: 'GET',
+                url: __apiurl + '/user/getRegion',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+            }).then(response => {
+                var tmparr = [];
+                for (var i in response.data) {
+                    var tmp = {};
+                    tmp.value = response.data[i].id;
+                    tmp.text = response.data[i].name;
+                    tmp.pid = response.data[i].pid;
+                    tmparr.push(tmp);
+                }
+                var tree = toTree(tmparr);
+                picker.setData(tree[0].children);
+            }).catch(error => {
+                mui.alert(error);
+            })
+        },
+        methods: {
+            //保存地址
+            saveAddress() {
+                //手机号码验证
+                if (!(/^1[34578]\d{9}$/.test(this.userAddress.tel))) {
+                    mui.alert("手机号码格式有误，请重填");
+                    return false;
+                }
+                if (this.userAddress.consignee == "" || this.userAddress.tel == "" || this.userAddress.addr == "") {
+                    mui.alert('请完善信息！');
+                } else {
+                    axios({
+                        method: 'post',
+                        url: __apiurl + '/user/addAddress',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        },
+                        data: {
+                            title: this.userAddress.consignee,
+                            province: this.provinceID,
+                            city: this.cityID,
+                            district: this.countyID,
+                            address: this.userAddress.addr,
+                            recname: this.userAddress.consignee,
+                            phone: this.userAddress.tel,
+                            area:this.area,
+                            is_default:this.is_default
+                        }
+                    }).then(res => {
+                        console.log(res)
+                        if(res.status==200){
+                            mui.alert('新增地址保存成功',function () {
+                                window.location.href="{:url('user/address')}"
+                            })
+                        }
+                    }).catch(error => {
+                       mui.alert(error)
+                    })
+                }
+            }
+
+        }
+    });
+
+    function address() {
+        picker.show(function (SelectedItem) {
+            console.log(SelectedItem);
+            vm.province = SelectedItem[0].text;
+            vm.provinceID = SelectedItem[0].value;
+            vm.city = SelectedItem[1].text;
+            vm.cityID = SelectedItem[1].value;
+            vm.county = SelectedItem[2].text;
+            vm.countyID = SelectedItem[2].value;
+            vm.area = SelectedItem[0].text+'-'+SelectedItem[1].text+'-'+SelectedItem[2].text;
+        })
+    }
+
+    //递归函数
+    function toTree(data) {
+        // 删除 所有 children,以防止多次调用
+        data.forEach(function (item) {
+            delete item.children;
+        });
+        // 将数据存储为 以 id 为 KEY 的 map 索引数据列
+        var map = {};
+        data.forEach(function (item) {
+            map[item.value] = item;
+        });
+        var val = [];
+        data.forEach(function (item) {
+            // 以当前遍历项，的pid,去map对象中找到索引的id
+            var parent = map[item.pid];
+            // 好绕啊，如果找到索引，那么说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
+            if (parent) {
+                (parent.children || (parent.children = [])).push(item);
+            } else {
+                //如果没有在map中找到对应的索引ID,那么直接把 当前的item添加到 val结果集中，作为顶级
+                val.push(item);
+            }
+        });
+        return val;
+    }
+
+    mui('.mui-switch').each(function() { //循环所有toggle
+        this.addEventListener('toggle', function(event) {
+            vm.is_default = event.detail.isActive ?  1 : 0;
+        });
+    });
+</script>
+
+</html>

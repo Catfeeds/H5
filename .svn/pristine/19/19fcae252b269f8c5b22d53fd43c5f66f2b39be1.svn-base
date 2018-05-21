@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+    <style type="text/css">
+    	.mui-content {
+    		margin-top: 40px;
+    	}
+    	.quit_login{
+    		width: 100%;
+		    height: 50px;
+		    color: #f786a3;
+		    border: none;
+		    font-size: 1rem;
+    	}
+    </style>
+</head>
+
+<body>
+<div class="user">
+    <div class="user-top">        
+        <span class="user-top-name">个人中心</span>
+        <a class="mui-icon mui-icon-gear mui-pull-right"></a>
+    </div>
+    <div class="mui-content" >
+        <div class="personal clear">
+            <!--<a href="javascript:;" class="my-a-icon">
+                <span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-shezhi3"></use>
+                     </svg>
+				</span>
+                账号管理
+            </a>-->
+            <div style="width: 80px;height: 80px; float: left">
+                <img src="__IMG__/zuanjie.png" alt="" width="100%;" height="100%" style="border-radius: 50%">
+            </div>
+            <div class="number">
+                <span>用户名：{{userName}}</span>
+            </div>
+        </div>
+        <div class="user-main-list">
+            <ul>
+                <li>
+                    <a href="order.html?type=0">
+                        <svg class="icon" aria-hidden="true">
+				            <use xlink:href="#icon-dingdan"></use>
+				        </svg>
+                        <span class="list-name">我的订单</span>
+                        <span class="right-icon">
+                        	查看全部订单
+	                        <svg class="icon" aria-hidden="true">
+					            <use xlink:href="#icon-xiangyou"></use>
+					        </svg>
+				        </span>
+                    </a>
+                </li>
+                <!--我的订单 start-->
+                <div class="order-item">
+                    <div class="order-box">
+                        <a href="order.html?type=1">
+                            <img src="__IMG__/order-icon-01.png" alt=""/>
+                            <span>待付款</span>
+                        </a>
+                    </div>
+                    <div class="order-box">
+                        <a href="order.html?type=2">
+                            <img src="__IMG__/order-icon-02.png" alt=""/>
+                            <span>待发货</span>
+                        </a>
+                    </div>
+                    <div class="order-box">
+                        <a href="order.html?type=3">
+                            <img src="__IMG__/order-icon-03.png" alt=""/>
+                            <span>待收货</span>
+                        </a>
+                    </div>
+                    <div class="order-box">
+                        <a href="order.html?type=4">
+                            <img src="__IMG__/order-icon-04.png" alt=""/>
+                            <span>已完成</span>
+                        </a>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div class="user-main-list">
+            <li>
+                <a href="collection.html">
+                    <svg class="icon" aria-hidden="true">
+			            <use xlink:href="#icon-xihuan-xianxing"></use>
+			        </svg>
+                    <span class="list-name">我的收藏</span>
+                    <svg class="icon right-icon" aria-hidden="true">
+			            <use xlink:href="#icon-xiangyou"></use>
+			        </svg>
+                </a>
+            </li>
+            <li>
+                <a href="goodsview.html">
+                    <svg class="icon" aria-hidden="true">
+			            <use xlink:href="#icon-shizhong"></use>
+			        </svg>
+                    <span class="list-name">浏览记录</span>
+                    <svg class="icon right-icon" aria-hidden="true">
+			            <use xlink:href="#icon-xiangyou"></use>
+			        </svg>
+                </a>
+            </li>
+        </div>
+
+        <div class="user-main-list">
+            <li style="margin-top: .5rem;">
+                <a href="passwordset.html">
+                    <svg class="icon" aria-hidden="true">
+			            <use xlink:href="#icon-anquan"></use>
+			        </svg>
+                    <span class="list-name">重置密码</span>
+                    <svg class="icon right-icon" aria-hidden="true">
+			            <use xlink:href="#icon-xiangyou"></use>
+			        </svg>
+                </a>
+            </li>
+            <li>
+                <a href="address.html">
+                    <svg class="icon" aria-hidden="true">
+			            <use xlink:href="#icon-dizhi1"></use>
+			        </svg>
+                    <span class="list-name">地址管理</span>
+                    <svg class="icon right-icon" aria-hidden="true">
+			            <use xlink:href="#icon-xiangyou"></use>
+			        </svg>
+                </a>
+            </li>
+        </div>      
+     	 <div class="quit">
+	        <button type="button" class="quit_login" @click="quitout">退出登录</button>
+	    </div>
+    </div>
+  
+</div>
+{include file="public/nav"/}
+</body>
+
+<script>
+    new Vue({
+        el: '.user',
+        data: {
+            userName: '',
+            token: '',
+        },
+        created() {                      
+        	__checkLogin();         	
+        	this.userName=getUserInfo().username;
+        },
+        methods: {
+            quitout() {
+            	var btnArray = ['是', '否'];
+				mui.confirm('确定退出登录?', '提示', btnArray, function(e) {
+					if(e.index == 0) {
+						clearUserInfo();
+                		window.location.href = "{:url('/mobile/index')}";
+					}
+				});
+            	
+            }
+        },
+    });
+    /*监听滚动*/
+	window.onscroll = function() {
+		//改变top的rgba
+		var t = document.documentElement.scrollTop || document.body.scrollTop; //获取距离页面顶部的距离
+		//如果小于220像素改变rgba
+		var changeRgba = (t / 200) > 1 ? 1 : t / 200;
+		document.getElementsByClassName("user-top-name")[0].style.opacity = changeRgba;		
+	}
+
+</script>
+
+</html>

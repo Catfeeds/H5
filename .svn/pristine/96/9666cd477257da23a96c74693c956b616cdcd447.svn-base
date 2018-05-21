@@ -1,0 +1,114 @@
+<meta charset="utf-8">
+<title>速易宝H5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="stylesheet" href="__MOBILE__/css/mui.min.css">
+<link rel="stylesheet" href="__MOBILE__/css/mui.picker.min.css">
+<link rel="stylesheet" href="__MOBILE__/css/app.css?__Version__"/>
+<link rel="stylesheet" href="__MOBILE__/css/swiper.min.css"/>
+<link rel="stylesheet" href="__MOBILE__/css/mobileSelect.css"/>
+<link rel="stylesheet" href="__CSS__/mstyle.css?__Version__"/>
+
+<script src="__MOBILE__/js/jquery.min.js"></script>
+<script src="http://at.alicdn.com/t/font_503258_ydr3mirvxk9y66r.js"></script> <!--icon 阿里字体图标-->
+<script src="__MOBILE__/js/swiper.min.js"></script>
+<script src="__MOBILE__/js/mobileSelect.js"></script>
+<script src="__MOBILE__/js/mui.min.js"></script>
+<script src="__MOBILE__/js/mui.picker.min.js"></script>
+<script src="__MOBILE__/js/app.js?__Version__"></script>
+
+<script src="__MOBILE__/js/vue.min.js"></script>
+<script src="__MOBILE__/js/axios.js"></script>
+<script src="__MOBILE__/js/vue-lazyload.js"></script>  <!--vue 懒加载-->
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '{$signPackage["appId"]}', // 必填，企业号的唯一标识，此处填写企业号corpid
+        timestamp: '{$signPackage["timestamp"]}', // 必填，生成签名的时间戳
+        nonceStr: '{$signPackage["nonceStr"]}', // 必填，生成签名的随机串
+        signature: '{$signPackage["signature"]}',// 必填，签名，见附录1
+        jsApiList: [
+            'onMenuShareAppMessage',
+            'onMenuShareTimeline'
+        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+
+    wx.ready(function () {  
+        wx.onMenuShareTimeline({  //例如分享到朋友圈的API
+           title: '钻明钻石', // 分享标题
+           link: window.location.protocol+'://'+window.location.host, // 分享链接
+            imgUrl: window.location.protocol+'://'+window.location.host+'/__MOBILE__/img/favicon.ico', // 分享图标
+           success: function () {
+               // 用户确认分享后执行的回调函数
+           },
+           cancel: function () {
+               // 用户取消分享后执行的回调函数
+           }
+        });
+        wx.onMenuShareAppMessage({
+            title: '钻明珠宝', // 分享标题
+            desc: '一个卖钻石的网站', // 分享描述
+            link: window.location.protocol+'://'+window.location.host, // 分享链接
+            imgUrl: window.location.protocol+'://'+window.location.host+'/__MOBILE__/img/favicon.ico', // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    })
+
+</script>
+<script>
+	$(function () {   
+		setAId("{$agent.id}");
+		setOpenId("{$user.openid}");
+	});
+
+    mui.init();    
+    var __apiurl = "{$apiurl}";
+    // var __apiurl = "http://zbfxapi.com/api";
+    var __apiurl2 = "{$apiurl2}";
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    }
+
+
+    //检查登录
+    function __checkLogin(){
+    	var token=getToken();    
+    	if(token===null){
+    		var openid=getOpenId();  		
+    		if(openid){    		
+    			//通过loginbyopenid登录   
+    	    	$.ajax({    	    		  
+    	    		  url: __apiurl+"/com/loginbyopenid",
+    	    		  type:"POST",
+    	    		  data: {"openid":openid},
+    	    		  dataType: 'json',
+    	    		  async:false,
+    	    		  success:function(ret, err){    	    			  
+    	    			  if(ret.status==100){
+    	    				  setUserInfo(ret.data);//本地用户信息存储           	    				  
+    	    				  return;
+    	    			  }
+                      }
+    	    	});
+    		}   		
+    	}
+    	
+    	if(getToken()===null){
+    		//跳转到登录页    		 
+    		window.location.href = "{:url('/mobile/com/login')}?r_url="+window.location.href;
+    	}
+    	return;
+    }
+</script>
+ 

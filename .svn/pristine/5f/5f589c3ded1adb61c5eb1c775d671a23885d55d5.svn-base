@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+<style>
+    body,
+    .mui-content {
+        background: #efeff4;
+        position: relative;
+        margin-bottom: 60px;
+    }
+
+    #page_01 .mui-bar-nav {
+        padding-left: 20px;
+        opacity: 0;
+        height: 50px;
+    	line-height: 50px;
+    }
+
+    .mui-search {
+        width: 90%;
+		float: left;
+		padding: 4px 5px;
+		position: fixed;
+		z-index: 998;
+    }
+
+    .mui-icon-search:before, .mui-search.mui-active:before {
+        color: #F430B6;
+    }
+
+    #myform {
+        text-indent: 30px;
+	    font-size: 14px;
+	    height: 30px;
+	    line-height: 30px;
+	    margin: 6px 0;
+	    background-color: rgb(240, 240, 240);
+	    border-radius: 40px;
+	    opacity: 0.5;
+	    color: #999999;
+    }
+
+    .mui-search .mui-placeholder .mui-icon {
+        margin-right: 5px;
+    	padding-right: 0px;
+    	font-size: 18px;
+    }
+
+    .mui-search .mui-placeholder {
+        color: #ddd;
+        font-size: 12px;        
+    	line-height: 50px;
+    }
+
+    .swiper-container {
+        font-size: 12px;
+        height: 220px;
+    }
+
+    .swiper-container a {
+        color: #8f8f94;
+    }
+
+    .fixtype_box {
+        height: 100px;
+        background-color: white;
+        margin-bottom: 10px;
+    }
+
+    .fixtype_title {
+        float: left;
+        width: 100%;
+    }
+
+    .fixtype_title span:first-child {
+        font-size: 12px;
+        float: left;
+        padding-left: 8px;
+    }
+
+    .fixtype_content ul {
+        float: left;
+        width: 100%;
+        padding-top: 10px;
+    }
+
+    .fixtype_content li {
+        float: left;
+        width: 25%;
+        text-align: center;
+
+    }
+
+    .fixtype_content li img {
+        width: 55px;
+        height: 55px;
+        border-radius: 20%;
+        background: #f9f9f9;
+    }
+
+    .fixtype_content li .fixtype_title {
+        color: gray;
+        font-size: 12px;
+        margin-top: 10px;
+        height: 15px;
+        line-height: 15px;
+    }
+
+    .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: #ef5a80;
+    }
+
+    .wrap_01 .new_goods {
+        width: 100%;
+	    font-family: initial;
+	    height: 47px;
+	    line-height: 47px;
+	    margin: 10px 0;
+	    background-color: #fff;
+    }
+
+    .wrap_01 .new_goods p:nth-of-type(1) {
+        margin: 0px;
+	    font-weight: 500;
+	    color: #212121;
+	    font-size: 14px;
+	    float: left;
+	    border-left: 2px solid #F52B9D;
+	    height: 17px;
+	    line-height: 17px;
+	    padding-left: 10px;
+	    margin: 15px 10px;
+    }
+
+    .wrap_01 .new_goods p:nth-of-type(2) {
+        float: right;
+    }
+
+    .wrap_01 .new_goods p span {
+        padding: 0;
+	    border-bottom: 0;
+	    color: #666666;
+	    font-size: 14px;
+	    display: block;
+	    text-align: right;
+	    margin-right: 10px;
+    }
+
+    .wrap_01 .swiper-container_02 .swiper-slide img {
+        width: 100%;
+	    display: block;
+	    height: 100px;
+	    margin-bottom: 0;
+	    border-top-left-radius: 5px;
+	    border-top-right-radius: 5px;
+    }
+
+    .wrap_01 .swiper-container_02 {        
+        height: 100%;
+    }
+
+    .wrap_01 .swiper-container_02 .swiper-slide {
+        padding-left: 10px;
+        width: 100px;
+    }
+    .message {
+        right: 0;
+	    width: 10%;
+	    position: fixed;
+	    line-height: 50px;
+	    padding-left: 5px;
+	    z-index: 998;
+    }
+    .message .icon{
+    	width: 25px;
+    	height: 25px;
+    	color: #F0F0F0;
+    }
+    .mui-search:before {
+	    line-height: 35px;
+	    margin-left: 10px;
+	}
+</style>
+
+<body>
+    <div id="page_01">
+        <div class="mui-content">
+        	<div class="mui-input-row mui-search">
+                <input type="search" placeholder="搜索商品" class="mui-input-clear" v-model="inputValue" id="myform">
+            </div>
+            <div class="message">
+                <svg class="icon messageicon" aria-hidden="true">
+                    <use xlink:href="#icon-xiaoxi2"></use>
+                </svg>
+            </div>
+            <header class="mui-bar mui-bar-nav">
+                
+            </header>
+            <!--首页轮播-->
+            <div class="swiper-container swiper-container_01">
+                <div class="swiper-wrapper">
+                    {volist name=":tfilter($templateitem,'slide')" id="vo"}
+                    <div class="swiper-slide">
+                        <a href="{$vo.url}">
+                            <img src="{$vo.images}" />
+                        </a>
+                    </div>
+                    {/volist}
+                </div>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <div class="fixtype_box">
+                <div class="fixtype_content">
+                    <ul class="">
+                        {volist name=":tfilter($templateitem,'nav')" id="vo" key="k"} {elt name="k" value="4"}
+                        <li class="">
+                            <a href="{$vo.url}">
+                                <img class="width_style" src="{$vo.images}" alt="">
+                                <div class="fixtype_title">{$vo.title}</div>
+                            </a>
+                        </li>
+                        {/elt} {/volist}
+                    </ul>
+                </div>
+            </div>
+            <div class="wrap_01">
+                <div class="new_goods">
+                    <p>新品上线</p>
+                    <p>
+                        <span>献上爱礼，赞颂生活的美好</span>
+                    </p>
+                </div>
+                <!--中间轮播-->
+                <div class="swiper-container swiper-container_02">
+                    <div class="swiper-wrapper">
+                        {web:goods cat='new' num='8'}
+                        <div class="swiper-slide">
+                            <a href="{:url('mobile/goods/details')}?id={$vo.id}">
+                                <img src="{$vo.thumb}" alt="无图({$vo.name})">
+                                <span>{$vo.name}</span>
+                                <span>￥{$vo.price_seller}</span>
+
+                            </a>
+                        </div>
+                        {/web:goods}
+                    </div>
+                    <!-- 如果需要分页器 -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <!--中间图片-->
+            <div class="m_img">
+                {volist name=":tfilter($templateitem,'newad')" id="vo" key="k"} {eq name="k" value="1"}
+                <a href="{$vo.url}">
+                    <img alt="" src="{$vo.images}" />
+                </a>
+                {/eq} {/volist}
+            </div>
+
+            <div class="wrap_01">
+                <div class="new_goods">
+                    <p>商城热卖</p>
+                    <p>
+                        <span>献上爱礼，赞颂生活的美好</span>
+                    </p>
+                </div>
+                <!--中间轮播-->
+                <div class="swiper-container swiper-container_02">
+                    <div class="swiper-wrapper">
+                        {web:goods cat='hot' num='8'}
+                        <div class="swiper-slide">
+                            <a href="{:url('mobile/goods/details')}?id={$vo.id}">
+                                <img src="{$vo.thumb}" alt="无图({$vo.name})">
+                                <span>{$vo.name}</span>
+                                <span>￥{$vo.price_seller}</span>
+                            </a>
+                        </div>
+                        {/web:goods}
+                    </div>
+                    <!-- 如果需要分页器 -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+
+            <!--中间图片-->
+            {volist name=":tfilter($templateitem,'hotad')" id="vo" key="k"} {elt name="k" value="2"}
+            <div class="m_img">
+                <a href="{$vo.url}">
+                    <img alt="" src="{$vo.images}" />
+                </a>
+            </div>
+            {/elt} {/volist}
+            <div style="width: 100%;height: 30px;text-align: center;line-height: 30px;font-size: 12px;color:#999999; ">
+            	——————  已经到底了  ——————
+            </div>
+        </div>
+    </div>
+    {include file="public/nav" /}
+</body>
+<script>
+    mui.init();
+    // mui.previewImage();
+    new Vue({
+        el: '#page_01',
+        data: {
+            inputValue: ''
+        },
+        methods: {
+            zuanshi: function () {
+                window.location.href = "{:url('goods/searchgoodslist')}?keyword=" + this.inputValue +
+                    '&type=0'
+            },
+            zhubao: function () {
+                window.location.href = "{:url('goods/searchgoodslist')}?keyword=" + this.inputValue +
+                    '&type=3'
+            }
+        }
+    })
+    var mySwiper1 = new Swiper('.swiper-container_01', {
+        direction: 'horizontal',
+        loop: true,
+        //自动播放
+        autoplay: {
+            delay: 3000,
+            stopOnLastSlide: false,
+            disableOnInteraction: true,
+        },
+        // 如果需要分页器
+        pagination: {
+            el: '.swiper-pagination',
+        }
+
+    });
+    /*swiper_02 */
+    var mySwiper2 = new Swiper('.swiper-container_02', {
+        slidesPerView: 3.2,
+        autoplay: false,
+        offsetPxAfter: 200
+    });
+    //搜索功能
+
+    $('#myform').focus(function () {
+        window.location.href = "{:url('goods/search')}"
+    })
+	/*监听滚动*/
+    window.onscroll = function () {
+        //改变top的rgba
+        var t = document.documentElement.scrollTop || document.body.scrollTop; //获取距离页面顶部的距离
+        //如果小于220像素改变rgba
+        var changeRgba = (t / 200) > 1 ? 1 : t / 200;
+        var changeRgba1 = (t / 200) > 1 ? t / 200 : 0.5;
+        document.getElementsByClassName("mui-bar-nav")[0].style.opacity = changeRgba;
+       	document.getElementById("myform").style.opacity = changeRgba1;
+        if(t>100){
+        	document.getElementsByClassName("mui-placeholder")[0].style.color = "#999";
+        	
+        }else{
+        	document.getElementsByClassName("mui-placeholder")[0].style.color = "#ddd";
+        }
+    }
+    /*监听丢失的图片*/
+
+    $("img").on('error', function () {
+        console.info(111)
+        $(this).attr('src', '__IMG__/banner_03.jpg');
+    })
+</script>
+
+
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="__CSS__/mint-ui.css"/>
+
+<head>
+    {include file="public/base" /}
+    <style>
+        .mint-swipe-indicator {
+            background: #666666;
+        }
+
+        .mint-swipe-indicator.is-active {
+            background: red;
+        }
+
+        .noshow {
+            background: #ccc;
+        }
+
+        .xdtShouCun .shoucunlist {
+            width: 30%;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #999;
+            border-radius: 5px;
+            overflow: hidden;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div id="details">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">详情</h1>
+    </header>
+    <div class="mui-content">
+        <!--列表头-->
+        <div class="list_title clear  ">
+            <ul class="mui-row">
+                <li class="mui-col-sm-4 mui-col-xs-4">
+                    <a href="#">商品</a>
+                </li>
+                <li class="mui-col-sm-4 mui-col-xs-4">
+                    <a :href="'{:url('goods/details_page')}?id='+id">详情</a>
+                </li>
+                <li class="mui-col-sm-4 mui-col-xs-4">
+                    <a :href="'{:url('goods/evaluation')}?goods_id='+id">评价</a>
+                </li>
+            </ul>
+        </div>
+        <!--轮播-->
+        <div>
+            <mt-swipe :auto="4000" style="height: 300px">
+                <mt-swipe-item>
+                    <img :src="thumb" width="100%" height="100%" />
+                </mt-swipe-item>
+            </mt-swipe>
+        </div>
+
+        <!--产品详情-->
+        <div class="goods_name">
+            <p>{{goodsName}}</p>
+            <p>价格：
+                <strong>￥{{goodsPrice*num |number}}</strong>
+                <span>￥{{goodsPrice*num |number}}</span>
+            </p>
+        </div>
+        <!--产品规格-->
+        <div id="mask">
+            <div class="clear title">
+                <p class="fl" style="font-size: 14px; color: #333333;">产品规格</p>
+            </div>
+            <div class="clear xdtCaiZi">
+                <ul class="clear">
+                    <p class="p_style">可选材质</p>
+                    <li v-for="(item,index) in caiziList"
+                        @click="liListClick(index)"
+                        :class="{active:index == isactive}">
+                        {{item.material_name}}
+                    </li>
+                </ul>
+            </div>
+            <div class="clear xdtShouCun" >
+                <p class="p_style fl">{{shoucunName}}</p>
+                <div class="shoucunlist" @click = "showShouCun()">{{shoucun}}</div>
+            </div>
+            <div class="clear xdtZhuShi">
+                <ul class="clear">
+                    <p class="p_style">可选主石</p>
+                    <li v-for="(item,index) in zhushiList" @click="changeshape(index)"
+                        :class="{active:index == isActive}">
+                        {{item.luozuan_shape_name}} {{item.luozuan_weight}}CT
+                    </li>
+                </ul>
+            </div>
+
+            <div class="clear list_04">
+                <p class="p_style">数量</p>
+                <button class="val_sel" >-</button>
+                <input class="val_text" type="text" v-model="num" disabled>
+                <button class="val_sel" >+</button>
+                <p class="kucun">库存
+                    <span>{{goodsStockNum}}</span>
+                </p>
+            </div>
+            <div class="clear ser_num">商品编号：
+                <span>{{goodsCode}}</span>
+            </div>
+        </div>
+        <!--产品参数-->
+        <div class="Parameter">
+            <p class="title">产品参数</p>
+            <ul class="clear" >
+                <p>产品材质:</p>
+                <li v-for="(item,index) in caiziList">{{item.material_name}}</li>
+            </ul>
+
+        </div>
+
+        <div style="width: 100%;height: 60px"></div>
+    </div>
+
+    <!-- 区分成品还是定制 若为成品可以立即购买 若为定制商品需要选择配托 -->
+    <div class="nav_footer mui-row">
+        <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 collect">
+            <span class="icon_style my-span-background"></span>
+            <span>收藏</span>
+        </a>
+        <a class="mui-col-sm-3 mui-col-xs-3">
+                <span class="icon_style">
+                    <svg class="icon" aria-hidden="true" style="font-size: 30px;">
+                        <use xlink:href="#icon-gouwuche1-copy"></use>
+                    </svg>
+
+                </span>
+            <span>购物车</span>
+            <span class="mui-badge mui-badge-danger my-badge">0</span>
+        </a>
+        <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 addcart">
+            <span>加入购物车</span>
+        </a>
+
+        <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 custom-btn" @click = "xtdPeishi()">
+            <span>在线配石</span>
+        </a>
+
+    </div>
+
+    <!-- 点击配托弹出层 -->
+    <div v-show="detailsShow">
+        <div class="buttom_alert" @click="buttom_alert"></div>
+        <div class="buttom_box peishi_box">
+            <p>参数详情</p>
+            <ul>
+                <li>形状</li>
+                <li>钻重</li>
+                <li>净度</li>
+                <li>颜色</li>
+                <li>价格</li>
+            </ul>
+            <ul v-for="(item,index) in peishiList" :class="{active:index == isActivee}" @click="selectDiamond(index)">
+                <li>{{zhushiList[isActive].luozuan_shape_name}}</li>
+                <li>{{zhushiList[isActive].luozuan_weight}}</li>
+                <li>{{item.clarity}}</li>
+                <li>{{item.color}}</li>
+                <li>{{item.price}}</li>
+            </ul>
+            <div class="nav_footer mui-row">
+                <a href="javascript:;" class="mui-col-sm-3 mui-col-xs-3 custom-btn" style="width:100%" @click = "pipei()">
+                    <span>确认匹配</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 当确认匹配显示所选的托和匹配到的钻 -->
+    <div class="matching" v-show="isShow">
+        <div class="buttom_alert" @click="buttom_alert"></div>
+        <div class="queRen">
+            <div class="tops">
+                <h1>匹配项目：</h1>
+                <ul class="ma-box">
+                    <li>
+                        <div class="fl good-img">
+                            <img :src="thumb" class="w4rem" alt="">
+                        </div>
+                        <div class="fr good-title">
+                            <p><span>{{goodsName}}</span>
+                                <button @click="ringAgain">重选</button>
+                            </p>
+                            <p>{{caiziList[isactive].material_name}}</p>
+                            <p class="rmb">￥{{goodsPrice}}</p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
+
+                    <li>
+                        <div class="fl good-img">
+                            <img src="__IMG__/zuanjie.png" class="w4rem" alt="">
+                        </div>
+                        <div class="fr good-title">
+                            <p><span></span>
+                                <button @click="diamondAgain">重选</button>
+                            </p>
+                            <p>{{zhushiList[isActive].luozuan_shape_name}}&nbsp;{{zhushiList[isActive].luozuan_weight}}&nbsp;{{peishiClarity}}&nbsp;{{peishiColor}}</p>
+                            <p class="rmb">￥{{peishiPrice}}</p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
+                    <div class="clearfix"></div>
+                </ul>
+            </div>
+            <a class="custom-btn" @click="queRenButton">确认定制</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script src="__MOBILE__/js/mint-ui.js?__Version__"></script>
+<script>
+    /*图片懒加载*/
+    Vue.use(VueLazyload, {
+        preLoad: 1.3,
+        error: "错误",
+        loading: '',
+        attempt: 1
+    });
+
+    let picker = new mui.PopPicker({
+        layer: 1
+    });
+    picker.hide();
+
+    let vm = new Vue({
+        el: '#details',
+        components: {},
+        data() {
+            return {
+                number: 0,
+                num: 1,
+                id: '',
+                goodsName: '', //商品名称
+                goodsPrice: '', //商品价格
+                goodsCode: '', //商品编号
+                goodsStockNum: '', //库存
+                token: '',
+                goodsAttr: [],
+                zhushiList: [], // 可选主石
+                caiziList: [], // 可选材质
+                shoucunList: [], // 手寸
+                shape: '',
+                weight: '',
+                isactive: 0, //材质默认选中
+                thumb: '',  // 缩略图
+                isActive: 0, //主石默认选中
+                detailsShow: false,
+                peishiList: "",
+                shoucunName: '',
+                shoucun:'',
+                goods_id:0, //商品ID
+                material_id:0, //商品材质ID
+                luozuan_ids:0, //主石ID
+                isActivee:0, //主石列表排序
+                peishi_id:0,
+                isShow: false,
+                peishiClarity:'', //下单通配石净度
+                peishiColor:'', //下单通配石颜色
+                peishiPrice:'' //下单通配石价格
+            }
+        },
+        filters: {
+            //保留2位小数点过滤器 不四舍五入
+            number(value) {
+                let toFixedNum = Number(value).toFixed(3);
+                let realVal = toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                return realVal;
+            }
+        },
+        created() {
+            this.token = getToken();
+            this.id = getUrlParam("id");
+            
+            /*获取下单通商品详情*/
+            axios.get(__apiurl + '/goods/xdtdetails', {
+                params: {
+                    id: this.id,
+                }
+            }).then(res => {
+                this.goodsName = res.data.data.name; //商品名称
+                this.goodsPrice = res.data.data.price; //商品价格
+                this.thumb = res.data.data.thumb; //商品图片
+                this.goodsStockNum = res.data.data.stock_num; //商品库存
+                this.goodsCode = res.data.data.code; //商品编号
+
+                this.goodsAttr = res.data.data.GoodsXdt; 
+                this.zhushiList = this.goodsAttr.extra_goods_luozuan //下单通主石
+                this.caiziList = this.goodsAttr.extra_goods_materials //下单通材质
+                this.shoucunList = this.goodsAttr.extra_goods_size.values //下单通手寸
+                this.shoucunName = this.goodsAttr.extra_goods_size.label;
+                
+                // 默认第一个
+                this.goods_id = res.data.data.supply_goods_id //对应的第一个商品ID
+                this.material_id = this.goodsAttr.extra_goods_materials[0].material_id //对应的第一个材质ID
+                this.luozuan_ids = this.goodsAttr.extra_goods_luozuan[0].associate_luozuan_id //对应的第一个主石ID
+                this.weight = this.zhushiList[0].luozuan_weight //对应的第一个主石钻重ID
+                
+                // 默认显示第一个手寸
+                var obj = [];
+                for (var i in this.shoucunList) {
+                    var tmp = {value:this.shoucunList[i],text:this.shoucunList[i]};
+                    obj.push(tmp);
+                }
+                this.shoucun = obj[0].value;
+                picker.setData(obj)
+                this.getxdtprice();
+
+                console.log(this.caiziList)
+            }).catch(error => {
+                mui.alert(error)
+            })
+        },
+        methods: {
+            liListClick (index) {
+                this.isactive = index;
+                this.material_id = this.caiziList[index].material_id //根据所选材质来决定商品价格
+                this.getxdtprice();
+                console.log(this.material_id)
+            },
+            changeshape (index) {
+                this.isActive = index;
+                this.luozuan_ids = this.caiziList[index].luozuan_ids //根据所选主石来决定商品价格
+                this.weight = this.zhushiList[index].luozuan_weight //根据所选主石来决定商品价格
+                this.getxdtprice();
+            },
+            
+            buttom_alert() {
+                this.detailsShow = false;
+                this.isShow = false;
+            },
+            
+            // 点击手寸，弹出picker选择器
+            showShouCun () {
+                picker.show(function (SelectedItem) {
+                    vm.shoucun = SelectedItem[0].text;
+                })
+            },
+
+            // 获取sku
+            getxdtprice() {
+                axios.get(__apiurl + '/goods/getxdtprice',{
+                    params: {
+                        goods_id: this.goods_id,
+                        material_id: this.material_id,
+                        luozuan_ids: this.luozuan_ids
+                    }
+                }).then(res => {
+                    
+                    if (res.data.status == 100) {
+                        this.goodsPrice = res.data.data.price //获取sku的价格
+                    }
+                }).catch(error => {
+                    mui.alert(error)
+                })
+                
+            },
+            
+
+            // 下单通在线配石
+            xtdPeishi () {
+                var that = this;
+                that.detailsShow = true
+                axios({
+                    url: __apiurl + '/goods/getxdtmatch',
+                    method: "get",
+                    params: {
+                        weight: that.weight
+                    }
+                }).then(res => {
+                    that.peishiList = res.data.data;
+                    // 默认第一个配石
+                    this.peishiClarity = this.peishiList[0].clarity //下单通配石净度
+                    this.peishiColor = this.peishiList[0].color  //下单通配石颜色
+                    this.peishiPrice = this.peishiList[0].price  //下单通配石价格
+                    console.log(that.peishiList)
+                    
+                })
+            },
+            // 在线配石
+            selectDiamond (index) {
+                this.isActivee = index;
+                this.peishi_id = this.peishiList[index].id;
+                this.peishiClarity = this.peishiList[index].clarity //下单通配石净度
+                this.peishiColor = this.peishiList[index].color  //下单通配石颜色
+                this.peishiPrice = this.peishiList[index].price  //下单通配石价格
+
+            },
+            // 确认匹配
+            pipei () {
+                this.detailsShow = false;
+                this.isShow = true;
+            },
+            // 戒指重选
+            ringAgain () {
+                history.go(-1);
+            },
+            // 钻石重选
+            diamondAgain () {
+                if (this.peishi_id = null) {
+                    window.location.href = "{:url('Goods/diamond')}";
+                } else {
+                    this.detailsShow = true;
+                    this.isShow = false;
+                }
+            },
+            // 确认定制后提交到订单页
+            queRenButton () {
+               
+                window.location.href = "{:url('cart/index')}";
+            },
+           
+        }
+    });
+
+</script>
+
+</html>

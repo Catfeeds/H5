@@ -1,0 +1,4242 @@
+.side-wrap {
+    width: 96px;
+    height: 100%;
+    background-color: #00b8d2;
+    float: left;
+    min-height: 590px;
+    top: 0;
+    z-index: 1001;
+}
+.pf, .side-wrap {
+    position: fixed;
+}
+.logo {
+    width: 96px;
+    height: 30px;
+    margin-top: 15px;
+}
+.logo a {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+}
+.side-menu {
+    margin-top: 65px;
+}
+.side-menu, .workbench .customer-quick-op-a span {
+    font-family: 'Microsoft Yahei',Tahoma,Arial;
+}
+.side-menu>ul>li {
+    height: 85px;
+}
+
+.side-menu li {
+    position: relative;
+}
+.side-menu>ul>li>a.order {
+    background-position: 34px 15px;
+}
+.main-wrap {
+    padding: 20px 0 20px 30px;
+    min-width: 840px;
+    margin-left: 96px;
+    max-width: 1404px;
+}
+.my-sin-btn{
+    color: #fff;
+    background-color: #00b8d2;
+    border-color: #00b8d2;
+}
+/*.row .btn-default:hover {
+    color: #fff;
+    background-color: #00b8d2;
+    border-color: #00b8d2;
+}*/
+.side-menu>ul>li>a {
+    background: url(../img/menu.png) no-repeat;
+    display: block;
+    text-align: center;
+    padding-top: 53px;
+    font-size: 14px;
+    color: #fff;
+    position: relative;
+}
+
+.side-menu>ul>li>a.product {
+    background-position: 33px -165px;
+}
+.side-menu>ul>li>a.pay {
+    background-position: 33px -506px;
+}
+.side-menu>ul>li>a.promotion {
+    background-position: 34px -257px;
+}
+.side-menu>ul>li>a.message {
+    background-position: 34px -343px;
+}
+.header_wrap_manage {
+    padding: 0 0 0 30px;
+    max-width: 1404px;
+    word-wrap: none;
+}
+#subLogo {
+    float: left;
+    height: 40px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.r-wrap {
+    margin-left: 96px;
+    max-width: 1404px;
+}
+
+.header_manage h2 {
+    color: #555;
+    display: inline-block;
+    font-weight: 400;
+}
+.header_manage {
+    border-bottom: 1px solid #dbdee1;
+    height: 60px;
+    background-color: #FFF;
+}
+.header_manage .h2-spec, .header_manage h2 {
+    font-family: 'Microsoft Yahei',Tahoma,Arial;
+    font-size: 16px;
+    float: left;
+    line-height: 60px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.header_manage h2 {
+    color: #555;
+    display: inline-block;
+    font-weight: 400;
+}
+
+.header_manage .h2-spec, .header_manage h2 {
+    font-family: 'Microsoft Yahei',Tahoma,Arial;
+    font-size: 16px;
+    float: left;
+    line-height: 60px;
+}
+.header_manage .h2-spec {
+    margin-left: 7px;
+}
+.header_manage .h2-spec, .header_manage h2 {
+    font-family: 'Microsoft Yahei',Tahoma,Arial;
+    font-size: 16px;
+    float: left;
+    line-height: 60px;
+}
+.header_manage .options {
+    float: right;
+}
+.header_wrap_manage .options .entry {
+    margin: 20px 18px 20px 5px;
+    border-radius: 2px;
+    background-color: #f9633e!important;
+    padding: 0 7px;
+    height: 20px;
+    line-height: 20px;
+    cursor: default;
+}
+
+.header_manage .options>li {
+    float: left;
+    height: 60px;
+    padding: 0 16px 0 44px;
+    line-height: 64px;
+    position: relative;
+    cursor: pointer;
+    color: #787878;
+}
+.header_wrap_manage .options .entry a {
+    color: #fff;
+}
+.header_manage .options a {
+    display: inline-block;
+}
+.search-box {
+    margin-left: 460px;
+    max-width: 1004px;
+    height: 48px;
+    overflow: hidden;
+    margin-top: 5px;
+    z-index: 10;
+}
+
+.map, .search-box {
+    position: relative;
+}
+.search-con {
+    width: 390px;
+    position: absolute;
+    top: 15px;
+    height: 32px;
+    right: 20px;
+}
+.search-con .advance-search-link {
+    width: 30px;
+    height: 30px;
+    line-height: 15px;
+    display: block;
+    float: right;
+}
+.ui-combo-wrap {
+    position: relative;
+    height: 30px;
+    background-color: #fff;
+    border: 1px solid #d6dee3;
+    color: #555;
+    overflow: hidden;
+    top: 1px;
+
+}
+.ui-combo-wrap, .ui-combo-wrap-mini, .ui-combo-wrap-page {
+    display: inline-block;
+    vertical-align: middle;
+    zoom: 1;
+}
+.search-con .search {
+    width: 228px;
+    margin-left: -5px;
+    z-index: 1;
+    height: 30px;
+}
+
+.ui-datepicker-inp, .ui-input {
+    padding: 5px 12px;
+    height: 20px;
+    vertical-align: middle;
+}
+.ui-datepicker-inp, .ui-input, .ui-textarea {
+    line-height: 20px;
+    border: 1px solid #d6dee3;
+    color: #555;
+    font-family: verdana,'宋体','Microsoft Yahei',Tahoma,Arial;
+    font-size: 12px;
+    outline: 0;
+}
+.ui-search-ico {
+    background: url(../img/icon8.png) -110px 0 no-repeat;
+    width: 14px;
+    height: 0;
+    padding-top: 14px;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    margin-left: -25px;
+}
+.cb {
+    clear: both!important;
+}
+.header_manage {
+    border-bottom: 1px solid #dbdee1;
+    height: 60px;
+    background-color: #FFF;
+}
+.header_manage .options .cart i {
+    background: url(../img/headerv2.1.png) -81px -101px no-repeat;
+    top: 21px;
+}
+.header_manage .options .info i {
+    background: url(../img/headerv2.1.png) -1px -101px no-repeat;
+    top: 22px;
+}
+.header_manage .options .user i {
+    background: url(../img/headerv2.1.png) -21px -101px no-repeat;
+    top: 21px;
+}
+.header_manage .options .setting i {
+    background: url(../img/headerv2.1.png) -41px -101px no-repeat;
+    top: 22px;
+}
+.header_manage .options .headerService i {
+    background: url(../img/headerv2.1.png) -61px -101px no-repeat;
+    top: 21px;
+}
+.header_manage .options li i {
+    width: 19px;
+    height: 18px;
+    display: block;
+    position: absolute;
+    top: 20px;
+    left: 16px;
+}
+i {
+    font-style: normal;
+}
+.map {
+    line-height: 30px;
+    margin-bottom: 10px;
+    z-index: 9;
+}
+.map, .map a {
+    font-size: 14px;
+    color: #666;
+}
+.map, .search-box {
+    position: relative;
+}
+.ui-combo-wrap .input-txt {
+    padding: 5px 12px;
+    height: 30px;
+    line-height: 30px;
+    color: #555;
+    border: 0;
+    font-size: 12px;
+}
+
+.ui-combo-wrap .input-txt, .ui-combo-wrap-mini .input-txt, .ui-combo-wrap-page .input-txt {
+    font-family: verdana,'宋体','Microsoft Yahei',Tahoma,Arial;
+    outline: 0;
+    float: left;
+}
+.ui-combo-wrap .trigger {
+    float: left;
+    width: 16px;
+    height: 28px;
+    overflow: hidden;
+    background: url(../img/icon8.png) -47px 14px no-repeat;
+}
+/*列表的样式*/
+
+ .input_1 {
+     float: left;
+     margin-left: 39px;
+     width: 135px;
+     height: 33px;
+     overflow: hidden;
+     display: inline;
+ }
+
+.input_1 input {
+    float: left;
+    color: #666666;
+    margin-top: 9px;
+    border: 0px;
+}
+
+.input_2 {
+    float: left;
+    margin-left: 62px;
+    width: 120px;
+    height: 33px;
+    overflow: hidden;
+    display: inline;
+}
+
+.input_2 input {
+    float: left;
+    color: #666666;
+    margin-top: 9px;
+    border: 0px;
+}
+
+.input_3 {
+    float: left;
+    margin-left: 92px;
+    width: 102px;
+    height: 33px;
+    overflow: hidden;
+    display: inline;
+}
+
+.input_3 input {
+    float: left;
+    color: #666666;
+    margin-top: 9px;
+    border: 0px;
+}
+
+.diamond_content_bg {
+    clear: both;
+    /*width: 1180px;*/
+    height: auto;
+    background-color: #FFFFFF;
+    /*position: relative;*/
+    z-index: 0;
+}
+
+.searchBg {
+    /*width: 1180px;*/
+    height: 105px;
+}
+
+.searchBg_line {
+    width: 1180px;
+    height: 27px;
+    background: url('http://img.zbird.cn/ww3/diamond/searchBg_line.jpg') no-repeat center top;
+    display: none
+}
+
+.searchBg_1 {
+    float: left;
+    width: 2px;
+    height: 96px;
+    background: url('http://img.zbird.cn/ww3/diamond/searchBg_1.jpg');
+}
+
+.searchBg_2 {
+    /*float: left;*/
+    /*width: 1176px;*/
+    height: 96px;
+    border-top: 1px solid #CCCCCC;
+    /*position: relative;*/
+    z-index: 2;
+}
+
+.searchCommon, .searchMore {
+    clear: both;
+    /*width: 1180px;*/
+    height: 30px;
+    cursor: pointer;
+    border-top: 1px solid #e1e1e1;
+    position: relative;
+    z-index: 0;
+    color: #666;
+}
+
+.searchCommon span, .searchCommon_hover span, .searchMore span, .searchMore_hover span {
+    display: inline-block;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #dfdfdf;
+    border-right: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+    line-height: 29px;
+    height: 29px;
+    text-align: center;
+    width: 130px;
+    margin-top: -1px;
+    font-size: 12px;
+    font-family: Arial, "宋体";
+}
+
+.searchCommon_hover, .searchMore_hover {
+    clear: both;
+    width: 1180px;
+    height: 30px;
+    cursor: pointer;
+    border-top: 1px solid #e1e1e1;
+    position: relative;
+    z-index: 0;
+    color: #ff8a81;
+}
+
+.searchPrice {
+    float: right;
+    width: 544px;
+    height: 52px;
+    margin: 46px 0px 0px 0;
+    position: relative
+}
+
+.searchPrice_borderL {
+    width: 100px;
+    height: 24px;
+    background: url('http://img.zbird.cn/ww3/diamond/searchPrice_border.jpg') no-repeat left top;
+    position: absolute;
+    left: 61px;
+    top: -16px;
+    z-index: 5;
+    font-size: 14px;
+    color: #333333;
+    line-height: 24px;
+    text-align: left;
+    text-indent: 0.3em;
+    border: none;
+}
+
+.searchPrice_borderR {
+    width: 100px;
+    height: 24px;
+    background: url('http://img.zbird.cn/ww3/diamond/searchPrice_border.jpg') no-repeat left top;
+    position: absolute;
+    left: 438px;
+    top: -16px;
+    z-index: 5;
+    font-size: 14px;
+    color: #333333;
+    line-height: 24px;
+    text-align: left;
+    text-indent: 0.3em;
+    border: none;
+}
+
+.searchWeight_borderL {
+    width: 100px;
+    height: 24px;
+    background: url('http://img.zbird.cn/ww3/diamond/searchWeight_border.jpg') no-repeat left top;
+    position: absolute;
+    left: 61px;
+    top: -16px;
+    z-index: 5;
+    font-size: 14px;
+    color: #333333;
+    line-height: 24px;
+    text-align: left;
+    text-indent: 0.3em;
+    border: none;
+}
+
+.searchWeight_borderR {
+    width: 100px;
+    height: 24px;
+    background: url('http://img.zbird.cn/ww3/diamond/searchWeight_border.jpg') no-repeat left top;
+    position: absolute;
+    left: 438px;
+    top: -16px;
+    z-index: 5;
+    font-size: 14px;
+    color: #333333;
+    line-height: 24px;
+    text-align: left;
+    text-indent: 0.3em;
+    border: none;
+}
+
+.searchPriceImg {
+    float: left;
+    width: 60px;
+    height: 14px;
+    margin-top: 18px;
+    text-align: left;
+    color: #000;
+}
+
+.searchPriceSlider {
+    float: left;
+    /*width: 480px;*/
+    height: 5px;
+    margin: 15px 0px 0px 0;
+}
+
+.searchPriceInput_1 {
+    float: left;
+    width: 190px;
+    height: 33px;
+    margin: 9px 0px 0px 28px;
+    background: url('http://img.zbird.cn/ww3/diamond/pricey.jpg');
+}
+
+.searchPriceInput_1 input {
+    float: left;
+    color: #666666;
+    margin-top: 9px;
+    margin-left: 30px;
+    border: 0px;
+}
+
+.searchPriceInput_2 {
+    float: left;
+    width: 190px;
+    height: 33px;
+    margin: 9px 0px 0px 0px;
+    background: url('http://img.zbird.cn/ww3/diamond/pricey.jpg');
+}
+
+.searchPriceInput_2 input {
+    float: left;
+    color: #666666;
+    margin-top: 9px;
+    margin-left: 30px;
+    border: 0px;
+}
+
+.searchWeightInput_1 {
+    float: left;
+    width: 190px;
+    height: 33px;
+    margin: 9px 0px 0px 28px;
+    background: url('http://img.zbird.cn/ww3/diamond/ct.jpg');
+}
+
+.searchWeightInput_1 input {
+    float: left;
+    color: #666666;
+    margin-top: 9px;
+    margin-left: 5px;
+    border: 0px;
+}
+
+.searchWeightInput_2 {
+    float: left;
+    width: 190px;
+    height: 33px;
+    margin: 9px 0px 0px 0px;
+    background: url('http://img.zbird.cn/ww3/diamond/ct.jpg');
+}
+
+.searchWeightInput_2 input {
+    float: left;
+    color: #666666;
+    margin-top: 9px;
+    margin-left: 5px;
+    border: 0px;
+}
+
+.hyphen {
+    float: left;
+    width: 28px;
+    height: 3px;
+    margin: 15px 0px 0px 0px;
+    color: #B1B1B1;
+}
+
+.searchPriceSliderLong {
+    float: left;
+    width: 422px;
+    height: 16px;
+    margin: -5.5px 0px 0px -8px;
+}
+
+.sliderPrice_1 {
+    float: left;
+    width: 16px;
+    height: 16px;
+    background: url('http://img.zbird.cn/ww3/diamond/slider.png');
+    cursor: pointer;
+    position: relative;
+    left: 0px;
+    z-index: 9;
+}
+
+.sliderPriceColor {
+    float: left;
+    width: 390px;
+    height: 5px;
+    background-color: #FF8A81;
+    margin-top: 5.5px;
+    position: relative;
+    left: 0px;
+    z-index: 8;
+}
+
+.sliderPrice_2 {
+    float: right;
+    width: 16px;
+    height: 16px;
+    background: url('http://img.zbird.cn/ww3/diamond/slider.png');
+    cursor: pointer;
+    position: relative;
+    right: 0px;
+    z-index: 9;
+}
+
+.searchPriceColum {
+    clear: both;
+    float: left;
+    width: 406px;
+    height: 15px;
+    margin-left: 70px;
+}
+
+.searchPriceColum ul li {
+    float: left;
+    font-family: Arial;
+    font-size: 11px;
+    color: #B3B3B3;
+}
+
+.searchWeight {
+    float: left;
+    width: 552px;
+    height: 52px;
+    margin: 46px 0 0 0;
+    position: relative;
+}
+
+.searchWeightImg {
+    float: left;
+    width: 60px;
+    height: 14px;
+    margin: 18px 0px 0px 0;
+    text-align: left;
+    color: #000;
+}
+
+.searchWeightSlider {
+    float: left;
+    width: 480px;
+    height: 5px;
+    margin: 15px 0px 0px 0;
+}
+
+.sliderWeight_1 {
+    float: left;
+    width: 16px;
+    height: 16px;
+    background: url('http://img.zbird.cn/ww3/diamond/slider.png');
+    cursor: pointer;
+    position: relative;
+    left: 0px;
+    z-index: 9;
+}
+
+.sliderWeightColor {
+    float: left;
+    width: 390px;
+    height: 5px;
+    background-color: #FF8A81;
+    margin-top: 5.5px;
+    position: relative;
+    left: 0px;
+    z-index: 8;
+}
+
+.sliderWeight_2 {
+    float: right;
+    width: 16px;
+    height: 16px;
+    background: url('http://img.zbird.cn/ww3/diamond/slider.png');
+    cursor: pointer;
+    position: relative;
+    right: 0px;
+    z-index: 9;
+}
+
+.searchBgMore {
+    width: 1280px;
+    height: auto;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.f_searchshap li {
+    margin: 0 7px;
+}
+
+/*和diy钻石列表一致的css*/
+.f_searchColor, .searchClarityName, .searchPointName, .searchCutName, .searchLetterName {
+    text-align: left;
+    margin-top: 13px;
+}
+
+.f_searchColor li, .searchClarityName li {
+    width: 57px;
+}
+
+.searchPointName li {
+    width: 238px;
+}
+
+.searchCutName li {
+    width: 117px;
+}
+
+.searchLetterName li {
+    width: 237px;
+}
+
+.searchfluorName li {
+    width: 93px;
+}
+
+.f_searchColor li, .searchClarityName li, .searchPointName li, .searchCutName li, .searchLetterName li, .searchfluorName li {
+    background: url(http://img.zbird.cn/ww3/diamond/five_repeat.jpg) left top repeat-x;
+    padding-top: 5px;
+    height: 24px;
+    line-height: 24px;
+    color: #000;
+    font-size: 12px;
+    font-family: Arial, "宋体";
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.f_searchColor li:hover, .searchClarityName li:hover, .searchPointName li:hover, .searchCutName li:hover, .searchLetterName li:hover, .searchfluorName li:hover,
+.f_searchColor li.colorName_D_hover, .f_searchColor li.colorName_E_hover, .f_searchColor li.colorName_F_hover, .f_searchColor li.colorName_G_hover,
+.f_searchColor li.colorName_H_hover, .f_searchColor li.colorName_I_hover, .f_searchColor li.colorName_J_hover, .f_searchColor li.colorName_K_hover,
+.searchClarityName li.clearityName_FL_hover, .searchClarityName li.clearityName_IF_hover, .searchClarityName li.clearityName_VVS1_hover,
+.searchClarityName li.clearityName_VVS2_hover, .searchClarityName li.clearityName_VS1_hover, .searchClarityName li.clearityName_VS2_hover,
+.searchClarityName li.clearityName_SI1_hover, .searchClarityName li.clearityName_SI2_hover,
+.searchPointName li.searchPoint_15_hover, .searchPointName li.searchPoint_16_hover,
+.searchCutName li.polishName_Ideal_hover, .searchCutName li.polishName_EX_hover, .searchCutName li.polishName_VG_hover, .searchCutName li.polishName_GD_hover,
+.searchCutName li.cutName_Ideal_hover, .searchCutName li.cutName_EX_hover, .searchCutName li.cutName_VG_hover, .searchCutName li.cutName_GD_hover,
+.searchCutName li.symmetryName_Ideal_hover, .searchCutName li.symmetryName_EX_hover, .searchCutName li.symmetryName_VG_hover, .searchCutName li.symmetryName_GD_hover,
+.searchLetterName li.cert_state_gia_hover, .searchLetterName li.cert_state_ags_hover, .searchLetterName li.cert_state_igi_hover,
+.searchfluorName li.searchfluorName_n_hover, .searchfluorName li.searchfluorName_f_hover, .searchfluorName li.searchfluorName_m_hover, .searchfluorName li.searchfluorName_s_hover,
+.searchfluorName li.searchfluorName_vs_hover {
+    background: url(http://img.zbird.cn/ww3/diamond/five_repeat_hover.jpg) left top repeat-x;
+}
+
+.web_reset {
+    background: #fff;
+    text-align: right;
+    position: absolute;
+    right: 0;
+    top: -8px;
+    display: inline-block;
+    padding-left: 3px;
+}
+
+/*end*/
+.searchColorSlider {
+    float: left;
+    width: 406px;
+    height: 5px;
+    margin: 4.5px 0px 0px 28px;
+    background: url('http://img.zbird.cn/ww3/diamond/searchColorSlider.jpg');
+}
+
+.searchColorSliderLong {
+    float: left;
+    width: 422px;
+    height: 16px;
+    margin: -5.5px 0px 0px -8px;
+}
+
+.sliderColor_1 {
+    float: left;
+    width: 16px;
+    height: 16px;
+    background: url('http://img.zbird.cn/ww3/diamond/slider.png');
+    cursor: pointer;
+    position: relative;
+    left: 0px;
+    z-index: 9;
+}
+
+.sliderColor_2 {
+    float: right;
+    width: 16px;
+    height: 16px;
+    background: url('http://img.zbird.cn/ww3/diamond/slider.png');
+    cursor: pointer;
+    position: relative;
+    right: 0px;
+    z-index: 9;
+}
+
+.searchColorColum {
+    clear: both;
+    float: left;
+    width: 406px;
+    height: 15px;
+    margin-left: 70px;
+}
+
+.searchColorColum ul li {
+    float: left;
+    font-family: Arial;
+    font-size: 11px;
+    color: #B3B3B3;
+    width: 8px;
+}
+
+.searchClarity {
+    float: left;
+    width: 555px;
+}
+
+.searchClarityImg {
+    float: left;
+    width: 60px;
+    height: 14px;
+    text-align: left;
+}
+
+.searchClarityName {
+    float: left;
+    width: 480px;
+    height: 33px;
+}
+
+.diamond_text em {
+    display: block;
+    width: 378px;
+    padding: 0 175px;
+    position: absolute;
+    top: 98px;
+    left: 226px;
+    font-style: normal;
+    font-family: Arial, "宋体";
+    line-height: 24px;
+}
+
+.diamondList_tag {
+    clear: both;
+    float: left;
+    width: 1180px;
+    height: 44px;
+    position: relative;
+    z-index: 5;
+    border-bottom: 1px solid #dedede;
+}
+
+.tag_gn {
+    float: left;
+    width: 178px;
+    height: 48px;
+    background: url('http://img.zbird.cn/ww3/diamond/tag_gn.jpg');
+    background-position: right top;
+    cursor: pointer;
+    margin: 2px 0px 0px 411px;
+    position: relative
+}
+
+.tag_gn_hover {
+    float: left;
+    width: 178px;
+    height: 48px;
+    background: url('http://img.zbird.cn/ww3/diamond/tag_gn.jpg');
+    background-position: left top;
+    cursor: pointer;
+    margin: 2px 0px 0px 411px;
+    position: relative
+}
+
+.tag_gb {
+    float: left;
+    width: 177px;
+    height: 48px;
+    background: url('http://img.zbird.cn/ww3/diamond/tag_gb.jpg');
+    background-position: right top;
+    cursor: pointer;
+    margin: 2px 0px 0px 0px;
+    position: relative
+}
+
+.tag_gb_hover {
+    float: left;
+    width: 177px;
+    height: 48px;
+    background: url('http://img.zbird.cn/ww3/diamond/tag_gb.jpg');
+    background-position: left top;
+    cursor: pointer;
+    margin: 2px 0px 0px 0px;
+    position: relative
+}
+
+.tag_gn_number {
+    width: 60px;
+    height: 25px;
+    color: #f6827a;
+    font-size: 12px;
+    font-weight: bold;
+    padding-left: 5px;
+}
+
+.diamond_tag {
+    height: 37px;
+    position: absolute;
+    right: 0px;
+    top: 19px;
+}
+
+.diamond_tag ul {
+    margin-top: 5px;
+}
+
+.diamond_tag ul li {
+    float: left;
+    font-family: Arial, "宋体";
+    color: #ff8a81;
+    height: 31px;
+    padding-left: 5px;
+}
+
+.diamond_tag ul li:hover {
+    height: 19px;
+}
+
+.diamond_tag ul li.diamond_tag_selected {
+    height: 19px;
+    color: #FFFFFF;
+}
+
+.diamond_tag ul li.diamond_tag_selected a {
+    background: #ff8b81;
+    color: #FFFFFF;
+}
+
+.diamond_tag ul li a {
+    padding-left: 15px;
+    padding-right: 15px;
+    display: inline-block;
+    height: 25px;
+    line-height: 25px;
+    background: #f1f1f1;
+    color: #666;
+    border-radius: 3px;
+}
+
+.diamond_tag ul li a:hover {
+    background: #ff8b81;
+    color: #FFFFFF;
+}
+
+.diamondlist_order {
+    clear: both;
+    width: 1180px;
+    position: relative;
+    z-index: 5;
+    overflow: hidden;
+}
+
+.web_diam_lst .diamondList_tag {
+    border-bottom: 1px solid #dedede;
+    margin-top: 5px;
+}
+
+.web_diam_lst .tag_gn, .web_diam_lst .tag_gb {
+    background: none;
+    line-height: 42px;
+    height: 42px;
+    font-size: 12px;
+    color: #000;
+    font-family: Arial, "宋体";
+}
+
+.web_diam_lst .tag_gb_hover, .web_diam_lst .tag_gn_hover {
+    background: none;
+    border-bottom: 2px solid #f5827b;
+    height: 42px;
+    line-height: 42px;
+    font-size: 12px;
+    color: #000;
+    font-family: Arial, "宋体";
+}
+
+.web_diam_lst #diam_hr_line {
+    height: 16px;
+    width: 0;
+    border-right: 1px solid #ccc;
+    display: inline-block;
+    float: left;
+    margin-top: 18px;
+}
+
+.diamond_tag li i {
+    font-family: Arial, "宋体";
+    color: #ccc;
+}
+
+.diamond_tag li:last-of-type i {
+    color: #fff;
+}
+
+/*详情页相近钻石列表样式*/
+
+.diamond_con04 .diamondList_tag02 {
+    clear: both;
+    float: left;
+    width: 1180px;
+}
+
+.diamond_con04 .diamondResultListOut {
+    clear: both;
+    float: left;
+    width: 1180px;
+    height: 60px;
+    background-color: #fbfbfb;
+    margin-top: 8px;
+    margin-left: 0 !important;
+    display: table !important;
+}
+
+.diamond_con04 .diamondResultListHover {
+    clear: both;
+    float: left;
+    width: 1180px;
+    height: 60px;
+    background-color: #fef9f7;
+    margin-top: 8px;
+    cursor: pointer;
+    margin-left: 0 !important;
+}
+
+/*end*/
+/*.diamondlist_order_price{float:left;width:55px;height:28px;margin:16px 0px 0px 33px;background:url('http://img.zbird.cn/ww3/diamond/order_price.jpg');background-position:0px -28px;cursor:pointer;}
+        .diamondlist_order_price_hover{background:url('http://img.zbird.cn/ww3/diamond/jiage_down_click.png') #ffffff no-repeat left top;}
+        .diamondlist_order_weight{float:left;width:55px;height:28px;margin:16px 0px 0px 0px;background:url('http://img.zbird.cn/ww3/diamond/order_weight.jpg');background-position:0px -28px;cursor:pointer;}
+        .diamondlist_order_weight_hover{float:left;width:55px;height:28px;margin:16px 0px 0px 0px;background:url('http://img.zbird.cn/ww3/diamond/order_weight.jpg');background-position:55px -28px;cursor:pointer;}
+        .diamondlist_order_color{float:left;width:55px;height:28px;margin:16px 0px 0px 0px;background:url('http://img.zbird.cn/ww3/diamond/order_color.jpg');background-position:0px -28px;cursor:pointer;}
+        .diamondlist_order_color_hover{float:left;width:55px;height:28px;margin:16px 0px 0px 0px;background:url('http://img.zbird.cn/ww3/diamond/order_color.jpg');background-position:55px -28px;cursor:pointer;}
+        .diamondlist_order_clarity{float:left;width:54px;height:28px;margin:16px 0px 0px 0px;background:url('http://img.zbird.cn/ww3/diamond/order_clarity.jpg');background-position:0px -28px;cursor:pointer;}
+        .diamondlist_order_clarity_hover{float:left;width:54px;height:28px;margin:16px 0px 0px 0px;background:url('http://img.zbird.cn/ww3/diamond/order_clarity.jpg');background-position:54px -28px;cursor:pointer;}*/
+.diamondCount {
+    height: 50px;
+    position: absolute;
+    right: 42px;
+    top: -55px;
+}
+
+.diamondCount_1 {
+    float: left;
+    height: 50px;
+    line-height: 50px;
+    color: #666666;
+}
+
+.diamondCount_1 span {
+    font-family: Arial, "宋体";
+    font-size: 14px;
+    color: #ad0909;
+    line-height: 60px;
+    font-weight: bold
+}
+
+.diamondList {
+    clear: both;
+    width: 1180px;
+}
+
+.diamondResultList {
+    clear: both;
+    width: 1180px;
+    height: auto;
+    margin: 0 auto
+}
+
+/***********jslider_begin*************/
+
+.jslider {
+    display: block;
+    width: 100%;
+    height: 1em;
+    position: relative;
+    top: .6em;
+    font-family: Arial, "宋体", sans-serif
+}
+
+.jslider table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 0
+}
+
+.jslider td, .jslider th {
+    padding: 0;
+    vertical-align: top;
+    text-align: left;
+    border: 0
+}
+
+.jslider table, .jslider table tr, .jslider table tr td {
+    width: 100%;
+    vertical-align: top
+}
+
+.jslider .jslider-bg {
+    position: relative
+}
+
+.jslider .jslider-bg i {
+    height: 5px;
+    position: absolute;
+    font-size: 0;
+    top: 0
+}
+
+.jslider .jslider-bg .l {
+    width: 0;
+    background-position: 0 0;
+    left: 0
+}
+
+.jslider .jslider-bg .f {
+    width: 100%;
+    left: 0;
+    background-repeat: repeat-x;
+    background-position: 0 -20px
+}
+
+.jslider .jslider-bg .r {
+    width: 0;
+    left: 90%;
+    background-position: right 0
+}
+
+.jslider .jslider-bg .v {
+    position: absolute;
+    width: 60%;
+    left: 20%;
+    top: 0;
+    height: 5px;
+    background-repeat: repeat-x;
+    background-position: 0 -40px
+}
+
+.jslider .jslider-pointer {
+    width: 16px;
+    height: 16px;
+    background-position: 0 -58px;
+    position: absolute;
+    left: 20%;
+    top: -6px;
+    margin-left: -6px;
+    cursor: pointer;
+    cursor: hand
+}
+
+.jslider .jslider-pointer-hover {
+    background-position: 0 -58px
+}
+
+.jslider .jslider-pointer-to {
+    left: 80%
+}
+
+.jslider .jslider-label {
+    font-size: 12px;
+    line-height: 12px;
+    color: black;
+    opacity: .4;
+    white-space: nowrap;
+    padding: 0 2px;
+    position: absolute;
+    top: -18px;
+    left: 0
+}
+
+.jslider .jslider-label-to {
+    left: auto;
+    right: 0
+}
+
+.jslider .jslider-value {
+    font-size: 12px;
+    white-space: nowrap;
+    padding: 1px 2px 0;
+    position: absolute;
+    top: -19px;
+    left: 20%;
+    line-height: 12px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -o-border-radius: 2px;
+    border-radius: 2px
+}
+
+.jslider .jslider-value-to {
+    left: 80%
+}
+
+.jslider .jslider-label small, .jslider .jslider-value small {
+    position: relative;
+    top: -0.4em
+}
+
+.jslider .jslider-scale {
+    position: relative;
+    top: 9px
+}
+
+.jslider .jslider-scale span {
+    position: absolute;
+    height: 5px;
+    font-size: 0
+}
+
+.jslider .jslider-scale ins {
+    font-size: 12px;
+    text-decoration: none;
+    position: absolute;
+    left: 0;
+    top: 5px;
+    color: #bdbdbd;
+    width: 25px
+}
+
+.jslider-single .jslider-pointer-to, .jslider-single .jslider-value-to, .jslider-single .jslider-bg .v, .jslider-limitless .jslider-label {
+    display: none
+}
+
+.jslider_plastic .jslider-bg i, .jslider_plastic .jslider-pointer {
+    background-image: url('http://img.zbird.cn/ww3/diamond/jslider.plastic.png')
+}
+
+/***********jslider_end*************/
+
+.diamondOtherListImg i {
+    display: block;
+    font-style: normal;
+    padding-top: 2px;
+    font-family: Arial, "宋体";
+    font-size: 12px;
+    color: #999;
+}
+
+/***分页***/
+.page_boder {
+    width: 276px;
+    height: 35px;
+    overflow: hidden;
+    float: right;
+    clear: both;
+    margin-bottom: 22px;
+    margin-top: 25px;
+    font-weight: bold;
+}
+
+.page_boder .current {
+    color: #ff8a81
+}
+
+.page_boder_text {
+    float: left;
+    width: 123px;
+    height: 31px;
+    line-height: 31px;
+    text-align: center
+}
+
+.page_boder_text_2 {
+    font-family: Arial, "宋体", Helvetica, sans-serif;
+    float: left;
+    width: 60px;
+    height: 31px;
+    line-height: 31px;
+    text-align: center
+}
+
+.page_line {
+    background: url('http://img.zbird.cn/ww3/weddings/page_line.png') no-repeat right center
+}
+
+.page_boder_a {
+    display: block;
+    float: left;
+    width: 33px;
+    height: 33px;
+    background: url('http://img.zbird.cn/ww3/weddings/page_arrow.png') no-repeat center center
+}
+
+.page_boder_a_left {
+    display: block;
+    float: left;
+    width: 33px;
+    height: 33px;
+    margin-right: 10px;
+    background: url('http://img.zbird.cn/ww3/diamond/page_boder_a_left_b.jpg') no-repeat left top
+}
+
+.page_boder_a_left:hover {
+    background: url('http://img.zbird.cn/ww3/diamond/page_boder_a_left_b.jpg') no-repeat -33px top
+}
+
+.page_boder_a_right {
+    display: block;
+    float: left;
+    width: 33px;
+    height: 33px;
+    background: url('http://img.zbird.cn/ww3/diamond/page_boder_a_right_b.jpg') no-repeat left top
+}
+
+.page_boder_a_right:hover {
+    background: url('http://img.zbird.cn/ww3/diamond/page_boder_a_right_b.jpg') no-repeat right top
+}
+
+.page_boder_a_number {
+    display: block;
+    float: left;
+    width: 31px;
+    height: 31px;
+    text-align: center;
+    line-height: 31px;
+    font-size: 13px;
+    margin-right: 8px;
+    font-family: Arial, "宋体";
+    border: 1px solid #dedfe0
+}
+
+.page_boder_a_last_number {
+    display: block;
+    float: left;
+    width: 31px;
+    height: 31px;
+    text-align: center;
+    line-height: 31px;
+    font-size: 13px;
+    font-family: Arial, "宋体", Helvetica, sans-serif;
+    border: 1px solid #dedfe0
+}
+
+.page_boder_a_ellipsis {
+    display: block;
+    float: left;
+    width: 15px;
+    height: 15px;
+    text-align: center;
+    line-height: 32px;
+    font-size: 13px;
+    margin-right: 8px;
+    font-family: Arial, "宋体", Helvetica, sans-serif
+}
+
+.page_boder_a:hover {
+    background: url('http://img.zbird.cn/ww3/weddings/page_arrow_pink.png') no-repeat center center
+}
+
+.page_boder_a_2 {
+    display: block;
+    float: left;
+    margin-left: 4px;
+    color: #666;
+    width: 52px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    border: 1px solid #dedfe0
+}
+
+.page_boder a:hover {
+    color: #ff8a81
+}
+
+.page_border_span {
+    color: #900;
+    font-weight: bold;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-family: Arial, "宋体", Helvetica, sans-serif
+}
+
+.page_list {
+    width: 946px;
+    height: auto;
+    overflow: hidden;
+    margin-top: 11px;
+    border-top: 1px solid #ccc
+}
+
+.page_img_bg {
+    width: 306px;
+    height: 306px;
+    position: absolute;
+    cursor: pointer;
+    left: 0;
+    top: 0;
+    z-index: 399;
+    display: block;
+    background: url('http://img.zbird.cn/ww3/weddings/page_img_bg.png') no-repeat left top
+}
+
+.page_bg {
+    width: 306px;
+    height: 306px;
+    float: left;
+    text-align: center;
+    margin-left: 9px;
+    margin-top: 11px;
+    position: relative;
+    overflow: hidden;
+    z-index: 0
+}
+
+.page_text_1 {
+    width: 250px;
+    height: 20px;
+    color: #8d8c8c;
+    line-height: 20px;
+    position: absolute;
+    left: 32px;
+    top: 235px;
+    text-align: left;
+    z-index: 501;
+    font-family: Arial, "宋体"
+}
+
+.page_text_1 span {
+    font-family: Arial, "宋体", Helvetica, sans-serif
+}
+
+.page_text_2 {
+    font-family: Arial, "宋体", Helvetica, sans-serif;
+    width: 70px;
+    height: 20px;
+    color: #ff8a81;
+    font-size: 15px;
+    line-height: 20px;
+    position: absolute;
+    left: 231px;
+    top: 235px;
+    text-align: center;
+    z-index: 500
+}
+
+.page_text_2 span {
+    font-size: 12px;
+    font-family: "微软雅黑"
+}
+
+.page_text_3 {
+    width: 80px;
+    height: 31px;
+    color: #999;
+    font-size: 13px;
+    font-family: Arial, "宋体";
+    position: absolute;
+    left: 88px;
+    top: 270px;
+    z-index: 502
+}
+
+.page_text_3 span {
+    color: #900;
+    font-family: Arial, "宋体", Helvetica, sans-serif;
+    font-weight: bold;
+    padding-left: 4px
+}
+
+.page_img_1 {
+    width: 306px;
+    height: 210px;
+    position: absolute;
+    text-align: center;
+    left: 0;
+    top: 0;
+    z-index: 2
+}
+
+.page_img_2 {
+    width: 306px;
+    height: 210px;
+    position: absolute;
+    text-align: center;
+    left: 0;
+    top: 0;
+    z-index: 1
+}
+
+.page_img_opacity {
+    width: 100%;
+    height: auto;
+    overflow: hidden
+}
+
+.page_img_opacity_border {
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 3;
+}
+
+/***排序***/
+.order_border {
+    width: 937px;
+    height: 33px;
+    overflow: hidden;
+    clear: both
+}
+
+.order_border .order {
+    width: auto;
+    height: 33px;
+    overflow: hidden;
+    float: left;
+    margin-left: 15px
+}
+
+.order_default {
+    width: 53px;
+    height: 29px;
+    background: #fff;
+    float: left;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-top-color: #e2e1e1;
+    border-bottom-color: #e2e1e1;
+    border-left-color: #e2e1e1;
+    overflow: hidden;
+    line-height: 26px
+}
+
+.order_default a {
+    padding-left: 11px;
+    width: 42px;
+    height: 100%;
+    text-align: left;
+    display: block;
+    color: #666
+}
+
+.order_default_a {
+    border-left: 1px solid #f7f7f7;
+    border-right: 1px solid #f7f7f7;
+    width: 44px;
+    height: 30px;
+    padding-right: 10px;
+    line-height: 30px;
+    color: #666;
+    display: block;
+    float: left;
+    font-style: normal;
+    cursor: pointer;
+}
+
+.f_pic_lst {
+    background: url(http://img.zbird.cn/ww3/diamond/diam_bgs.jpg) no-repeat;
+    width: 1180px;
+    height: 1137px;
+    clear: both;
+    position: relative;
+    z-index: 0;
+}
+
+.f_pic_lst_01 {
+    width: 459px;
+    height: 680px;
+    top: 0;
+    right: 0;
+    position: absolute;
+    z-index: 0;
+    display: block;
+}
+
+.f_pic_lst_02 {
+    width: 705px;
+    height: 443px;
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    left: 0;
+    display: block;
+    background: url(http://img.zbird.cn/ww3/diamond/diam_bgs.gif) no-repeat;
+}
+
+.f_pic_lst_03 {
+    width: 705px;
+    height: 60px;
+    padding-top: 98px;
+    position: absolute;
+    z-index: 0;
+    top: 475px;
+    left: 0;
+    display: block;
+    font-family: Arial, "宋体";
+    color: #000;
+    letter-spacing: 2px;
+}
+
+.f_pic_lst_03 a {
+    color: #000;
+    font-size: 14px;
+    display: inline-block;
+    padding: 0 12px;
+}
+
+.f_pic_lst_03 a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.f_pic_lst_04 {
+    width: 1180px;
+    height: 488px;
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    background: url(http://img.zbird.cn/ww3/diamond/diam_bgs2.jpg) no-repeat;
+}
+
+/***自定义滚动条***/
+.mCSB_container {
+    width: auto;
+    margin-right: 0;
+    overflow: hidden
+}
+
+.mCSB_container.mCS_no_scrollbar {
+    margin-right: 0
+}
+
+.mCS_disabled > .mCustomScrollBox > .mCSB_container.mCS_no_scrollbar, .mCS_destroyed > .mCustomScrollBox > .mCSB_container.mCS_no_scrollbar {
+    margin-right: 30px
+}
+
+.mCustomScrollBox > .mCSB_scrollTools {
+    width: 16px;
+    height: 100%;
+    top: 0;
+    right: 0
+}
+
+.mCSB_scrollTools .mCSB_draggerContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: auto
+}
+
+.mCSB_scrollTools a + .mCSB_draggerContainer {
+    margin: 20px 0
+}
+
+.mCSB_scrollTools .mCSB_draggerRail {
+    width: 2px;
+    height: 100%;
+    margin: 0 auto;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px
+}
+
+.mCSB_scrollTools .mCSB_dragger {
+    cursor: pointer;
+    width: 100%;
+    height: 30px;
+    left: 0;
+    top: 0
+}
+
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 4px;
+    height: 100%;
+    margin: 0 auto;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-align: center
+}
+
+.mCSB_scrollTools .mCSB_buttonUp, .mCSB_scrollTools .mCSB_buttonDown {
+    display: block;
+    position: relative;
+    height: 20px;
+    overflow: hidden;
+    margin: 0 auto;
+    cursor: pointer
+}
+
+.mCSB_scrollTools .mCSB_buttonDown {
+    top: 100%;
+    margin-top: -4px
+}
+
+.mCSB_horizontal > .mCSB_container {
+    height: auto;
+    margin-right: 0;
+    margin-bottom: 30px;
+    overflow: hidden
+}
+
+.mCSB_horizontal > .mCSB_container.mCS_no_scrollbar {
+    margin-bottom: 0
+}
+
+.mCS_disabled > .mCSB_horizontal > .mCSB_container.mCS_no_scrollbar, .mCS_destroyed > .mCSB_horizontal > .mCSB_container.mCS_no_scrollbar {
+    margin-right: 0;
+    margin-bottom: 30px
+}
+
+.mCSB_horizontal.mCustomScrollBox > .mCSB_scrollTools {
+    width: 100%;
+    height: 16px;
+    top: auto;
+    right: auto;
+    bottom: 0;
+    left: 0;
+    overflow: hidden
+}
+
+.mCSB_horizontal > .mCSB_scrollTools a + .mCSB_draggerContainer {
+    margin: 0 20px
+}
+
+.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%;
+    height: 2px;
+    margin: 7px 0;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px
+}
+
+.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger {
+    width: 30px;
+    height: 100%
+}
+
+.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 4px;
+    margin: 6px auto;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px
+}
+
+.mCSB_horizontal > .mCSB_scrollTools .mCSB_buttonLeft, .mCSB_horizontal > .mCSB_scrollTools .mCSB_buttonRight {
+    display: block;
+    position: relative;
+    width: 20px;
+    height: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    cursor: pointer;
+    float: left
+}
+
+.mCSB_horizontal > .mCSB_scrollTools .mCSB_buttonRight {
+    margin-left: -40px;
+    float: right
+}
+
+.mCustomScrollBox {
+    -ms-touch-action: none
+}
+
+.mCustomScrollBox > .mCSB_scrollTools {
+    opacity: .75;
+    filter: "alpha(opacity=75)";
+    -ms-filter: "alpha(opacity=75)"
+}
+
+.mCustomScrollBox:hover > .mCSB_scrollTools {
+    opacity: 1;
+    filter: "alpha(opacity=100)";
+    -ms-filter: "alpha(opacity=100)"
+}
+
+.mCSB_scrollTools .mCSB_draggerRail {
+    background: #000;
+    background: rgba(0, 0, 0, 0.4);
+    filter: "alpha(opacity=40)";
+    -ms-filter: "alpha(opacity=40)"
+}
+
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    background: #fff;
+    background: rgba(255, 255, 255, 0.75);
+    filter: "alpha(opacity=75)";
+    -ms-filter: "alpha(opacity=75)"
+}
+
+.mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(255, 255, 255, 0.85);
+    filter: "alpha(opacity=85)";
+    -ms-filter: "alpha(opacity=85)"
+}
+
+.mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(255, 255, 255, 0.9);
+    filter: "alpha(opacity=90)";
+    -ms-filter: "alpha(opacity=90)"
+}
+
+.mCSB_scrollTools .mCSB_buttonUp, .mCSB_scrollTools .mCSB_buttonDown, .mCSB_scrollTools .mCSB_buttonLeft, .mCSB_scrollTools .mCSB_buttonRight {
+}
+
+.mCSB_scrollTools .mCSB_buttonUp {
+    background-position: 0 0
+}
+
+.mCSB_scrollTools .mCSB_buttonDown {
+    background-position: 0 -20px
+}
+
+.mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: 0 -40px
+}
+
+.mCSB_scrollTools .mCSB_buttonRight {
+    background-position: 0 -56px
+}
+
+.mCSB_scrollTools .mCSB_buttonUp:hover, .mCSB_scrollTools .mCSB_buttonDown:hover, .mCSB_scrollTools .mCSB_buttonLeft:hover, .mCSB_scrollTools .mCSB_buttonRight:hover {
+    opacity: .75;
+    filter: "alpha(opacity=75)";
+    -ms-filter: "alpha(opacity=75)"
+}
+
+.mCSB_scrollTools .mCSB_buttonUp:active, .mCSB_scrollTools .mCSB_buttonDown:active, .mCSB_scrollTools .mCSB_buttonLeft:active, .mCSB_scrollTools .mCSB_buttonRight:active {
+    opacity: .9;
+    filter: "alpha(opacity=90)";
+    -ms-filter: "alpha(opacity=90)"
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_draggerRail {
+    background: #000;
+    background: rgba(0, 0, 0, 0.15)
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    background: #000;
+    background: rgba(0, 0, 0, 0.75)
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.85)
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCS-dark > .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.9)
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_buttonUp {
+    background-position: -80px 0
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_buttonDown {
+    background-position: -80px -20px
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: -80px -40px
+}
+
+.mCS-dark > .mCSB_scrollTools .mCSB_buttonRight {
+    background-position: -80px -56px
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 4px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.75);
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px
+}
+
+.mCS-light-2.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%;
+    height: 4px;
+    margin: 6px 0
+}
+
+.mCS-light-2.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 4px;
+    margin: 6px auto
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(255, 255, 255, 0.85)
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCS-light-2 > .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(255, 255, 255, 0.9)
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_buttonUp {
+    background-position: -32px 0
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_buttonDown {
+    background-position: -32px -20px
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: -40px -40px
+}
+
+.mCS-light-2 > .mCSB_scrollTools .mCSB_buttonRight {
+    background-position: -40px -56px
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+    background: #000;
+    background: rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 4px;
+    background: #000;
+    background: rgba(0, 0, 0, 0.75);
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px
+}
+
+.mCS-dark-2.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%;
+    height: 4px;
+    margin: 6px 0
+}
+
+.mCS-dark-2.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 4px;
+    margin: 6px auto
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.85)
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCS-dark-2 > .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.9)
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_buttonUp {
+    background-position: -112px 0
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_buttonDown {
+    background-position: -112px -20px
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: -120px -40px
+}
+
+.mCS-dark-2 > .mCSB_scrollTools .mCSB_buttonRight {
+    background-position: -120px -56px
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 6px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.75);
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px
+}
+
+.mCS-light-thick.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%;
+    height: 4px;
+    margin: 6px 0
+}
+
+.mCS-light-thick.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 6px;
+    margin: 5px auto
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(255, 255, 255, 0.85)
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCS-light-thick > .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(255, 255, 255, 0.9)
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_buttonUp {
+    background-position: -16px 0
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_buttonDown {
+    background-position: -16px -20px
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: -20px -40px
+}
+
+.mCS-light-thick > .mCSB_scrollTools .mCSB_buttonRight {
+    background-position: -20px -56px
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+    background: #000;
+    background: rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 6px;
+    background: #000;
+    background: rgba(0, 0, 0, 0.75);
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px
+}
+
+.mCS-dark-thick.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%;
+    height: 4px;
+    margin: 6px 0
+}
+
+.mCS-dark-thick.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 6px;
+    margin: 5px auto
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.85)
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCS-dark-thick > .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.9)
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_buttonUp {
+    background-position: -96px 0
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_buttonDown {
+    background-position: -96px -20px
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: -100px -40px
+}
+
+.mCS-dark-thick > .mCSB_scrollTools .mCSB_buttonRight {
+    background-position: -100px -56px
+}
+
+.mCS-light-thin > .mCSB_scrollTools .mCSB_draggerRail {
+    background: #fff;
+    background: rgba(255, 255, 255, 0.1)
+}
+
+.mCS-light-thin > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 2px
+}
+
+.mCS-light-thin.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%
+}
+
+.mCS-light-thin.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 2px;
+    margin: 7px auto
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_draggerRail {
+    background: #000;
+    background: rgba(0, 0, 0, 0.15)
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 2px;
+    background: #000;
+    background: rgba(0, 0, 0, 0.75)
+}
+
+.mCS-dark-thin.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%
+}
+
+.mCS-dark-thin.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 2px;
+    margin: 7px auto
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.85)
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCS-dark-thin > .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.9)
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_buttonUp {
+    background-position: -80px 0
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_buttonDown {
+    background-position: -80px -20px
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: -80px -40px
+}
+
+.mCS-dark-thin > .mCSB_scrollTools .mCSB_buttonRight {
+    background-position: -80px -56px
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_draggerRail {
+    background: #fff
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 5px;
+    background: #ccc
+}
+
+.mCS-xiaoniao.mCSB_horizontal > .mCSB_scrollTools .mCSB_draggerRail {
+    width: 100%
+}
+
+.mCS-xiaoniao.mCSB_horizontal > .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 100%;
+    height: 5px;
+    margin: 7px auto
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.85)
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_dragger:active .mCSB_dragger_bar, .mCS-xiaoniao > .mCSB_scrollTools .mCSB_dragger.mCSB_dragger_onDrag .mCSB_dragger_bar {
+    background: rgba(0, 0, 0, 0.9)
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_buttonUp {
+    background-position: -80px 0
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_buttonDown {
+    background-position: -80px -20px
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_buttonLeft {
+    background-position: -80px -40px
+}
+
+.mCS-xiaoniao > .mCSB_scrollTools .mCSB_buttonRight {
+    background-position: -80px -56px
+}
+
+.custom_select_border {
+    width: 151px;
+    height: 119px;
+    overflow: hidden;
+    position: absolute;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    top: 195px;
+    left: 642px;
+    border: 1px solid #e1e1e1;
+    background: #FFF;
+    z-index: 1
+}
+
+.opacity {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.custom_select_border_zhezhao {
+    width: 153px;
+    height: 21px;
+    overflow: auto;
+    position: absolute;
+    top: 196px;
+    left: 642px;
+    opacity: 1;
+    background: #fff;
+    filter: alpha(opacity=100);
+    display: none;
+    z-index: 5
+}
+
+.custom_box_select_ul {
+    width: 135px;
+    height: auto;
+    overflow: hidden;
+    float: left;
+    position: relative;
+    margin-bottom: 10px;
+    z-index: 0
+}
+
+.custom_box_select_li {
+    width: 135px;
+    height: 22px;
+    background-color: #fff;
+    line-height: 22px;
+    padding-left: 18px;
+    text-align: left;
+    float: left
+}
+
+.custom_box_select_li a {
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    color: #666;
+    overflow: hidden;
+    opacity: 1;
+    filter: alpha(opacity=100);
+    background-color: #fff;
+}
+
+.custom_box_select_li a:hover {
+    color: #ff8a81
+}
+
+.diamondResultList {
+    position: relative;
+    z-index: 100;
+}
+
+.searchBg {
+    position: relative;
+    z-index: 1;
+}
+
+/***导航栏***/
+
+.tab_bg a {
+    display: inline-block;
+    color: #000;
+    font-size: 12px;
+    font-family: Aria, "宋体";
+    height: 38px;
+    line-height: 38px;
+    padding: 0 22px;
+}
+
+.tab_bg i {
+    color: #ccc;
+    font-family: "宋体";
+    font-style: normal;
+}
+
+.tab a {
+    cursor: pointer;
+}
+
+.tab_off_3:hover .tab_review, .tab_on_3 .tab_review {
+    color: #ff8a81 !important;
+}
+
+/**************头部固定浮动****************/
+
+.tab_bg_3 {
+    width: 100%;
+    height: 42px;
+    padding-top: 2px;
+    background: url("http://img.zbird.cn/ww3/detail150815/repeat_h44.png") repeat-x left top;
+    border: none;
+}
+
+/***商品详情***/
+.diamondRecomm {
+    width: 1180px;
+    margin-top: 0px;
+}
+
+.diamondCombine {
+    width: 1180px;
+}
+
+.diamondInfoR {
+    width: 535px;
+}
+
+.diamondInfoPara {
+    width: 550px;
+    margin: 2px 0 0 0;
+}
+
+.diamondInfoPara_2 {
+    width: 315px;
+    height: 39px;
+    margin-left: 35px;
+}
+
+.diamondInfoPrice {
+    clear: both;
+    float: left;
+    width: 600px;
+    height: 40px;
+    text-align: left;
+    margin-top: 0px;
+}
+
+.diamondInfoPara_2 ul li {
+    width: 18px;
+    height: 17px;
+    font-weight: bold;
+    color: #999999;
+}
+
+.diamondcurrent_zimu {
+    background: url("http://img.zbird.cn/ww3/diamond/detail/diamondcurrent_zimu.png") no-repeat center bottom;
+    color: #666 !important;
+}
+
+.diamondInfoPara_2_2 {
+    width: 315px;
+    height: 39px;
+    margin-left: 35px;
+}
+
+.diamondInfoPara_2_2 ul li {
+    width: 39px;
+    height: 17px;
+    font-weight: bold;
+    color: #999999;
+}
+
+.diamondInfoPara_2_3 {
+    width: 315px;
+    height: 39px;
+    margin-left: 35px;
+}
+
+.diamondInfoPara_2_3 ul li {
+    width: 39px;
+    height: 17px;
+    font-weight: bold;
+    color: #999999;
+}
+
+.diamondInfoCert {
+    width: 500px;
+    height: 40px;
+    text-align: left;
+    margin-top: 15px;
+    clear: none;
+}
+
+.diamond_jiaobiao {
+    float: left;
+    margin-right: 18px;
+    margin-top: 7px;
+}
+
+.diamondInfoButton_end {
+    margin-top: 15px;
+    float: left;
+    background: #ebebeb;
+    color: #666;
+    width: 138px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    /*background:url("http://img.zbird.cn/ww3/diamond/detail/diamondInfoButton_end.jpg") no-repeat left top;*/
+}
+
+.diamondInfoButton {
+    width: 138px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    margin-top: 15px;
+    background: #ff8a81;
+    color: #fff;
+    /*background:url("http://img.zbird.cn/ww3/diamond/detail/order_btn.jpg") no-repeat left top;*/
+}
+
+.diamondInfoButton:hover, .diamondInfoBuy:hover {
+    opacity: 0.85;
+    filter: alpha(opacity=85);
+}
+
+.diamondInfoButtonHover {
+    opacity: 0.85;
+    filter: alpha(opacity=85);
+    background: none;
+
+}
+
+.diamondInfo_buy {
+    width: 138px;
+    margin-top: 15px;
+    margin-left: 8px !important;
+}
+
+.diamondInfoBuy {
+    width: 138px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: #feaca0;
+    color: #fff;
+
+}
+
+.fenqimianxiBorder {
+    float: left;
+    width: 138px;
+    margin-top: 15px;
+    margin-left: 8px;
+}
+
+.fenqimianxi {
+    width: 138px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+    background: #b7ac7e;
+    color: #fff;
+
+}
+
+.fenqimianxi:hover {
+    opacity: 0.85;
+    filter: alpha(opacity=85);
+
+}
+
+.diamondInfoBuyHover {
+    opacity: 0.85;
+    filter: alpha(opacity=85);
+
+}
+
+.diamondInfoTips a {
+    color: #4f4e4e !important;
+}
+
+.diamondInfoTips a:hover {
+    color: #4f4e4e !important;
+}
+
+.diamond_con01_21_text span {
+    font-size: 24px;
+}
+
+.diamond_con01_2_text {
+    width: 241px;
+    height: 50px;
+    float: left;
+    margin-top: 30px;
+    line-height: 25px;
+    color: #666666;
+}
+
+.diamondParaCertIntro2 ul li {
+    margin-left: 0px;
+}
+
+.diamondRecomm_content_211_s2 span {
+    font-style: italic;
+}
+
+.diamondRecomm_show_border p {
+    padding-left: 10px;
+    font-weight: bold;
+    color: #333;
+    line-height: 25px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.diamondRecomm_show_border p:hover {
+    color: #fd9087;
+}
+
+.diamondOtherListStone2 font {
+    width: 38px;
+    height: 60px;
+    float: left;
+    display: block;
+    text-align: center;
+    line-height: 60px;
+    font-family: Arial;
+    color: #666666;
+    text-indent: 0px;
+}
+
+.diamondInfoRTitle h1 {
+    font-family: Arial, "宋体";
+    font-size: 22px;
+    color: #000;
+    font-weight: normal;
+    float: left;
+
+}
+
+.diamondList img {
+    margin-top: 20px;
+}
+
+/*
+ * 裸钻形状样式
+ */
+/* 公主方 */
+.shapeIco001 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -116px -30px;
+}
+
+/* 椭圆 */
+.shapeIco002 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -156px -30px;
+}
+
+/* 圆形 */
+.shapeIco003 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -196px -30px;
+}
+
+/* 梨形 */
+.shapeIco004 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -236px -30px;
+}
+
+/* 祖母绿形 */
+.shapeIco005 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -276px -30px;
+}
+
+/* 心形 */
+.shapeIco006 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -316px -30px;
+}
+
+/* 橄榄 */
+.shapeIco007 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -356px -30px;
+}
+
+/* 雷蒂恩 */
+.shapeIco008 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -396px -30px;
+}
+
+/* 垫形 */
+.shapeIco009 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -436px -30px;
+}
+
+/* 三角形 */
+.shapeIco010 {
+    width: 30px;
+    height: 14px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -476px -30px;
+}
+
+.diamondChannel {
+}
+
+.diamondDetailPop {
+    width: 181px;
+    height: 322px;
+    position: absolute;
+    display: none;
+    background-color: #fff;
+    float: left;
+    text-align: left;
+    overflow: hidden;
+}
+
+.diamondDetailPop .arrow {
+    width: 10px;
+    height: 322px;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondDetailPop .arrow .LHF {
+    width: 9px;
+    height: 152px;
+    border-left: 1px solid #b6b6b6;
+    float: left;
+}
+
+.diamondDetailPop .arrow .LM {
+    width: 10px;
+    height: 18px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -251px 0;
+}
+
+.diamondDetailPop .arrow .RHF {
+    width: 9px;
+    height: 152px;
+    border-right: 1px solid #b6b6b6;
+    float: left;
+}
+
+.diamondDetailPop .arrow .RM {
+    width: 10px;
+    height: 18px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') no-repeat -267px 0;
+}
+
+.diamondDetailPop .cont {
+    width: 150px;
+    height: 300px;
+    padding: 10px;
+    border: 1px solid #b6b6b6;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondDetailPop .contL {
+    border-right: 0;
+}
+
+.diamondDetailPop .contR {
+    border-left: 0;
+}
+
+.diamondDetailPop .cont ul {
+    width: 150px;
+    height: 300px;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondDetailPop .cont li {
+    width: 150px;
+    float: left;
+}
+
+.diamondDetailPop .cont .diamondInfo {
+}
+
+.diamondDetailPop .cont .diamondInfo .img {
+    width: 54px;
+    height: 54px;
+    padding: 5px 0;
+}
+
+.diamondDetailPop .cont .diamondInfo .cert {
+    width: 96px;
+    height: 44px;
+    padding: 10px 0 0 0;
+    line-height: 20px;
+}
+
+.diamondDetailPop .cont .diamondInfo .item {
+    height: 18px;
+    line-height: 18px;
+}
+
+.diamondDetailPop .cont .diamondInfo .line {
+    height: 5px;
+    padding: 2px 0;
+}
+
+.diamondDetailPop .cont .diamondPic {
+    line-height: 95%;
+}
+
+.diamondChannel .cart {
+    width: 30px;
+    height: 14px;
+    margin: 0 5px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/img_button.gif') 0 0;
+}
+
+.diamondChannel .diy {
+    width: 30px;
+    height: 14px;
+    margin: 0 7px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/img_button.gif') -31px 0;
+}
+
+.diamondChannel .view {
+    width: 30px;
+    height: 14px;
+    margin: 0 7px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/button/btn_view.gif');
+}
+
+.diamondChannel .searchBtn {
+    width: 115px;
+    height: 25px;
+    float: right;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/img_button.gif') 0 -15px;
+}
+
+.diamondChannel .resetBtn {
+    width: 132px;
+    height: 25px;
+    float: right;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/img_button.gif') 0 -41px;
+}
+
+.diamondChannel .compareBtn {
+    width: 65px;
+    height: 20px;
+    float: right;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/img_button.gif') 0 -67px;
+}
+
+/* 公主方 */
+.diamondChannel .shapeOn001 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -181px;
+}
+
+/* 椭圆 */
+.diamondChannel .shapeOn002 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -66px -181px;
+}
+
+/* 圆形 */
+.diamondChannel .shapeOn003 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -132px -181px;
+}
+
+/* 梨形 */
+.diamondChannel .shapeOn004 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -198px -181px;
+}
+
+/* 祖母绿形 */
+.diamondChannel .shapeOn005 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -264px -181px;
+}
+
+/* 心形 */
+.diamondChannel .shapeOn006 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -330px -181px;
+}
+
+/* 橄榄 */
+.diamondChannel .shapeOn007 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -396px -181px;
+}
+
+/* 雷蒂恩 */
+.diamondChannel .shapeOn008 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -462px -181px;
+}
+
+/* 垫形 */
+.diamondChannel .shapeOn009 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -528px -181px;
+}
+
+/* 三角形 */
+.diamondChannel .shapeOn010 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -594px -181px;
+}
+
+/* 公主方 */
+.diamondChannel .shapeOff001 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -241px;
+}
+
+/* 椭圆 */
+.diamondChannel .shapeOff002 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -66px -241px;
+}
+
+/* 圆形 */
+.diamondChannel .shapeOff003 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -132px -241px;
+}
+
+/* 梨形 */
+.diamondChannel .shapeOff004 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -198px -241px;
+}
+
+/* 祖母绿形 */
+.diamondChannel .shapeOff005 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -264px -241px;
+}
+
+/* 心形 */
+.diamondChannel .shapeOff006 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -330px -241px;
+}
+
+/* 橄榄 */
+.diamondChannel .shapeOff007 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -396px -241px;
+}
+
+/* 雷蒂恩 */
+.diamondChannel .shapeOff008 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -462px -241px;
+}
+
+/* 垫形 */
+.diamondChannel .shapeOff009 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -528px -241px;
+}
+
+/* 三角形 */
+.diamondChannel .shapeOff010 {
+    width: 64px;
+    height: 53px;
+    float: left;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -594px -241px;
+}
+
+.diamondChannel .L {
+    width: 755px;
+    margin-top: 5px;
+    float: left;
+    text-align: left;
+}
+
+.diamondChannel .R {
+    width: 217px;
+    margin-top: 5px;
+    padding-left: 8px;
+    float: left;
+    text-align: left;
+}
+
+.diamondChannel .L dl {
+    float: left;
+}
+
+.diamondChannel .L dd {
+    float: left;
+}
+
+.diamondChannel .L .banner {
+    width: 755px;
+    height: 262px;
+    overflow: hidden;
+}
+
+.diamondChannel .L .secptit {
+    width: 107px;
+    height: 47px;
+    overflow: hidden;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 0;
+}
+
+.diamondChannel .L .secpbg {
+    width: 648px;
+    height: 47px;
+    overflow: hidden;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -50px;
+}
+
+.diamondChannel .L .secpbg ul {
+    width: 648px;
+    overflow: hidden;
+    float: left;
+}
+
+.diamondChannel .L .secpbg li {
+    overflow: hidden;
+    float: left;
+    text-align: center;
+}
+
+.diamondChannel .L .secpbg ul.tit li {
+    padding-top: 6px;
+    padding-top: 8px \9;
++ padding-top: 8 px;
+    _padding-top: 6px;
+    color: #666666;
+    padding-bottom: 5px;
+    padding-bottom: 4px \9;
++ padding-bottom: 4 px;
+    _padding-bottom: 5px;
+}
+
+.diamondChannel .L .secpbg li.tit01 {
+    width: 50px;
+    padding-left: 8px;
+}
+
+.diamondChannel .L .secpbg li.tit02 {
+    width: 82px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit03 {
+    width: 67px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit04 {
+    width: 56px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit05 {
+    width: 57px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit06 {
+    width: 55px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit07 {
+    width: 56px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit08 {
+    width: 57px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit09 {
+    width: 54px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.tit10 {
+    width: 81px;
+    padding-left: 2px;
+    padding-right: 7px;
+}
+
+.diamondChannel .L .secpbg .slider {
+    width: 648px;
+    height: 16px;
+    overflow: hidden;
+    float: left;
+    position: relative;
+}
+
+.diamondChannel .L .secpbg .content {
+    width: 648px;
+    height: 16px;
+    float: left;
+    position: absolute;
+}
+
+.diamondChannel .L .secpbg ul.item {
+    height: 16px;
+}
+
+.diamondChannel .L .secpbg ul.item li {
+    color: #d70034;
+    cursor: pointer;
+}
+
+.diamondChannel .L .secpbg ul.item li span {
+    color: #d70034;
+}
+
+.diamondChannel .L .secpbg li.item01 {
+    width: 50px;
+    padding-left: 8px;
+}
+
+.diamondChannel .L .secpbg li.item01 span {
+    margin: 1px 0 0 10px;
+}
+
+.diamondChannel .L .secpbg li.item02 {
+    width: 82px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item03 {
+    width: 67px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item04 {
+    width: 56px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item05 {
+    width: 57px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item06 {
+    width: 55px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item07 {
+    width: 56px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item08 {
+    width: 57px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item09 {
+    width: 54px;
+    padding-left: 2px;
+}
+
+.diamondChannel .L .secpbg li.item10 {
+    width: 81px;
+    padding-left: 2px;
+    padding-right: 7px;
+}
+
+.diamondChannel .L .secpbg li.item10 span {
+    width: 81px;
+    padding-top: 1px \9;
++ padding-top: 0 px;
+    _padding-top: 0px;
+    float: left;
+}
+
+.diamondChannel .L .tab {
+    width: 755px;
+    height: 27px;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .L .tab .tit {
+    width: 755px;
+    height: 27px;
+    float: left;
+}
+
+.diamondChannel .L .tab .tit li {
+    float: left;
+}
+
+.diamondChannel .L .tab .txt {
+    width: 530px;
+    height: 23px;
+    padding-top: 3px;
+    border-bottom: 1px solid #CCCCCC;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .L .tab .txt span {
+    width: 450px;
+    height: 23px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -461px -456px;
+}
+
+.diamondChannel .L .tab .blank {
+    width: 3px;
+    height: 26px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.diamondChannel .L .tab .ico01 {
+    width: 111px;
+    height: 27px;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -103px;
+}
+
+.diamondChannel .L .tab .ico02 {
+    width: 111px;
+    height: 27px;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -111px -103px;
+}
+
+.diamondChannel .L .tab .ico03 {
+    width: 111px;
+    height: 27px;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -222px -103px;
+}
+
+.diamondChannel .L .tab .ico04 {
+    width: 111px;
+    height: 27px;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -333px -103px;
+}
+
+.diamondChannel .L .tabContent {
+    width: 755px;
+    height: 315px;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .L .tabButton {
+    width: 755px;
+    height: 315px;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .L .tabButton .bigbg {
+    width: 753px;
+    height: 58px;
+    border: 1px solid #CCCCCC;
+    border-top: 0;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/bg_d_1.gif') repeat-x;
+}
+
+.diamondChannel .L .tabButton .bigbg li {
+    width: 65px;
+    height: 53px;
+    padding-top: 3px;
+    float: left;
+}
+
+.diamondChannel .L .tabButton .bigbg .tit {
+    width: 55px;
+    height: 33px;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.diamondChannel .L .tabButton .bigbg .tit2 {
+    width: 60px;
+    height: 33px;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.diamondChannel .L .tabButton .bigbg .item {
+    width: 245px;
+    height: 33px;
+    padding: 20px 0 0 3px;
+    text-align: left;
+}
+
+.diamondChannel .L .tabButton .bigbg .item input {
+    width: 100px;
+}
+
+.diamondChannel .L .tabButton .smallbg {
+    width: 753px;
+    height: 34px;
+    border: 1px solid #CCCCCC;
+    margin-top: 3px;
+    float: left;
+    background: url("http://img.zbird.cn/ww2/diamond/bg_d_2.gif") repeat-x;
+}
+
+.diamondChannel .L .tabButton .smallbg li {
+    width: 49px;
+    height: 32px;
+    padding-top: 2px;
+    float: left;
+}
+
+.diamondChannel .L .tabButton .smallbg .tit {
+    width: 55px;
+    height: 26px;
+    line-height: 100%;
+    padding-top: 6px;
+    text-align: center;
+}
+
+.diamondChannel .L .tabButton .smallbg .tit2 {
+    width: 60px;
+    height: 26px;
+    line-height: 100%;
+    padding-top: 6px;
+    text-align: center;
+}
+
+.diamondChannel .L .tabButton .itemOn {
+    width: 48px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    float: left;
+    color: #fff;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -660px -1px;
+}
+
+.diamondChannel .L .tabButton .itemOff {
+    width: 48px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    float: left;
+    color: #999;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -710px -1px;
+}
+
+.diamondChannel .L .tabButton .smallbg li.location2 {
+    width: 45px;
+    height: 32px;
+    padding-top: 2px;
+    float: left;
+}
+
+.diamondChannel .L .tabButton .itemOn2 {
+    width: 44px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    float: left;
+    color: #fff;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -770px -1px;
+}
+
+.diamondChannel .L .tabButton .itemOff2 {
+    width: 44px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    float: left;
+    color: #999;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -816px -1px;
+}
+
+.diamondChannel .L .tabButton .itemBtn {
+    width: 755px;
+    height: 25px;
+    padding-top: 6px;
+    float: left;
+}
+
+.diamondChannel .L .tabButton .weighFrom {
+    background: transparent url('http://img.zbird.cn/ww2/diy/bg_from.jpg') no-repeat;
+}
+
+.diamondChannel .L .tabButton .weighTo {
+    background: transparent url('http://img.zbird.cn/ww2/diy/bg_to.jpg') no-repeat;
+}
+
+.diamondChannel .L .tabText {
+    width: 713px;
+    height: 294px;
+    padding: 10px 20px;
+    border: 1px solid #CCCCCC;
+    border-top: 0;
+    background-color: #F8F8F8;
+    float: left;
+    display: none;
+    overflow: hidden;
+}
+
+.diamondChannel .L .tabText ul.item {
+    width: 713px;
+    height: 25px;
+    border-bottom: 1px dashed #A8B1B8;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .L .tabText ul.item li {
+    float: left;
+}
+
+.diamondChannel .L .tabText li.tit {
+    width: 110px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    padding-left: 10px;
+    color: #D70034;
+    text-align: left;
+}
+
+.diamondChannel .L .tabText li.tit a.tit:link {
+    color: #d70034;
+}
+
+.diamondChannel .L .tabText li.tit a.tit:visited {
+    color: #d70034;
+}
+
+.diamondChannel .L .tabText li.line {
+    width: 1px;
+    height: 10px;
+    border-left: 1px solid #CCC;
+    margin: 8px 0;
+    font-size: 0;
+}
+
+.diamondChannel .L .tabText a.itemOn:link {
+    color: #3366CC;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.diamondChannel .L .tabText a.itemOn:visited {
+    color: #3366CC;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.diamondChannel .L .tabText li.shape {
+    width: 47px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.weight {
+    width: 82px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.color {
+    width: 90px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.color2 {
+    width: 130px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.clarity {
+    width: 90px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.clarity2 {
+    width: 130px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.cut {
+    width: 90px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.polish {
+    width: 90px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.symmetry {
+    width: 90px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.price {
+    width: 80px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.cert {
+    width: 50px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText li.location {
+    width: 37px;
+    height: 15px;
+    line-height: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+.diamondChannel .L .tabText .itemBtn {
+    width: 693px;
+    height: 25px;
+    padding-right: 20px;
+    padding-top: 10px;
+    float: left;
+}
+
+.diamondChannel .L .tabText .resetBtn {
+    width: 132px;
+    height: 25px;
+    float: right;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -157px -140px;
+}
+
+.diamondChannel .L .keywords {
+    width: 755px;
+    height: 25px;
+    margin-top: 15px;
+    border-top: 1px dashed #A8B1B8;
+    border-bottom: 1px dashed #A8B1B8;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .L .keywords li {
+    height: 25px;
+    line-height: 25px;
+    padding: 0 3px;
+    float: left;
+    text-align: left;
+}
+
+.diamondChannel .L .keywords li.tit {
+    width: 80px;
+}
+
+.diamondChannel .L .keywords a.item:link {
+    color: #D70034;
+}
+
+.diamondChannel .L .desc {
+    width: 755px;
+    height: 50px;
+    line-height: 180%;
+    margin-top: 15px;
+    text-align: center;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .L .desc a.item:link {
+    color: #D70034;
+    text-decoration: underline;
+}
+
+.diamondChannel .result {
+    width: 755px;
+    float: left;
+    text-align: left;
+}
+
+.diamondChannel .result .pop {
+    position: absolute;
+    display: none;
+}
+
+.diamondChannel .result ul.top {
+    width: 755px;
+    height: 25px;
+    margin-bottom: 10px;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .result ul.top li {
+    height: 30px;
+    line-height: 30px;
+}
+
+.diamondChannel .result ul.top .total {
+    float: left;
+}
+
+.diamondChannel .result ul.top .psize {
+    float: right;
+}
+
+.diamondChannel .result .count {
+    padding: 0 4px;
+    color: #d70034
+}
+
+.diamondChannel .result span.tit {
+    float: left;
+    text-align: center;
+}
+
+.diamondChannel .result span.line {
+    border-left: 1px solid #ccc;
+    padding-left: 1px;
+}
+
+.diamondChannel .result .resultArea {
+    width: 755px;
+    float: left;
+}
+
+.diamondChannel .result .resultTable {
+    width: 755px;
+    text-align: left;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .result .head {
+    height: 34px;
+}
+
+.diamondChannel .result .head .l {
+    width: 5px;
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+}
+
+.diamondChannel .result .head .l span {
+    width: 5px;
+    height: 34px;
+    float: left;
+    overflow: hidden;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -310px;
+}
+
+.diamondChannel .result .head .c {
+    width: 970px;
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -6px -310px;
+}
+
+.diamondChannel .result .head .r {
+    width: 5px;
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+}
+
+.diamondChannel .result .head .r span {
+    width: 5px;
+    height: 34px;
+    float: left;
+    overflow: hidden;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -975px -310px;
+}
+
+.diamondChannel .result .foot {
+    height: 34px;
+}
+
+.diamondChannel .result .foot .l {
+    width: 5px;
+    overflow: hidden;
+    border-top: 1px solid #ccc;
+}
+
+.diamondChannel .result .foot .l span {
+    width: 5px;
+    height: 34px;
+    float: left;
+    overflow: hidden;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -350px;
+}
+
+.diamondChannel .result .foot .c {
+    width: 970px;
+    overflow: hidden;
+    border-top: 1px solid #ccc;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -6px -350px;
+}
+
+.diamondChannel .result .foot .r {
+    width: 5px;
+    overflow: hidden;
+    border-top: 1px solid #ccc;
+}
+
+.diamondChannel .result .foot .r span {
+    width: 5px;
+    height: 34px;
+    float: left;
+    overflow: hidden;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -975px -350px;
+}
+
+.diamondChannel .result .resultTable td {
+    font-family: '宋体';
+}
+
+.diamondChannel .result .resultTable .odd {
+    height: 30px;
+}
+
+.diamondChannel .result .resultTable .even {
+    height: 30px;
+    background-color: #FEF5F4;
+}
+
+.diamondChannel .result .resultTable .hover {
+    background-color: #F8C8C5;
+}
+
+.diamondChannel .result .resultTable .norecord {
+    text-align: center;
+    height: 30px;
+}
+
+.diamondChannel .result .odesc {
+    width: 8px;
+    height: 5px;
+    padding: 5px 0 0 8px;
+    font-size: 0;
+    line-height: 0;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/img_button.gif') -62px 0;
+}
+
+.diamondChannel .result .oasc {
+    padding: 5px 0 0 8px;
+    font-size: 0;
+    line-height: 0;
+    cursor: pointer;
+    background: url('http://img.zbird.cn/ww2/img_button.gif') -71px 0;
+}
+
+.diamondChannel .R .eduTit {
+    width: 217px;
+    height: 35px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -660px -180px;
+}
+
+.diamondChannel .R .eduBg {
+    width: 201px;
+    height: 40px;
+    margin-top: 6px;
+    padding: 12px 8px;
+    overflow: hidden;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -660px -220px;
+}
+
+.diamondChannel .R .eduBg ul {
+    width: 200px;
+    height: 40px;
+    float: left;
+}
+
+.diamondChannel .R .eduBg li {
+    width: 50px;
+    height: 20px;
+    line-height: 20px;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .R .eduBg a.item:link {
+}
+
+.diamondChannel .R .eduBg a.item:hover {
+}
+
+.diamondChannel .R .eduBg a.item:visited {
+}
+
+.diamondChannel .R .cert {
+    width: 217px;
+    height: 140px;
+    padding-top: 48px;
+    overflow: hidden;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -230px -390px;
+}
+
+.diamondChannel .R .cert ul {
+    float: left;
+}
+
+.diamondChannel .R .cert li {
+    width: 95px;
+    height: 40px;
+    padding: 0 0 5px 7px;
+    float: left;
+}
+
+.diamondChannel .R .konwTit {
+    width: 217px;
+    height: 28px;
+    margin-top: 9px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -660px -40px;
+}
+
+.diamondChannel .R .konwCont {
+    width: 217px;
+}
+
+.diamondChannel .R .konwCont ul {
+    width: 217px;
+    height: 146px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') 0 -390px;
+}
+
+.diamondChannel .R .konwCont li {
+    float: left;
+}
+
+.diamondChannel .R .konwCont li.qt {
+    width: 17px;
+    padding: 17px 0 20px 13px;
+    line-height: 150%;
+    color: #666666;
+    font-weight: bold;
+    font-family: Arial, "宋体";
+    float: left;
+}
+
+.diamondChannel .R .konwCont li.q {
+    width: 177px;
+    height: 40px;
+    padding: 17px 10px 7px 0;
+    line-height: 150%;
+    color: #666666;
+    float: left;
+}
+
+.diamondChannel .R .konwCont li.at {
+    width: 17px;
+    height: 80px;
+    padding: 0 0 0 13px;
+    line-height: 150%;
+    color: #666666;
+    font-weight: bold;
+    font-family: Arial, "宋体";
+    float: left;
+}
+
+.diamondChannel .R .konwCont li.a {
+    width: 177px;
+    height: 80px;
+    padding: 0 10px 0 0;
+    line-height: 150%;
+    color: #999999;
+    float: left;
+}
+
+.diamondChannel .R .buyhelpTit {
+    width: 217px;
+    height: 27px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -660px -71px;
+}
+
+.diamondChannel .R .buyhelpCont {
+    width: 185px;
+    height: 130px;
+    padding: 0 15px;
+    border: 1px solid #c5c7c8;
+    border-top: 0;
+    border-bottom: 0;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .R .buyhelpCont ul {
+    width: 185px;
+    height: 115px;
+    margin-top: 5px;
+    float: left;
+}
+
+.diamondChannel .R .buyhelpCont li {
+    width: 185px;
+    height: 23px;
+    line-height: 23px;
+    border-bottom: 1px dashed #A8B1B8;
+    float: left;
+}
+
+.diamondChannel .R .buyhelpCont li span {
+    padding: 0 5px;
+    color: #D70034;
+    font-weight: bold;
+}
+
+.diamondChannel .R .buyhelpFoot {
+    width: 217px;
+    height: 10px;
+    font-size: 0;
+    line-height: 0;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -460px -440px;
+}
+
+.diamondChannel .R .leadingTit {
+    width: 217px;
+    height: 27px;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -660px -101px;
+}
+
+.diamondChannel .R .leadingCont {
+    width: 185px;
+    height: 130px;
+    padding: 0 15px;
+    border: 1px solid #c5c7c8;
+    border-top: 0;
+    border-bottom: 0;
+    float: left;
+    overflow: hidden;
+}
+
+.diamondChannel .R .leadingCont ul {
+    width: 185px;
+    height: 115px;
+    margin-top: 5px;
+    float: left;
+}
+
+.diamondChannel .R .leadingCont li {
+    width: 185px;
+    height: 23px;
+    line-height: 23px;
+    border-bottom: 1px dashed #A8B1B8;
+    float: left;
+}
+
+.diamondChannel .R .leadingCont li span {
+    padding: 0 5px;
+    color: #D70034;
+    font-weight: bold;
+}
+
+.diamondChannel .R .leadingFoot {
+    width: 217px;
+    height: 10px;
+    font-size: 0;
+    line-height: 0;
+    float: left;
+    background: url('http://img.zbird.cn/ww2/diamond/img_diamond.gif') -460px -440px;
+}
+
+.compareBar dt {
+    height: 10px;
+    padding-left: 466px;
+    border-bottom: 3px solid #FEBAC5;
+}
+
+.compareBar span {
+    float: left;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.compareBar dt span.open {
+    width: 47px;
+    height: 10px;
+    background: url('http://img.zbird.cn/ww2/img/button.gif') -148px -166px;
+}
+
+.compareBar dt span.close {
+    width: 47px;
+    height: 10px;
+    background: url('http://img.zbird.cn/ww2/img/button.gif') -148px -155px;
+}
+
+.reduce_info ul {
+    height: 40px;
+    border: 3px solid #D6D6D6;
+    border-left: none;
+    background: url("http://img.zbird.cn/ww2/proexstyle/reduce_hot.gif") no-repeat left center;
+}
+
+.reduce_info ul li {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px 0 30px;
+}
+
+.reduce_info .tit {
+    padding-left: 8px;
+    background: url("http://img.zbird.cn/ww2/product/ico_r1.gif") no-repeat left center;
+}
+
+.diamondInfoRTitle h1 {
+    font-family: "Microsoft YaHei", Arial;
+    font-size: 22px;
+    color: #333333;
+    font-weight: normal;
+    float: left;
+}
+
+.diamondInfoRTitle font {
+    color: #ff8a81;
+    float: left;
+    margin-left: 10px;
+    line-height: 45px;
+    font-family: Arial;
+}
+
+.diamondInfoPara li {
+    font-family: Arial;
+}
+
+.diamondInfoPara_1 {
+    float: left;
+    width: 30px;
+    height: 38px;
+    line-height: 65px;
+    color: #999999;
+    text-align: left;
+}
+
+.diamondInfoPara_2 {
+    float: left;
+    width: 287px;
+    height: 38px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.diamondInfoPara_2 ul li {
+    float: left;
+    list-style: none;
+    margin-left: 7px;
+    width: 15px;
+    height: 15px;
+    margin-top: 23px;
+    color: #666666;
+}
+
+.diamondInfoPara_2_2 {
+    float: left;
+    width: 287px;
+    height: 38px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.diamondInfoPara_2_2 ul li {
+    float: left;
+    list-style: none;
+    margin-left: 5px;
+    width: 30px;
+    height: 15px;
+    margin-top: 23px;
+    color: #666666;
+}
+
+.diamondInfoPara_2_3 {
+    float: left;
+    width: 287px;
+    height: 38px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.diamondInfoPara_2_3 ul li {
+    float: left;
+    list-style: none;
+    margin-left: 6px;
+    width: 25px;
+    height: 15px;
+    margin-top: 23px;
+    color: #666666;
+}
+
+.diamondInfoPrice ul li {
+    float: left;
+}
+
+.diamondCombineProductRingPop div {
+    position: absolute;
+}
+
+.diamondCombineProductStoneParaSize ul {
+    width: 78px;
+    height: auto;
+    background: #FFFFFF;
+    border: 1px solid #CDCBCB;
+    display: none;
+    position: absolute;
+    z-index: 3;
+    margin-top: 30px;
+}
+
+.diamondCombineProductStoneParaSize ul li {
+    height: 22px;
+    line-height: 22px;
+    text-align: left;
+    text-indent: 1em;
+    font-family: Arial;
+}
+
+.diamondCombineProductStoneParaSize ul li a {
+    display: block;
+    height: 22px;
+    text-decoration: none;
+    color: #676767;
+}
+
+.diamondCombineProductStoneParaSize ul li a:hover {
+    color: #f2a495;
+}
+
+.diamondParaCertIntro2 ul li {
+    float: left;
+    margin-left: 10px;
+}
+
+.diamondParaCertSection {
+    clear: both;
+    float: left;
+    margin-top: 40px;
+    width: 980px;
+}
+
+.diamondParaCertSection div {
+    font-family: Arial;
+    color: #666666;
+}
+
+.diamondOtherCount font {
+    font-family: Arial;
+    font-size: 18px;
+    color: #f2a495;
+    height: 23px;
+}
+
+.pageFont font {
+    color: #990000;
+}
+
+.my-dia-ul {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.my-dia-ul li {
+    width: 150px;
+}
+
+.my-dia-ul li:nth-of-type(2) {
+    margin-left: 25px;
+}
+
+.my-dia-ul li a {
+    text-align: center;
+    display: inline-block;
+}
+
+.my-dia-info {
+    margin-top: 20px;
+}
+
+.iTitle p {
+    text-align: left;
+}
+/*列表的样式end*/

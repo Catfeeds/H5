@@ -1,0 +1,64 @@
+<?php
+require("TopSdk.php");
+class Aliim
+{  
+    private $appkey="24646659";
+    private $secretKey="3b1d1833b91e5add8dd42d0c366e11f4";    
+    
+    //private $appkey="24800828";
+    //private $secretKey="9754d1786f5167ca4eac3d9b712b26d1";
+    
+    public function __construct($appkey=null,$secretKey=null){
+        if(isset($appkey)&&isset($secretKey)){
+            $this->appkey=$appkey;
+            $this->secretKey=$secretKey;
+        }        
+    }
+    
+    /**
+     * 添加一个用户
+     *
+     * @param nick 昵称
+     * @param username 用户编号                               
+     * @return  object     
+     */
+    public  function adduser($nick,$username){
+        $c = new TopClient();
+        $c->appkey = $this->appkey;
+        $c->secretKey = $this->secretKey;        
+        $req = new OpenimUsersAddRequest;
+        $userinfos = new Userinfos;
+        $userinfos->nick=$nick;
+        $userinfos->userid=$username;
+        $userinfos->password="123";
+        $req->setUserinfos(json_encode($userinfos));
+        $resp = $c->execute($req);          
+        if(isset($resp->fail_msg)){
+            return false;
+        }else{
+            return $userinfos->password;
+        }        
+    }
+    
+    /**
+     * 获取一个用户
+     *
+     * @param nick 昵称
+     * @param username 用户编号
+     * @return  object
+     */
+    public function getuser($username){       
+        $c = new \TopClient();
+        $c->appkey = $this->appkey;
+        
+        $c->secretKey = $this->secretKey;
+        $req = new \OpenimUsersGetRequest();
+        $req->setUserids($username);
+        $resp = $c->execute($req);       
+        if(isset($resp->userinfos)){
+            return $resp->userinfos->userinfos[0]->password;
+        }else{
+            return false;
+        }        
+    }
+}

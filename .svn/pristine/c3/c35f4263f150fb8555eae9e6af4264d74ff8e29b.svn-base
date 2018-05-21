@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__" />
+    <style type="text/css">
+        #orderConfirm .name {
+            width: 50%;
+            display: inline-block;
+        }
+
+        .left-box,
+        .left-svg {
+            line-height: 80px;
+        }
+
+        .right-box {
+            width: 80%;
+            padding: 15px 0px;
+        }
+
+        .left-box .icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        .left-svg .icon {
+            width: 20px;
+            height: 20px;
+            color: #d7d7d7;
+        }
+
+        .address {
+            font-size: 12px;
+        }
+
+        .goodlist {
+            margin-top: 10px;
+        }
+
+        .blank {
+            height: 20px;
+        }
+
+        .goodlist li {
+            margin-bottom: 5px;
+        }
+
+        .good-name {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .pro-msg {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .good-img {
+            width: 70px;
+            height: 70px;
+            margin-right: 10px;
+        }
+
+        .good-img img {
+            width: 70px;
+            min-height: 70px;
+            overflow: hidden;
+            display: block;
+            border: 1px solid #cccccc;
+            vertical-align: center;
+        }
+
+        .good-msg p {
+            font-size: 12px;
+        }
+
+        .list-num {
+            width: 100%;
+            padding: 10px;
+            text-align: right;
+        }
+
+        .price-num {
+            margin-top: 10px;
+        }
+
+        .user-note {
+            height: 50px;
+            background: #fff;
+            margin-top: 16px;
+            line-height: 50px;
+            padding: 0 10px;
+        }
+
+        .user-note span {
+            font-size: 14px;
+        }
+
+        .user-note input {
+            width: 75%;
+            border: none;
+            height: 30px;
+            font-size: 12px;
+            overflow: hidden;
+            background-color: rgb(240, 240, 240);
+        }
+
+        /* .exploration-center {
+            padding: 10px;
+            border-bottom: 1px solid #D7D7D7;
+        } */
+
+        .exploration-center h2 {
+            padding-left: 10px;
+        }
+
+        .exploration-center ul li {
+            font-size: 14px;
+        }
+
+        .exploration-center ul li span {
+            width: 25%;
+            float: left;
+
+        }
+
+        .step-content p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: black;
+        }
+
+        .step-content .right_c {
+            width: 100%;
+            overflow: hidden;
+            height: 40px;
+            line-height: 40px;
+            border-bottom: 1px solid #D7D7D7;
+            background: #fff;
+            padding-left: 10px;
+        }
+
+        .step-content .way-list input {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            float: right;
+            margin: 10px;
+        }
+
+        .payIcon {
+            width: 10%;
+            float: left;
+            padding-right: 10px;
+        }
+
+        .step-content h2 {
+            font-size: 14px;
+            color: #666666;
+            float: left;
+            line-height: 40px;
+        }
+
+        .user-note {
+            height: 50px;
+            background: #fff;
+            margin-top: 16px;
+            line-height: 50px;
+            padding-left: 10px;
+        }
+
+        span.addressIcon {
+            width: 9%;
+            float: left;
+        }
+
+        .exploration-center .left-svg {
+            line-height: 40px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body onresize="document.activeElement.scrollIntoView(true)">
+    <header class="mui-bar mui-bar-nav">
+        <a href="javascript:history.go(-1)" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">确认订单</h1>
+    </header>
+    <div class="mui-content" id="orderConfirm" v-cloak>
+        <!-- 己选择地址 -->
+        <div class="user-msg clear bw" @click="dizhi">
+            <a href="javascript:;" class="clear" v-for=" item in listName" v-if="item.is_default==1">
+                <!-- <div class="left-box fl">
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-dizhiguanli"></use>
+                    </svg>
+                </div> -->
+                <div class="right-box fl">
+                    <div class="name-num clear">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-geren"></use>
+                        </svg>
+                        <span class="name">收货人：{{item.recname}}</span>
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-dianhua8"></use>
+                        </svg>
+                        <span class="phone">{{item.phone}}</span>
+                    </div>
+                    <span class="addressIcon">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-dingwei1"></use>
+                        </svg>
+                    </span>
+                    <p class="address" v-text="'收货地址：'+item.area.replace('-','省').replace('-','市')+item.address">
+                    </p>
+                </div>
+                <div class="left-svg fr">
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-xiangyou"></use>
+                    </svg>
+                </div>
+            </a>
+        </div>
+        <div class="location-icon clear"></div>
+
+
+        <!--中间商品-->
+        <!-- <div class="goodlist bw clear">-->
+        <!--<a href="javascript:;" class="clear">-->
+        <ul class="goodlist">
+            <li class="bw" v-for="item in cartList">
+                <div class="good-name" v-text="item.goods_name">
+
+                </div>
+                <div class="pro-msg">
+                    <div class="good-img fl">
+                        <img :src="item.thumb" alt="">
+                    </div>
+                    <div class="good-msg">
+                        <p>
+                            <span class="mui-ellipsis-2 cb" v-text="item.spec_key_name.replace('：',':')"> </span>
+                        </p>
+                        <p class="price-num">
+                            <span style="color: #F52B9D">￥{{item.member_goods_price}}</span>
+                            <span class="cb fr">x {{item.goods_num}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="blank bw"></div>
+            </li>
+        </ul>
+        <!--<div class="list-num bw">
+                	共{{cartList.length}}件
+            </div>-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--中间商品 end-->
+        <!--支付方式-->
+        <div class="step-content clear">
+            <ul class="way-list">
+                <h1>支付方式</h1>
+                <li v-for="item in payMent">
+                    <!-- <div class="left_c">
+                        <input type="radio" :value="item.code" name="payment" v-if="item.code==1000" checked @click="chosepayment(item)">
+                        <input type="radio" :value="item.code" name="payment" v-else="item.code" @click="chosepayment(item)">
+                    </div> -->
+                    <div class="right_c">
+                        <div class="payIcon" v-if="item.name == '支付宝'">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-zhifubao"></use>
+                            </svg>
+                        </div>
+                        <div class="payIcon" v-if="item.name == '微信'">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-WeChat"></use>
+                            </svg>
+                        </div>
+                        <div class="payIcon" v-if="item.name == '线下转帐'">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-xianxiazhifu"></use>
+                            </svg>
+                        </div>
+                        <h2>{{item.name}}</h2>
+                        <input type="radio" :value="item.code" name="payment" v-if="item.code==1000" checked @click="chosepayment(item)">
+                        <input type="radio" :value="item.code" name="payment" v-else="item.code" @click="chosepayment(item)">
+                    </div>
+                </li>
+            </ul>
+
+            <!--物流方式-->
+            <ul class="way-list">
+                <h1>物流方式</h1>
+                <li v-for="item in shippingType">
+                    <div class="right_c">
+                        <div class="payIcon" v-if="item.name == '邮寄'">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-daishouhuo"></use>
+                            </svg>
+                        </div>
+                        <div class="payIcon" v-if="item.name == '门店自取'">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-mendian1"></use>
+                            </svg>
+                        </div>
+                        <h2>{{item.name}}</h2>
+                        <input type="radio" v-model="shipping_type" :value="item.value" @click="showInputList(item)">
+                    </div>
+                </li>
+
+            </ul>
+            <div class="exploration-center" v-show="isShow">
+                <h2>门店自取信息</h2>
+                <ul class="way-list">
+                    <li>
+                        <div class="right_c">
+                            <span>选择门店：</span>
+                            <select class="mui-btn" v-model="storeindex" @change="changestore">
+                                <option value="-1">请选择自取的门店</option>
+                                <option v-for="(item,index) in storeInfo" :value="index">{{item.name}}</option>
+                            </select>
+                            <div class="left-svg fr">
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-xiangyou"></use>
+                                </svg>
+                            </div>
+                            <!-- <input type="text" class="select-input" v-model="address"> -->
+                        </div>
+                    </li>
+                    <li>
+                        <div class="right_c">
+                            <span>门店地址：</span>
+                            <input type="text" class="select-input" placeholder="详细地址" v-model="address">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="right_c">
+                            <span>预约时间：</span>
+                            <div class="">
+                                <input type="text" class="select-input" placeholder="请选择预约时间" :value="date" onfocus="showDate()">
+                                <div class="left-svg fr">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-xiangyou"></use>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="right_c">
+                            <span>收货人：</span>
+                            <div class="">
+                                <input type="text" class="select-input" placeholder="请输入收货人名称" v-model="consignee">
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="right_c">
+                            <span>联系电话：</span>
+                            <div class="">
+                                <input type="text" class="select-input" placeholder="请输入联系电话" v-model="mobile">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="user-note">
+                <span>订单备注：</span>
+                <input type="text" id="valueName" v-model="userNote" placeholder="给卖家留言" />
+            </div>
+
+            <div class="aubmit_btn">
+                <p>实际付款：￥{{totalGoodsPrice |number}}</p>
+                <div class="SubmitOrders" @click="SubmitOrders">提交订单</div>
+            </div>
+        </div>
+        <!--支付方式 end-->
+        <!-- <div style="width: 100%;height: 50px"></div>-->
+    </div>
+
+
+    <!--{include file="public/nav" /}-->
+</body>
+<script>
+    var vm = new Vue({
+        el: '#orderConfirm',
+        data: {
+            isShow: false,
+            selected: false,
+            token: '',
+            totalGoodsPrice: '',
+            cartList: '',
+            payMent: '',
+            userNote: '',
+            listName: [], //收货人信息数据
+            goods_sn: '',
+            wxURL: '',
+            user_address_id: '',
+            shippingType: [{
+                name: '邮寄',
+                value: 2,
+                checked: false
+            }, {
+                name: '门店自取',
+                value: 1,
+                checked: true
+            }],
+            shipping_type: 2,
+            pay_type: 1,
+            pay_code: 1000,
+            date: '',
+            consignee: '',
+            mobile: '',
+            storeInfo: [],
+            store_id: '',
+            address: '',
+            storeindex: -1
+        },
+        filters: {
+            //保留2位小数点过滤器 不四舍五入
+            number: function (value) {
+                console.info(value);
+                var toFixedNum = Number(value).toFixed(3);
+                var realVal = toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                return realVal;
+            }
+        },
+        created: function () {
+            __checkLogin();
+            this.token = getToken();
+            var _this = this;
+            //订单提交接口
+            axios.get(__apiurl + '/order/addpre', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+            }).then(function (response) {
+                console.info(response);
+                _this.totalGoodsPrice = response.data.data.total_goods_price;
+                _this.cartList = response.data.data.cartList;
+                _this.payMent = response.data.data.payment;
+            }).catch(function (error) {
+                mui.alert(error);
+            });
+            axios.get(__apiurl + '/user/getAddress', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: getToken()
+                },
+            }).then(function (res) {
+                console.info(res);
+                _this.listName = res.data.data;
+                for (var i in res.data.data) {
+                    if (res.data.data[i].is_default == 1) {
+                        _this.user_address_id = res.data.data[i].id;
+                    }
+                }
+            }).catch(function (error) {
+                mui.alert(error)
+            });
+
+            //获取门店信息
+            axios.get(__apiurl + '/order/setorderstore', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: getToken()
+                },
+            }).then(function (res) {
+                _this.storeInfo = res.data.data;
+            }).catch(function (error) {
+                mui.alert(error)
+            });
+
+
+        },
+        methods: {
+            SubmitOrders: function () {
+                //订单提交接口2
+                axios.post(__apiurl + '/order/addsubmit', {
+                    shipping_type: this.shipping_type,
+                    pay_type: this.pay_type,
+                    pay_code: this.pay_code,
+                    user_note: this.userNote,
+                    store_id: this.store_id,
+                    shipping_time: this.date,
+                    consignee: this.consignee,
+                    mobile: this.mobile,
+                    user_address_id: this.user_address_id
+                }, {
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    }
+                }).then(function (res) {
+                    if (res.data.status == 100) {
+                        mui.alert(res.data.msg, function () {
+                            window.location.href = "{:url('order/success')}" + '?id=' + res
+                                .data.data.id;
+                        });
+                    } else {
+                        mui.alert(res.data.msg);
+                    }
+                }).catch(function (error) {
+                    mui.alert(error)
+                });
+            },
+            chosepayment: function (obj) {
+                if (obj.code == 1000) {
+                    this.pay_type = 1;
+                } else {
+                    this.pay_type = 2;
+                }
+                this.pay_code = obj.code;
+            },
+            //显示门店信息
+            showInputList: function (obj) {
+                this.shipping_type = obj.value;
+                if (this.shipping_type == 1) {
+                    this.isShow = true;
+                } else {
+                    this.isShow = false;
+                }
+            },
+            changestore: function () {
+                if (this.storeindex == -1) {
+                    this.store_id = '';
+                    this.address = '';
+                    return false;
+                }
+                this.store_id = this.storeInfo[this.storeindex].id;
+                this.address = this.storeInfo[this.storeindex].province_name + this.storeInfo[this.storeindex]
+                    .city_name + this.storeInfo[this.storeindex].district_name + this.storeInfo[this.storeindex]
+                    .address;
+            },
+            //地址
+            dizhi: function () {
+                window.location.href = "{:url('user/address')}?type=1"
+            }
+        }
+    });
+
+
+    var dtpicker = new mui.DtPicker({
+        type: "datetime", //设置日历初始视图模式
+        beginDate: new Date(2015, 04, 25), //设置开始日期
+        endDate: new Date(2026, 04, 25), //设置结束日期
+        labels: ['年', '月', '日', '时', '分'], //设置默认标签区域提示语
+        value: "2018-01-01 12:00"
+    })
+    dtpicker.hide();
+
+    function showDate() {
+        dtpicker.show(function (e) {
+            vm.date = e.text;
+        })
+    }
+</script>
+
+</html>

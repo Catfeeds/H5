@@ -1,0 +1,79 @@
+<html>  
+<head>  
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>  
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>  
+    <title>微信支付样例-支付</title>  
+    <style>  
+        .wxPay{  
+            width: 100%;  
+            text-align: center;  
+        }  
+        .wxPay p{  
+            color: #051b28;  
+            font-size: 14px;  
+            margin-top:38px;  
+        }  
+        .wxPay span{  
+            color: #051b28;  
+            font-size: 34px;  
+            margin-top:8px;  
+        }  
+        .wxPay button{  
+            width: 93.7%;  
+            height: 40px;  
+            border-radius: 5px;  
+            background: #ff5520;  
+            color: #fff;  
+            font-size: 14px;  
+            border: none;  
+            margin-top: 37px;  
+        }  
+    </style>  
+    <script type="text/javascript">  
+        //调用微信JS api 支付  
+        function jsApiCall()  
+        {  alert('jsApiCall');
+            WeixinJSBridge.invoke('getBrandWCPayRequest', {$jsApiParameters},  
+	            function(res){  
+	                alert(res.err_msg); 
+	                if(res.err_msg == "get_brand_wcpay_request:ok" ) {  
+	                	
+	                	alert('支付成功');
+	                	
+	                    //跳转  
+	                }else{  
+	                    if(res.err_msg == "get_brand_wcpay_request:cancel"){  
+	                        alert('支付取消!');  
+	                        return false;  
+	                    }else{  
+	                        alert('支付失败!');  
+	                        return false;  
+	                    }  
+	                }  
+	            }  
+        	);  
+        }  
+  
+        function callpay()  
+        {  
+            if (typeof WeixinJSBridge == "undefined"){  alert(222);
+                if( document.addEventListener ){  
+                    document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);  
+                }else if (document.attachEvent){  
+                    document.attachEvent('WeixinJSBridgeReady', jsApiCall);  
+                    document.attachEvent('onWeixinJSBridgeReady', jsApiCall);  
+                }  
+            }else{  
+                jsApiCall();  
+            }  
+        }  
+    </script>   
+</head>  
+<body>  
+<div class="wxPay">  
+    <p>该笔订单支付金额为</p>  
+    <span>{$payTotal}</span>  
+    <button type="button" onclick="callpay()" >立即支付</button>  
+</div>  
+</body>  
+</html>  

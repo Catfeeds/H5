@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <title>搜索页面</title>
+    <style type="text/css">
+    	.mui-bar,body, .mui-content {
+		    background-color: #EEEEEE;
+		}
+		.mui-pull-right{
+		    color: #4c4b4b!important;
+		    margin-right: 10px;
+		    font-size: 14px;
+		}
+		.mui-search .mui-placeholder {
+		    font-size: 13px;
+		    line-height: 50px;
+		}
+		.mui-search .mui-placeholder .mui-icon {
+		    color: #F430B6;
+		    margin-right: 1px;
+		}
+		.mui-bar {
+		    height: 50px;
+		    line-height: 50px;
+		    padding-right: 0px;
+    		padding-left: 0px;
+		}
+		.mui-bar-nav {
+		    top: 0;
+		    -webkit-box-shadow: 0 1px 6px #EEEEEE;
+		    box-shadow: 0 1px 6px #EEEEEE;
+		}
+		.mui-search {
+		    margin: 0px 2%;
+		    width: 85%;
+		    float: left;
+		}
+		.mui-bar input[type=search] {
+		    height: 35px;
+		    margin: 6px 0;
+		    background-color: white;
+		    border-radius: 40px;
+		}
+		.mui-search:before{
+			top: 40%;
+		}
+		.mui-search.mui-active:before{
+			left: 15px;
+			height: 35px;
+			line-height: 35px;
+			color: #F430B6;
+		}
+		.mui-search.mui-active input[type='search']{
+			padding-left: 40px;
+		}
+		.history-search{
+			padding: 10px;
+		}
+		.history-text{
+			font-size: 12px;
+		    color: #4c4b4b!important;
+		    height: 40px;
+    		line-height: 30px;
+		}
+		.history-text .icon{
+			width: 15px;
+    		height: 15px;
+		}
+		.history-search ul{
+			margin-bottom: 10px;
+		    max-height: 125px;
+		    overflow: hidden;
+		}
+		.history-search ul li {
+		    max-width: 23%;
+		    margin: 0px 1.5%;
+		    margin-bottom: 10px;
+		    float: left;
+		    text-align: center;
+		    height: 30px;
+		    line-height: 30px;
+		    border-radius: 20px;
+		    background: #e6e2e2ad;
+		    padding: 0px 20px;
+		    overflow: hidden;
+		    color: #4c4b4b!important;
+		    font-size: 12px;
+		}
+    </style>
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-pull-right">取消</a>
+	    <div class="mui-input-row mui-search">
+            <input type="search" placeholder="搜索商品" class="mui-input-clear" v-model="" id="myform">
+        </div>
+	</header>
+	<div class="mui-content">
+	    <div class="history-search">
+        	<div class="history-text">
+        		<svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-shizhong2"></use>
+                </svg>
+        		历史搜索
+        	</div>
+    		<ul class="clear">
+    			<li>钻石</li>
+    			<li>珠宝首饰</li>
+    			<li>成品珠宝</li>
+    			<li>戒指</li>
+    			<li>耳环</li>
+    			<li>裸钻</li>
+    			<li>钻石</li>
+    			<li>珠宝首饰</li>
+    			<li>成品珠宝</li>
+    			<li>钻石</li>
+    			<li>珠宝首饰</li>
+    			
+    		</ul>
+    	</div>
+	</div>
+</body>
+<script>
+   
+</script>
+</html>

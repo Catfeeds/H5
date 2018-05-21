@@ -1,0 +1,16 @@
+<?php
+
+//二位数组去重
+function er_array_unique($arr){
+  $newarr = array();
+  if(is_array($arr)){
+    foreach($arr as $v){
+      if(!in_array($v,$newarr,true)){
+        $newarr[] = $v;
+      }
+    }
+  }else{
+     return false;
+  }
+  return $newarr;
+}

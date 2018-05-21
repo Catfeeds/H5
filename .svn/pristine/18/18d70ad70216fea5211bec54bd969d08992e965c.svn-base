@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * 获取模板信息
+ * @param
+ * @return int
+ */
+function get_agent_template($id){  
+    $agent_template=db('template')
+    //->cache("template_".$agent_id,7200)
+    ->find($id); 
+    return $agent_template;
+}
+
+/**
+ * 获取登录用户信息
+ * @param
+ * @return arr
+ */
+function get_user_token($token){  
+    $user= session("user");
+    if(empty($user)){
+        $uid=get_userid_token();
+        if($uid){
+            $user=model("User")->getUserInfoById($uid);
+            session("user",$user);
+        }
+    }
+    return $user;
+}
+

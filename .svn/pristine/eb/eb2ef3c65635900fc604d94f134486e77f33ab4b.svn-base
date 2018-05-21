@@ -1,0 +1,748 @@
+<?php
+namespace app\common\model;
+
+use think\db\Query;
+use think\Model;
+
+class Order extends Model
+{
+    protected $insert = ['create_time'];
+
+    /**
+     * 创建时间
+     * @return bool|string
+     */
+    protected function setCreateTimeAttr()
+    {
+        return date('Y-m-d H:i:s');
+    }
+
+    
+    //fire 获取订单api显示列表,抄getOrderShowList,由于显示格式不一样 update guihongbing 20180202
+    public function getUserOrderList($where='',$page=1,$size=5,$order='id desc'){
+        $total = M('order')->where($where)->count();
+        $order_list = M('order')->field('*')->where($where)->order($order)->page($page,$size)->select();
+        if(!$order_list) return ;
+        $o_list = convert_arr_key($order_list,'id');
+        $o_list_id = array_keys($o_list);
+        $order_status = ConditionShow('','order','order_status');
+        $order_type = ConditionShow('','order_goods','order_type');
+        $pay_type = ConditionShow('','order','pay_type');
+        $shipping_type = ConditionShow('','order','shipping_type');
+    
+        $og_list = M('order_goods')->alias('og')
+        ->field('og.*,g.thumb,oge.score oge_score,oge.content oge_content')
+        ->join('zm_goods g','g.id=og.goods_id','left')
+        ->join('zm_order_goods_eval oge','oge.order_goods_id=og.id','left')
+        ->where(['og.order_id'=>['in',$o_list_id]])
+        ->select();
+		//$sql = Order::getLastSql();
+        $o_list_all=[];
+		foreach($order_list as $key =>$val){
+			foreach ($og_list as $k => $v) {
+				if($v['order_id'] == $val['id']){
+					$v['order_status_name'] = $order_status[$o_list[$v['order_id']]['order_status']];
+					$v['pay_type_name'] = $pay_type[$o_list[$v['order_id']]['pay_type']];
+					$v['shipping_type_name'] = $shipping_type[$o_list[$v['order_id']]['shipping_type']];
+
+					//生成去支付按钮
+					if($o_list[$v['order_id']]['pay_status'] == 0 && $o_list[$v['order_id']]['pay_type'] == 2 && $o_list[$v['order_id']]['order_status']!=7){
+						$v['button']['去支付'] = true;
+					}
+
+					//生成确认收货按钮
+					if($o_list[$v['order_id']]['order_status'] == 4){
+						$v['button']['确认收货'] = true;
+					}
+					//生成待评价按钮
+					if($o_list[$v['order_id']]['order_status'] == 5 && $v['is_comment'] == 0){
+						$v['button']['待评价'] = true;
+					}
+					//返回显示数组
+					$v['spec_key_name_arr'] = logic('DataProcessing')->spec_key_name_arr($v);
+
+					$v['order_type_name'] = $order_type[$v['order_type']];
+
+					$order_list[$key]['sub_order_goods'][] = $v;
+				}
+			}
+		}
+
+        $result['page']=$page;
+        $result['size']=$size;
+        $result['total']=$total;
+        $result['data']=$order_list;
+    
+        return $result;
+    }
+    
+    
+    
+	/**
+	 * 订单详情
+	 * auth	：zengmm
+	 * @param：$id 订单ID
+	 * time	：2017-11-20
+	**/
+	public function getInfoById($id)
+	{
+		$where["o.id"] = $id;
+		$data = db("order")->alias('o')
+		->join('user u','u.id=o.user_id')
+		->where($where)
+		->field("o.*,u.username")
+		->find();	
+		//查询订单所有产品	
+		$data["goodsList"] = $this->getOrderGoods($id);
+		//有物流的情况,查询物流信息
+		if($this->getOrderDelivery($id)){ $data["orderDelivery"] = $this->getOrderDelivery($id); }
+		return $data;
+	}
+	
+	//查询订单所有产品	
+	public function getOrderGoods($order_id){
+		//查询订单所有产品
+		$where_g["og.order_id"] = $order_id;
+		$orderGoodsList = db("order_goods")->alias('og')
+		->join('goods g','og.goods_id=g.id','left')
+		->where($where_g)
+		->field("og.id as ogId,og.*,g.id as goods_id,g.type,g.agent_id as goods_agent_id")
+		->select();
+		//成品、钻石产品的区分
+		foreach($orderGoodsList as $key=>$val){
+			$order_delivery_goods_info = db("order_delivery_goods")->where("order_goods_id=".$val["id"])->field("goods_number")->find();
+			$val["odg_goods_number"] = $order_delivery_goods_info["goods_number"];
+			$agent_id = get_agent_id();
+			if($val["goods_agent_id"] != $agent_id){
+				$val["distribution"] = 1;	
+				$list["isDistribution"]	= 1;
+			}else{
+				$val["distribution"] = 0;	
+				$list["isDistribution"]	= 0;
+			}	
+			if($val["order_type"] == 1){
+				//查询裸钻数据
+				$val["diamondInfo"] = db("goods_diamond")->where("goods_id=".$val["goods_id"])->find();
+				$list["diamond"][] = $val;
+			}elseif($val["order_type"] == 2){
+				$val["goodsInfo"] = db("goods")->where("id=".$val["goods_id"])->find();
+				$list["goods"][] = $val;
+			}elseif($val["order_type"] == 3){
+				$diamondInfo = db("goods_diamond")->where("goods_id=".$val["goods_id"])->find();
+				if($diamondInfo){
+					$val["diamondInfo"] = $diamondInfo;
+					$list["goods_custom"]["diamond"][] = $val;	
+				}else{
+					$val["goodsInfo"] = db("goods")->where("id=".$val["goods_id"])->find();
+					$list["goods_custom"]["goods"][] = $val;
+				}
+			}
+		}	
+		return $list;
+	}
+	
+	//有物流的情况,查询物流信息	
+	public function getOrderDelivery($order_id){
+		$order_delivery_arr = db("order_delivery")->alias('od')
+		->join('order_delivery_express ode','ode.delivery_id=od.id','left')
+		->where("od.order_id=".$order_id)->find();
+		return $order_delivery_arr;
+	}
+	
+	/**
+	 * 订单详情
+	 * auth	：zengmm
+	 * @param：$order_sn 订单编号
+	 * time	：2017-11-20
+	 **/
+	public function getInfoBySn($order_sn)
+	{
+	    $data = db("order")->where("order_sn",$order_sn)->find();
+	    return $data;
+	}
+	
+	
+	/**
+	 * 订单详情							
+	 * auth	：zengmm
+	 * @param：$id 订单ID
+	 * time	：2017-11-20
+	**/
+	public function getInfo($param)
+	{		
+		$data = db("order")->where($param)->find();
+		return $data;		
+	}
+	
+	
+	/**
+	 * 获取付款日志详情
+	 * auth	：zengmm
+	 * @param：$param 筛选条件
+	 * time	：2017-11-21
+	**/
+	public function getOrderPaymentInfo($id)
+	{
+		$orderPaymentInfo = db("order_payment")->alias('op')
+		->join('user u','op.uid=u.id')
+		//->join('trader t','op.tid=t.id')
+		->join('payment p','op.payment_mode=p.id')
+		->join('order o','op.order_id=o.id')
+		->where("op.id=".$id)
+		->field("op.*,u.username,p.name as pname,o.order_sn")
+		->find();
+		if($orderPaymentInfo){ return $orderPaymentInfo; }else{ return false; }
+	}
+	
+	/**
+	 * 获取发货单详情
+	 * auth	：zengmm
+	 * @param：$param 筛选条件
+	 * time	：2017-11-21
+	**/
+	public function getOrderDeliveryInfo($id)
+	{
+		$where["ode.id"] = $id;
+		
+		$orderDeliveryInfo = db("order_delivery_express")->alias('ode')
+		->join('order_delivery od','od.id=ode.delivery_id')
+		->join('user u','u.id=od.uid')
+		->where($where)
+		->field("ode.id,ode.order_sn,ode.type,ode.name,ode.phone,ode.create_time,ode.status,od.goods_price,od.address,u.realname")
+		->find();
+		$deliveryGoods = db("order_delivery_goods")->where("order_delivery_express_id=".$id)->select();
+		//成品、钻石产品的区分
+		foreach($deliveryGoods as $key=>$val){
+			$orderGoodsInfo = db("order_goods")->where("id=".$val["order_goods_id"])->field("spec_key_name")->find();
+			$val["spec_key_name"] = $orderGoodsInfo["spec_key_name"];
+			if($val["goods_type"] == 1){
+				//查询裸钻数据
+				$diamondInfo = db("goods_diamond")->where("goods_id=".$val["goods_id"])->field("id,certificate_type,certificate_number,type,weight,color,clarity,cut")->find();
+				$val["diamond"] = $diamondInfo;
+				$deliveryGoodsList["diamond"][] = $val;
+			}elseif($val["goods_type"] == 3){
+				//成品数据
+				$goodsInfo = db("goods")->where("id=".$val["goods_id"])->field("id,name")->find();
+				$val["goods"] = $goodsInfo;
+				$deliveryGoodsList["goods"][] = $val;
+			}	
+			$goodsPrice += $val["goods_price"]; 
+		}	
+		$orderDeliveryInfo["deliveryGoodsList"] = $deliveryGoodsList;
+		$orderDeliveryInfo["goodsPrice"] = $goodsPrice;
+		if($orderDeliveryInfo){ return $orderDeliveryInfo; }else{ return false; }
+	}
+	
+	/**
+	 * 获取退货单详情
+	 * auth	：zengmm
+	 * @param：$param 筛选条件
+	 * time	：2017-11-22
+	**/
+	public function getOrderReturnInfo($param=array(),$field="")
+	{
+		if(!empty($param)){
+			$orderReturnInfo = db("order_return")->alias('ort')
+			->join('order_return_goods rg','rg.return_id=ort.id')
+			->join('user u','u.id=ort.uid')
+			->join('order o','o.id=ort.order_id')
+			->where($param)
+			->field($field)
+			->find();
+			if($orderReturnInfo){ return $orderReturnInfo; }else{ return false; }
+		}else{
+			return false;	
+		}
+	}
+	
+	/**
+	 * 获取退款详情
+	 * auth	：zengmm
+	 * @param：$param 筛选条件
+	 * time	：2017-11-22
+	**/
+	public function getOrderRefundInfo($param=array(),$field="")
+	{
+		if(!empty($param)){
+			$data = db("order_refund")->alias('orf')
+			->join('payment_mode pm','orf.mode=pm.id')
+			->where($param)
+			->field($field)
+			->find();
+			if($data){ return $data; }else{ return false; }
+		}else{
+			return false;	
+		}
+	}
+
+	/**
+	 * 手工退款（添加退款记录）
+	 * auth	：zengmm
+	 * @param：$data  添加数据
+	 * time	：2017-11-23
+	**/
+	public function addOrderRefund($data)
+	{
+		$action	= db('order_refund')->insert($data);
+		if($action){ return true; }else{ return false; }
+	}
+	
+	/**
+	 * 增加支付记录
+	 * @param：$data  添加数据
+	 **/
+	public function addOrderPayment($data){
+	    $action	= db('order_payment')->insert($data);
+	    if($action){ return true; }else{ return false; }
+	}
+
+	//获取订单号 zwx
+	public function getOrderSn(){
+		return date('Ymdhis',time()).rand(1000, 9999);
+	}
+	
+	/** 
+     * zwx 生成订单
+     * @param array 
+     * @return array
+     */
+	public function addOrder($data){
+
+        $save_order['order_sn'] = $this->getOrderSn(); //订单编号
+        $save_order['agent_id'] = $data['agent_id'];
+        $save_order['user_id'] = $data['user_id'];
+
+        $save_order['shipping_type'] = $data['shipping_type']; // 1 门店自取 2 第三方物流
+        $save_order['pay_type'] = $data['pay_type']; // 1 线下转账 2 在线支付
+
+        $save_order['consignee'] = $data['consignee']; //收货人
+        $save_order['address'] = $data['address'];
+        $save_order['mobile'] = $data['mobile'];
+
+        $save_order['province'] = isset($data['province'])?$data['province']:'';
+        $save_order['city'] = isset($data['city'])?$data['city']:'';
+        $save_order['district'] = isset($data['district'])?$data['district']:'';
+        $save_order['zipcode'] = isset($data['zipcode'])?$data['zipcode']:'';
+        $save_order['shipping_time'] = isset($data['shipping_time'])?$data['shipping_time']:'';
+        
+        $save_order['pay_code'] = $data['pay_code']; //支付方式
+        $save_order['pay_name'] = $data['pay_name']; //支付方式名称
+
+		$save_order['integral'] = $data['integral']; //抵扣积分
+		$save_order['integral_money'] = $data['integral_money']; //抵扣价格
+        $save_order['goods_price'] = $data['goods_price']; //商品总价
+        $save_order['order_amount'] = $data['order_amount']; //应付款金额
+        //根据现货 订货 获取定金总额
+
+        $data['result'] = logic('Order')->getOrderPaidMoney(['list'=>$data['cartList']]);
+        if($data['pay_code'] == 1000){ //线下支付
+        	$save_order['paid_money'] = $data['order_amount']; //定金总额
+        }else{ //线上支付
+        	$save_order['paid_money'] = $data['result']['paid_money']; //定金总额
+        }
+        
+
+        if($save_order['paid_money'] == 0){ //如果定金金额为0
+            $save_order['order_status'] = 3; //订单状态
+            $save_order['pay_status'] = 1; //支付状态
+        }else{
+            $save_order['order_status'] = 0; //订单状态
+            $save_order['pay_status'] = 0; //支付状态
+        }
+
+        $save_order['total_amount'] = $data['total_amount']; //订单总价
+       
+        $save_order['add_time'] = date('Y-m-d H:i:s',time()); //订单总价
+        $save_order['user_note'] = $data['user_note']; // 备注
+
+        $this->startTrans();
+        
+        if($data['integral']>0){ //用户抵扣积分
+        	D('score')->setUserScore($data['user_id'],$data['agent_id'],-$data['integral'],'购物抵扣积分',json_encode(['order_sn'=>$save_order['order_sn']]));
+        }
+
+        $id = M('order')->insertGetId($save_order);
+
+        $saveAll_order_goods = [];
+
+        foreach ($data['result']['list'] as $k => $v) {
+        	$idArr[] = $v['id']; 
+        	$save_order_goods['order_id'] = $id;
+        	$save_order_goods['order_type'] = $v['cart_type'];
+        	$save_order_goods['goods_id'] = $v['goods_id'];
+        	$save_order_goods['goods_name'] = $v['goods_name'];
+        	$save_order_goods['stock_status'] = $v['g_stock_status']; //1为现货 2订货
+        	$save_order_goods['goods_sn'] = $v['goods_sn'];
+        	$save_order_goods['goods_num'] = $v['goods_num'];
+        	$save_order_goods['goods_price'] = $v['goods_price'];
+        	if($data['pay_code'] == 1000){ //线下支付
+	        	$save_order_goods['prepay_price'] = $v['member_goods_price']; //预付金
+	        }else{ //线上支付
+	        	$save_order_goods['prepay_price'] = $v['prepay_price']; //预付金
+	        }
+        	$save_order_goods['member_goods_price'] = $v['member_goods_price'];
+        	$save_order_goods['spec_key'] = $v['spec_key'];
+        	$save_order_goods['spec_key_name'] = $v['spec_key_name'];
+        	$save_order_goods['attr_main_json'] = $v['attr_main_json'];
+        	$save_order_goods['give_integral'] = $v['give_integral'];
+        	$save_order_goods['give_leader_integral'] = $v['give_leader_integral'];
+        	//组合编码
+        	$save_order_goods['goods_group_code'] = $v['goods_group'];
+        	$saveAll_order_goods[] = $save_order_goods;
+        	
+        	if($v['g_stock_status'] == 1){ //现货判断库存
+                if($v['gs_sku_id']>0){ //有sku
+                    if($v['goods_num']>$v['gs_goods_number']){ //购物车数量大于库存数量
+                    	$this->rollback();
+                        return '购物车数量大于库存数量';
+                    }else{ //减库存
+                    	if($save_order['pay_type'] == 2){ //在线支付扣库存
+                    		M('goods_sku')->where(['id'=>$v['gs_sku_id']])->setDec('goods_number',$v['goods_num']);
+        				}
+                    }
+                }else{ //没有sku
+                    if($v['goods_num']>$v['g_stock_num']){ //购物车数量大于库存数量
+                    	$this->rollback();
+                        return '购物车数量大于库存数量';
+                    }else{ //减库存
+                    	if($save_order['pay_type'] == 2){ //在线支付扣库存
+                    		M('goods')->where(['id'=>$v['goods_id']])->setDec('stock_num',$v['goods_num']);
+                    	}
+                    }
+                }
+            }
+        }
+        $bool_num = M('order_goods')->insertAll($saveAll_order_goods); //返回新增条数
+        $del_num = D('cart')->delCart(['id'=>$idArr]); //返回删除购物车条数
+        
+        if($id&&$bool_num&&$del_num){
+        	//转采购单
+        	$b = logic('PurchaseOrder')->set_index_zm_order($id,$data['agent_id']);
+        	if($b !== true){
+        		$this->rollback();
+        		return $b;
+        	}
+        	
+        	cookie('cart_count'.$data['user_id'],null); //删除购物车清空cookie
+        	$this->commit();
+        	return $id;
+        }else{
+        	$this->rollback();
+        	return '提交订单失败';
+        }
+	}
+
+	//zwx 获取订单
+	public function getOrderList($where='',$page=1,$size=15,$order='id desc'){
+		return M('order')->field('*')->where($where)
+		->order($order)->page($page,$size)->select();
+	}
+
+	//zwx 获取订单前台显示列表
+	public function getOrderShowList($where='',$page=1,$size=5,$order='id desc'){
+		$total = M('order')->where($where)->count();
+		$o_list = M('order')->field('*')->where($where)->order($order)->page($page,$size)->select();
+		
+		if(!$o_list) return ;
+
+		$o_list = convert_arr_key($o_list,'id');
+		$o_list_id = array_keys($o_list);
+		$order_status = ConditionShow('','order','order_status');
+		$order_type = ConditionShow('','order_goods','order_type');
+		$pay_type = ConditionShow('','order','pay_type');
+		$shipping_type = ConditionShow('','order','shipping_type');
+		
+		$og_list = M('order_goods')->alias('og')
+					->field('og.*,g.thumb,g.supply_goods_type,g.type,oge.score oge_score,oge.content oge_content')
+					->join('zm_goods g','g.id=og.goods_id','left')
+					->join('zm_order_goods_eval oge','oge.order_goods_id=og.id','left')
+					->where(['og.order_id'=>['in',$o_list_id]])
+					->select();
+
+		//设置商品ID为键值
+        $og_list_goods_id = convert_arr_key($og_list,'goods_id');
+		foreach ($og_list as $k => $v) {
+			//托配钻
+			if($v['order_type'] == 3 && $v['goods_group_code']){
+                //分割托配钻数组 0 托 1 钻
+                $goods_group = explode('_', $v['goods_group_code']);
+                $v['goods_name'] = '托配钻('.$og_list_goods_id[$goods_group[0]]['goods_name'].','.$og_list_goods_id[$goods_group[1]]['goods_name'].')';
+            }
+			$o_list[$v['order_id']]['order_status_name'] = $order_status[$o_list[$v['order_id']]['order_status']];
+			$o_list[$v['order_id']]['pay_type_name'] = $pay_type[$o_list[$v['order_id']]['pay_type']];
+			$o_list[$v['order_id']]['shipping_type_name'] = $shipping_type[$o_list[$v['order_id']]['shipping_type']];
+
+			//生成去支付按钮
+			if($o_list[$v['order_id']]['pay_status'] == 0 && $o_list[$v['order_id']]['pay_type'] == 2 && $o_list[$v['order_id']]['order_status']!=7){
+				$o_list[$v['order_id']]['button']['去支付'] = true;
+			}
+
+			//生成确认收货按钮
+			if($o_list[$v['order_id']]['order_status'] == 4){
+				$o_list[$v['order_id']]['button']['确认收货'] = true;
+			}
+			//生成待评价按钮
+			if($o_list[$v['order_id']]['order_status'] == 5 && $v['is_comment'] == 0){
+				$o_list[$v['order_id']]['button']['待评价'] = true;
+			}
+
+			$o_list[$v['order_id']]['give_integral'] += $v['give_integral']; //获得总积分
+
+			//返回显示数组
+            $v['spec_key_name_arr'] = logic('DataProcessing')->spec_key_name_arr($v);
+            
+			$v['order_type_name'] = $order_type[$v['order_type']];
+			$o_list[$v['order_id']]['sub_order_goods'][] = $v;
+		}
+
+        $result['page']=$page;
+        $result['size']=$size;
+        $result['total']=$total;
+        $result['data']=$o_list;
+
+        return $result;
+	}
+	
+	
+
+	/** 
+     * zengmm 修改订单
+     * @param array 
+     * @return array
+     */
+	public function saveOrderInfo($data){
+		return db('order')->update($data);	
+	}
+	
+	/** 
+     * zengmm 获取快递公司列表
+     * @param array 
+     * @return array
+     */
+	public function getShippingList(){
+		return db('shipping')->select();	
+	}
+	
+	/** 
+     * zengmm 获取订单评论详情
+     * @param array 
+     * @return array
+     */
+	public function getGoodsEvalInfo($id){
+		return db('order_goods_eval')->alias('oge')
+			->join('goods g','g.id = oge.goods_id')
+            ->join('user u','u.id = oge.uid')
+            ->field('oge.*,g.name as goodsName,u.username')
+            ->where("oge.id=".$id)
+            ->find();
+	}
+	
+	/** 
+     * zengmm 修改订单评论
+     * @param array 
+     * @return array
+     */
+	public function updGoodsEvalInfo($data){
+		return db('order_goods_eval')->update($data);	
+	}
+	
+	/** 
+     * zengmm 删除订单评论
+     * @param array 
+     * @return array
+     */
+	public function delGoodsEvalInfo($id){
+		return db('order_goods_eval')->delete($id);	
+	}
+	
+	/** 
+     * zengmm 订单配货
+     * @param array 
+     * @return array
+     */
+	public function goDelivery($order_id){
+		$orderInfo = $this->getInfoById($order_id);
+		$data["order_id"] = $order_id;
+		$data["uid"] = $orderInfo["user_id"];
+		/*$addressArr = array("address"=>$orderInfo["address"],"consignee"=>$orderInfo["consignee"],"mobile"=>$orderInfo["mobile"],"country"=>$orderInfo["country"],"province"=>$orderInfo["province"],"city"=>$orderInfo["city"],"district"=>$orderInfo["district"]);*/
+		$data["address"] = $orderInfo["address"];
+		$data["goods_price"] = $orderInfo["order_amount"];
+		$data["agent_id"] = $orderInfo["agent_id"];
+		$rsod = db("order_delivery")->insert($data);
+		if($rsod){
+			return true;	
+		}else{
+			return false;	
+		}		
+	}
+	
+	/** 
+     * zengmm 订单发货
+     * @param array 
+     * @return array
+     */
+	public function delivery($data){
+		$this->startTrans();	
+		$orderDeliveryInfo = db("order_delivery")->where("order_id=".$data["order_id"])->find();
+		$data_od["delivery_id"] = $orderDeliveryInfo["id"];
+		//1、添加订单物流表数据  order_delivery_express
+		$data_od["order_id"] = $data["order_id"];
+		$data_od["order_sn"] = $data["order_sn"];
+		$data_od["name"] = $data["name"];
+		$data_od["phone"] = $data["phone"];
+		if($data["company"]){
+			$company = explode("_",$data["company"]);			//$data["company"]为 "物流方式ID_快递公司"的拼接字符串
+			$data_od["company"] = $company[1];
+			$data_od["shipping_id"] = $company[0];
+		}else{
+			$data_od["company"] = "";
+			$data_od["shipping_id"] = "";
+		}
+		$data_od["number"] = $data["number"];
+		$data_od["freight"] = $data["freight"];
+		$data_od["create_time"] = date("Y-m-d H:i:s");
+		$data_od["update_time"] = date("Y-m-d H:i:s");
+		$data_od["agent_id"] = $data["agent_id"];
+		$data_od["type"] = $data["type"];
+		$data_od["status"] = 1;
+		$order_delivery_express_id = db("order_delivery_express")->insertGetId($data_od);
+		if($order_delivery_express_id == false){
+			$this->rollback();
+			return false;
+		}
+		//2、添加订单发货表数据   order_delivery_goods
+		$data_odg["delivery_id"] = $data_od["delivery_id"];
+		$data_odg["order_delivery_express_id"] = $order_delivery_express_id;
+		$data_odg["order_id"] = $data["order_id"];	
+		$data_odg["agent_id"] = $data["agent_id"];
+		$goodsNumber = array();	
+		foreach($data["goodsId"] as $v){
+			if($v){ $data["goodsIds"][] = $v; }
+		}
+		foreach($data["goodsPrice"] as $v){
+			if($v){ $data["goods_price"][] = $v; }
+		}
+		foreach($data["goodsType"] as $v){
+			if($v){ $data["goods_type"][] = $v; }
+		}
+		foreach($data["goodsNumber"] as $v){
+			if($v){ $data["goods_number"][] = $v; }
+		}		
+		$i=0;
+		foreach($data["orderGoodsId"] as $key=>$val){
+			$data_odg["order_goods_id"] = $val;
+			$data_odg["goods_id"] = $data["goodsIds"][$i];
+			$data_odg["goods_price"] = $data["goods_price"][$i];
+			$data_odg["goods_type"] = $data["goods_type"][$i];
+			$data_odg["goods_number"] = $data["goods_number"][$i];
+			$odgRs =  db("order_delivery_goods")->insert($data_odg);
+			if($odgRs == false){
+				$this->rollback();
+				return false;
+			}	
+			//3、修改order_goods表数据  
+			$where_og["id"] = $val;
+			$data_og["is_send"] = 1;
+			$ogRs = db("order_goods")->where($where_og)->update($data_og);
+			if($ogRs == false){
+				$this->rollback();
+				return false;
+			}	
+			$i++;	
+		}	
+		//4、查看是否修改整个订单的状态
+		$orderGoodsIds = implode(",",$data["orderGoodsId"]);
+		$ogWhere["order_id"] = $data["order_id"];
+		$ogWhere["is_send"] = 0;
+		$ogWhere["id"] = array("not in",$orderGoodsIds);
+		$orderGoodsList = db("order_goods")->where($ogWhere)->field("id")->select();
+		if(empty($orderGoodsList)){
+			//修改订单状态
+			$oData["id"] = $data["order_id"];
+			$oData["order_status"] = 4;
+			$oData["shipping_status"] = 1;
+			$oRs = db("order")->update($oData);	
+			if($oRs !== false){
+				$this->commit(); 
+				return true;			
+			}else{
+				$this->rollback();
+				return false;		
+			}	
+		}else{
+			$this->commit(); 
+			return true;		
+		}	
+	}
+	
+	//zwx 确认收货
+	public function order_status_5($id,$user_id,$confirm_type){
+		$this->startTrans();
+		$b1 = M('order_delivery')->where(['order_id'=>$id])->update(['confirm_type'=>$confirm_type,'confirm_time'=>date('Y-m-d H:i:s',time())]);
+		$b2 = M('order')->where(['id'=>$id,'user_id'=>$user_id])->update(['order_status'=>5]);
+		if($b1&&$b2){
+			logic('Score')->setOrderGoodsScore($id); //确认收货送积分
+			$this->commit();
+			return true;
+		}else{
+			$this->rollback();
+			return false;
+		}
+	}
+
+	/**
+	 * 订单操作-更新订单状态
+	 * @param $where 订单ID,用户ID
+	 * @param $order_status 订单状态
+	 * @return $result 更新操作成功/失败
+	 * @author guihongbing
+	 * @date 20171214
+	 */
+	public function updateOrderStatus($where = array(),$order_status){
+		$result = M('order')->where($where)->update(['order_status'=>$order_status]);
+		return (false !== $result) ? true:false;
+	}
+
+	/**
+	 * 查询用户订单个数
+	 * @param $where 订单ID,用户ID
+	 * @return $num int 订单个数
+	 * @author guihongbing
+	 * @date 20171214
+	 */
+	public function orderNumber($where = array()){
+		$num = M('order')->where($where)->count();
+		return $num;
+	}
+
+	//zwx 获取订单评论
+	public function getOrderGoodsEvalListJoin($where='',$page=1,$size=15,$order='oge.id desc'){
+		$total = M('order_goods_eval')->alias('oge')
+				->join('goods g','g.id = oge.goods_id','left')
+				->join('order_goods og','og.id = oge.order_goods_id','left')
+				->where($where)->count();
+		if(!$total) return ;
+		
+		$list = M('order_goods_eval')->alias('oge')
+				->field('oge.*,
+						g.thumb,
+						og.is_comment,og.spec_key_name,og.attr_main_json
+					')
+				->join('goods g','g.id = oge.goods_id','left')
+				->join('order_goods og','og.id = oge.order_goods_id','left')
+				->where($where)->order($order)->page($page,$size)->select();
+
+		foreach ($list as $k => $v) {
+			//返回显示数组
+            $v['spec_key_name_arr'] = logic('DataProcessing')->spec_key_name_arr($v);
+            $list[$k] = $v;
+		}
+		
+        $result['page']=$page;
+        $result['size']=$size;
+        $result['total']=$total;
+        $result['data']=$list;
+
+        return $result;
+	}
+}

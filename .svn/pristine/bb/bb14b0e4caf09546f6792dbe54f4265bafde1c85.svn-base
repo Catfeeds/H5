@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+
+    <style type="text/css">
+    	.mui-bar,.mui-title, .mui-pull-right, .mui-pull-left{
+    		background:white!important;
+    		color: black!important;
+    	}
+    	.detail_item{
+    		width: 100%;
+    		height: 100%;
+    		padding: 0px 20px;
+    		color: white;
+    	}
+    	.order_status{    		
+    		float: left;
+		    font-size: 20px;
+		    width: 30%;
+		    height: 100%;
+		    line-height: 100px;
+    	}
+    	.order_status_svg{
+    		    /* width: 70%; */
+		    margin-right: 50px;
+		    line-height: 100px;
+		    text-align: right;
+		}
+    	.order_status_svg .icon {
+		    width: 3rem;
+		    height: 3rem;
+		}
+		.user-msg{			
+			padding: 0px 10px;
+		}
+		.left-box{			
+			height: 80px;
+			line-height: 80px;
+			float: left;
+			margin-right: 10px;
+		}
+		.left-box .icon {
+		    width: 2rem;
+		    height: 2rem;
+		}
+		.right-box{
+			height: 80px;
+			font-size: 14px;
+			color: #8f8f94;
+			margin-left: 10px;
+			padding: 15px 10px;
+			line-height: 25px;
+		}
+		.name-num{
+			width: 100%;
+			display: block;
+		}
+		.name{
+			width: 60%;
+		}
+		.fr{
+			text-align: right;
+		}
+		.address{
+			width: 100%;
+			display: block;
+		}
+    </style>
+</head>
+
+
+<body>
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">订单详情</h1>
+</header>
+<div class="mui-content" id="my-order-detail">
+    <div class="detail-title">
+        <!--<img src="__IMG__/banner_01.jpg" alt="" width="100%" height="100%">-->
+        <div class="detail_item" v-for="item in goodsNameList">
+            <div v-if="item.order_status==0">
+            	<div class="order_status">
+            		待付款
+            	</div>
+            	<div class="order_status_svg">
+            		<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-daifukuan"></use>
+                    </svg>
+            	<div class="order_status_svg">
+
+            	</div>
+            </div>
+            <div v-if="item.order_status==3">
+            	<div class="order_status">
+            		待发货
+            	</div>
+            	<div class="order_status_svg">
+            		<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-daifahuo1"></use>
+                     </svg>
+            	</div>
+            </div>
+            <div v-if="item.order_status==4">
+            	<div class="order_status">
+            		待收货
+            	</div>
+            	<div class="order_status_svg">
+            		<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-daishouhuo"></use>
+                     </svg>
+            	</div>
+            </div>
+            <div v-if="item.order_status==5 && item.sub_order_goods[0].is_comment==0">
+            	<div class="order_status">
+            		待评价
+            	</div>
+            	<div class="order_status_svg">
+            		<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-pingjia"></use>
+                     </svg>
+            	</div>
+            </div>
+            <div v-if="item.order_status==5 && item.sub_order_goods[0].is_comment==1">
+            	<div class="order_status">
+            		交易成功
+            	</div>
+            	<div class="order_status_svg">
+            		<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-yiwancheng"></use>
+                     </svg>
+            	</div>
+            </div>
+            <div v-if="item.order_status==7">
+            	<div class="order_status">
+            		订单取消
+            	</div>
+            	<div class="order_status_svg">
+            		<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-iconfontzhizuobiaozhun0262"></use>
+                     </svg>
+            	</div>
+            </div>
+        </div>
+    </div>
+    <div class="user-msg clear bw">
+        <div class="left-box">
+        	<svg class="icon" aria-hidden="true">
+	            <use xlink:href="#icon-dizhiguanli"></use>
+	        </svg>
+           <!-- <img src="__IMG__/zuanjie.png" alt="">-->
+        </div>
+        <div class="right-box" v-for="item in goodsNameList">
+            <div class="name-num">
+            	<span class="name">收货人：{{item.consignee}}</span>
+            	<span class="fr">{{item.mobile}}</span>
+            </div>
+            <p class="address">地址：{{item.address}}</p>
+        </div>
+    </div>
+    <div class="main-text clear bw" v-for="item in goodsNameList">
+        <p class="p-number cb">订单编号：{{item.order_sn}}</p>
+        <ul>
+            <li class="bg clear" v-for="tab in item.sub_order_goods">
+                <div class="fl pro-img">
+                    <img :src="tab.thumb" alt="">
+                </div>
+                <div class="fl middle-box mui-ellipsis-2 ">
+                	<span class="" v-for="attrList in tab.spec_key_name_arr" v-text="attrList.replace('：',':')">                            	
+		            </span>
+                    <!--<span>{{tab.spec_key_name}}</span>-->
+                </div>
+                <div class="fr">
+                    <!--<p>{{tab.order_status_name}}</p>-->
+                    <p class="cb">￥{{tab.member_goods_price}}</p>
+                    <p style="font-size: 14px; color: #999999">x {{tab.goods_num}}</p>
+                    
+                </div>
+            </li>
+           
+        </ul>
+        <div class="fr totalmoney">
+            <span>共{{item.totalnum}}件商品，合计：<strong style="color: red">￥{{item.order_amount}}</strong> </span>
+        </div>
+    </div>
+    <div class="wrap-pay">
+        <div class="clear box-list" v-for="item in goodsNameList">
+            <p class="fl">支付方式</p>
+            <p class="fr">{{item.pay_name}}</p>
+        </div>
+        <div class="clear box-list">
+            <p class="fl">配送方式</p>
+            <p class="fr">免费邮寄</p>
+        </div>
+        <div class="clear box-list">
+            <p>订单备注：客户留言</p>
+        </div>
+    </div>
+    <div class="order-time clear">
+        <p>下单时间：2015-11-11 15:01:00</p>
+        <button class="fl">取消订单</button>
+        <button type="button" class="fr" @click="goPay">去支付</button>
+    </div>
+    <div class="my-mask" v-show="myMask" @click="MaskNone"></div>
+    <div class="mask-html" v-show="myMask">
+        <ul>
+            <li @click="wxGoPay">
+                <span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-wechat"></use>
+                     </svg>
+				</span>
+                微信支付
+            </li>
+            <li @click="zfbGoPay">
+                <span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-alipay"></use>
+                     </svg>
+				</span>
+                支付宝支付
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+<script>
+
+
+
+
+    new Vue({
+        el: '#my-order-detail',
+        data: {
+            id: '',
+            goodsNameList: '',
+            myMask:false,
+            order_sn:''
+        },
+        created:function() {
+            __checkLogin();
+            this.id = getUrlParam("id");
+            this.token = getToken();
+            axios.get(__apiurl + '/order/detail', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+                params: {
+                    id: this.id,
+                }
+            }).then(function (res)  {
+                this.goodsNameList = res.data.data.data;
+                for (var i in this.goodsNameList) {
+                    var num = 0;
+                    for (var j in this.goodsNameList[i].sub_order_goods) {
+                        num += this.goodsNameList[i].sub_order_goods[j].goods_num;
+                    }
+                    this.$set(this.goodsNameList[i], 'totalnum', num)
+                }
+
+
+                for( var el of this.goodsNameList){
+                    this.order_sn=el.order_sn;
+                }
+            }).catch(function (error){
+            alert(error)
+            })
+        },
+        methods: {
+            goPay:function(){
+              this.myMask=true;
+            },
+            MaskNone:function(){
+                this.myMask=false;
+            },
+            //微信支付
+            wxGoPay:function(){
+                var wxopenid=getOpenId();
+                //微信支付接口  ,如果有openid就是公众号支付，没有为H5支付，upt by fire
+                axios.post(__apiurl + '/pay/wxpay', {
+                        order_id:this.order_sn,
+                        openid:wxopenid
+                    }, {
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        }
+                    }
+                ).then(function (res)  {
+                    if(wxopenid){
+                        jsApiMpPay(res.data.data.options,"{:url('order/wxpaysuccess')}" + '?id=' + this.order_sn);
+                    }else{
+                        window.location.href = res.data.data.options;
+                    }
+
+                }).catch(function (error)  {
+                    mui.alert(error)
+                })
+            },
+            //支付宝支付
+            zfbGoPay:function(){
+
+            }
+        }
+    });
+
+
+</script>
+
+</html>

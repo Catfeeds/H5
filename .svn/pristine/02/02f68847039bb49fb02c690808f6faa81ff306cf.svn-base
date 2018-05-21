@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body>
+<div id="evaluation">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">评价</h1>
+    </header>
+    <div class="mui-content">
+        <ul class="evaluation_ul ">
+            <li v-for="item in plList">
+                <div class="evaluation_title clear">
+                    <p class="fl">匿名</p>
+                    <p class="fr">
+
+                    </p>
+                </div>
+                <p class="evaluation_text">
+                    {{item.content}}
+                </p>
+            </li>
+
+        </ul>
+    </div>
+    <div style="width: 100%;height: 60px"></div>
+</div>
+ {include file="public/nav" /}
+</body>
+<script>
+
+    new Vue({
+        el: '#evaluation',
+        data: {
+            id:'',
+            plList:[]
+        },
+        created:function() {
+            this.token = getToken();
+            this.id = getUrlParam("goods_id");
+            axios.get(__apiurl + '/order/evalList', {
+                params: {
+                    goods_id: this.id
+                }
+            }).then(function (response) {
+                if (response.status == 200) {
+                    this.plList=response.data.data
+
+                }
+            }).catch(function (error)  {
+                mui.alert(error)
+            })
+        },
+    });
+</script>
+<script type="text/javascript">
+
+</script>
+
+</html>

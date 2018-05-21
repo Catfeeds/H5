@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <style type="text/css">
+    	body, .mui-content {
+		    background-color: white!important;
+		}
+        .mui-bar {
+            background: #F52B9D;
+        }
+
+        .mui-title {
+            color: white !important;
+        }
+
+        .login-btn {
+            width: 90%;
+            margin-left: 5%;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="mui-bar mui-bar-nav">
+        <h1 class="mui-title">注册</h1>
+    </header>
+    <div class="mui-content">
+        <section class="wrapper">
+            <form class="form-box" id="myform" name="regist" action="" method="post">
+                <ul>
+                    <li class="userinput">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-iconfontdianhua"></use>
+                        </svg>
+                        <input type="number" class="text-input" name="iphoneNum" placeholder="请输入手机号">
+                    </li>
+                    <li class="mobliecode">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-anquan"></use>
+                        </svg>
+                        <input type="text" class="text-input pr5" name="mobliecode" placeholder="请输入验证码">
+                        <button type="button" class="getcode" onclick="send_sms_reg_code()">获取验证码
+                        </button>
+                    </li>
+                    <li class="mui-input-row mui-password userinput">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-zhanghuanquan"></use>
+                        </svg>
+                        <input type="password" id="password" class="mui-input-password " name="password" placeholder="请输入密码">
+                    </li>
+                    <li class="mui-input-row mui-password userinput">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-zhanghuanquan"></use>
+                        </svg>
+                        <input type="password" class="mui-input-password " name="agpassword" placeholder="再一次输入密码">
+                    </li>
+                </ul>
+                <div class="pass-help">
+                    <div class="user-agreement">
+                        <input type="checkbox" class="zdy-checkbox">
+                        <label>同意并接受
+                            <span>&lt;用户协议&gt;</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="login-btn-box">
+                    <button type="button" class="login-btn" onclick="checkSubmit()">确认</button>
+                </div>
+
+                <div class="toreg">
+                    我已有账户？现在
+                    <a href="{:url('/mobile/com/login')}">去登录</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</body>
+<script>
+    /*同意接受条款按钮*/
+    $('.zdy-checkbox').click(function () {
+        $(this).toggleClass('active');
+    })
+
+    //提交
+    function checkSubmit() {
+        var iphoneNum = $('input[name="iphoneNum"]').val();
+        var password = $('input[name="password"]').val();
+        var agpassword = $('input[name="agpassword"]').val();
+        var mobliecode = $('input[name="mobliecode"]').val();
+        var ischeck = $('.zdy-checkbox').get(0).checked;
+
+        if (iphoneNum == '') {
+            showErrorMsg('手机号码不能为空!');
+            return false;
+        }
+        if (!(/^1[34578]\d{9}$/.test(iphoneNum))) {
+            showErrorMsg("手机号码格式有误，请重填");
+            return false;
+        }
+        if (mobliecode == '') {
+            showErrorMsg('请输入手机验证码!');
+            return false;
+        }
+        if (password == '') {
+            showErrorMsg('密码不能为空!');
+            return false;
+        }
+        if (password != agpassword) {
+            showErrorMsg('两次密码输入不一致!');
+            return false;
+        }
+        if (!ischeck) {
+            showErrorMsg("请勾选同意并接受<用户协议>");
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: __apiurl + "/com/reg",
+            dataType: "json",
+            data: {
+                username: iphoneNum,
+                password: password,
+                verifycode: mobliecode
+            },
+            success: function (res) {
+                //console.log(res);
+                if (res.status == 100) {
+                    window.location.href = "{:url('/mobile/com/login')}?username=" + res.data.username;
+                } else {
+                    showErrorMsg(res.msg);
+                }
+            },
+            error: function (error) {
+                alert("error init." + error)
+            }
+        });
+    }
+
+    // 发送手机短信
+    function send_sms_reg_code() {
+        var iphoneNum = $('input[name="iphoneNum"]').val();
+        var countdown = 60;
+        var timer;
+        $.ajax({
+            url: __apiurl + "/com/sendcode?username=" + iphoneNum,
+            dataType: "json",
+            success: function (res) {
+                mui.alert(res.msg)
+                if (res.status == 100) {
+                    timer = setInterval(function () {
+                        if (countdown == 0) {
+                            clearInterval(timer)
+                            $(".getcode").text("获取验证码");
+                            countdown = 60;
+                            return;
+                        } else {
+                            countdown--;
+                            $(".getcode").text(countdown + 's后再次发送')
+                            console.log(countdown)
+                        }
+                    }, 1000)
+                }
+            }
+
+        });
+
+    }
+
+    function showErrorMsg(msg) {
+        mui.alert(msg);
+    }
+</script>
+
+</html>

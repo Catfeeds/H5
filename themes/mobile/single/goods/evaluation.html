@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <style type="text/css">
+    	body, .mui-content {
+		    
+		}
+		.evaluation_ul {
+		    margin:0;
+		    padding: 0;
+		}
+		.evaluation_ul li {
+		    font-size: 12px;
+		    color: #999999;
+		    padding: 15px 20px;
+		    border-bottom: 1px solid #eee;
+		    background-color: white;
+		}
+		.eval_top{
+			padding: 15px 20px;
+		    background: white;
+		    border-bottom: 1px solid #eee;
+		}
+		.eval_user_msg {
+		    width: 100%;
+		    height: 35px;
+		    line-height: 35px;
+		}
+		.eval_user_img {
+		    float: left;
+		    width: 35px;
+		    height: 35px;
+		    text-align: center;
+		    line-height: 35px;
+		    background: #F52B9D;
+		    border-radius: 50%;
+		    margin-right: 10px;
+		}
+		.eval_user_img .icon {
+		    width: 60%;
+		    height: 60%;
+		    color: white!important;
+		    font-size: 55px;
+		}
+		.eval_user_name {
+		    float: left;
+		}
+		.eval_user_score {
+		    float: right;
+		}
+		.eval_content {
+		    color: black;
+		    line-height: 20px;
+		    margin: 10px 0px;
+		}
+		.listend,.nolist{
+			padding: 20px 0px;
+			text-align: center;
+			font-size: 14px;
+			color: #999999;
+		}
+    </style>
+</head>
+
+<body>
+<div id="evaluation">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">评价</h1>
+    </header>
+    <div class="mui-content">
+        <ul class="evaluation_ul" v-if="evalList.length>0">
+        	<div class="eval_top">
+        		全部评价（{{evalList.length}}）
+        	</div>
+            <li v-for="(item,index) in evalList">
+				<div class="eval_user_msg">
+					<div class="eval_user_img">
+						<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-icon_Buyers-certification"></use>
+                        </svg>
+					</div>
+					<div class="eval_user_name">
+						匿名
+					</div>
+					<span class="eval_user_score" >
+						<span v-for="index in item.score" v-id="index">
+							<svg class="icon" aria-hidden="true" >
+	                            <use xlink:href="#icon-star"></use>
+	                       </svg>				                        
+						</span>
+					</span>
+				</div>
+				<div class="eval_content mui-ellipsis-2" v-text="item.content"></div>
+				<div class="eval_time" v-text="item.create_time"></div>
+			</li>
+			<div class="listend">
+				————— 已经到底了 —————
+			</div>
+        </ul>
+        <div class="nolist" v-else>
+        	该商品暂无评价！
+        </div>
+    </div>
+    <div style="width: 100%;height: 60px"></div>
+</div>
+ {include file="public/nav" /}
+</body>
+<script>
+
+    var vm = new Vue({
+        el: '#evaluation',
+        data: {
+            id:'',
+            evalList:[]
+        },
+        created:function() {
+            this.token = getToken();
+            this.id = getUrlParam("goods_id");
+            axios.get(__apiurl + '/order/evalList', {
+                params: {
+                    goods_id: this.id
+                }
+            }).then(function (response) {
+            	console.info(response);
+                if (response.status == 200) {
+                    vm.evalList=response.data.data
+
+                }
+            }).catch(function (error)  {
+                mui.alert(error)
+            })
+        },
+    });
+</script>
+<script type="text/javascript">
+
+</script>
+
+</html>

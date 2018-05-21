@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+    <!-- 使用px -->
+    <link rel="stylesheet" href="//unpkg.com/vue-ydui/dist/ydui.px.css">
+    <!-- 引入组件库 -->
+    <script src="//unpkg.com/vue-ydui/dist/ydui.px.js"></script>
+    <style>
+        .yd-cell-box {
+            margin-bottom: 0;
+        }
+        .evaluate_item{
+        	background: white;
+        	margin-bottom: 10px;
+        	/*padding: 20px 10px;*/
+        }
+       /* .yd-cell:after {
+		    content: "";
+		    position: absolute;
+		    z-index: 0;
+		    bottom: 0;
+		    left: 0;
+		    width: 100%;
+		    border-bottom: 0px;
+		}*/
+		.pro-grade{
+			height: 50px;
+			font-size: 15px;
+			line-height: 50px;
+			margin-left: 10px;
+		}
+		/*.yd-cell-item {
+		    padding-left: 0px!important;
+		    font-size: 16px;
+		}
+		.yd-rate a:after {
+		    font-size: 20px;
+		}*/
+		.evaluate-content{
+			height: 50px;
+   			padding: 13px 0px;
+		}
+		.grade li.star {
+			width: 25px;
+			height: 25px;
+			background: url(__IMG__/star.png) no-repeat 0 -25px;
+			float: left;
+			list-style: none;
+		}
+		.grade li.select{
+			background-position: 0px 0px;
+		}
+		.grade-text{
+			font-size: 12px;
+		    color: #808080e3;
+		    line-height: 25px;
+		    margin-left: 10px;
+		}
+    </style>
+</head>
+
+<body>
+<div id="evaluate">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">订单评价</h1>
+    </header>
+    <div class="mui-content" >
+       <div class="evaluate_main">
+	       	<div class="evaluate_item" v-for="item in order_goods">
+	       		<div class="evaluate_list" v-if="item.is_comment==0">
+		       		<div class="evaluate_top clear">
+		       			<div class="evaluate-left fl" v-if="item.thumb=='' || item.thumb==null">
+		                    <img src="__IMG__/lost.jpg" alt="">
+		                </div>
+		                <div class="evaluate-left fl" v-else-if="item.thumb.indexOf('http://zbfx.com/') == -1">
+		                    
+		                    <img v-lazy="'http://zbfx.com/'+item.thumb" alt="">
+		                </div>
+		                <div class="evaluate-left fl" v-else>
+		                	<img v-lazy="item.thumb" alt="">
+		                </div>			        
+			            <div class="pro-grade fl">
+			            	商品评分：
+			            </div>
+			            <div class="evaluate-content fl">
+			            	<ul class="grade">
+								<li class="star select" onclick="selectStar(this,'1')"></li>
+								<li class="star select" onclick="selectStar(this,'2')"></li>
+								<li class="star" onclick="selectStar(this,'3')"></li>
+								<li class="star" onclick="selectStar(this,'4')"></li>
+								<li class="star" onclick="selectStar(this,'5')"></li>
+								<span class="grade-text">一般</span>
+							</ul>
+				        </div>
+		       		</div>
+			        
+			        <textarea class="evaluateContent" placeholder="请写下对产品的评价感受~">
+			
+			        </textarea>
+			        <div class="sub-btn">
+			            <button class="mui-btn" @click="mySubmit($event,item.order_id,item.goods_id)">提交</button>
+			        </div>
+		        </div>
+		        <div class="evaluate_list" v-else>
+		       		<div class="evaluate_top clear">			       		
+				        <div class="evaluate-left fl" v-if="item.thumb=='' || item.thumb==null">
+	                        <img src="__IMG__/lost.jpg" alt="">
+	                    </div>
+	                    <div class="evaluate-left fl" v-else-if="item.thumb.indexOf('http://zbfx.com/') == -1">
+	                        
+	                        <img v-lazy="'http://zbfx.com/'+item.thumb" alt="">
+	                    </div>
+	                    <div class="evaluate-left fl" v-else="">
+	                    	<img v-lazy="item.thumb" alt="">
+	                    </div>
+			            <div class="pro-grade fl">
+			            	商品评分：
+			            </div>
+			            <div class="evaluate-content fl" >
+				            <ul class="grade" v-if="item.oge_score == 1">
+								<li class="star select"></li>
+								<li class="star"></li>
+								<li class="star"></li>
+								<li class="star"></li>
+								<li class="star"></li>
+								<span class="grade-text">很差</span>
+							</ul>
+							<ul class="grade" v-else-if="item.oge_score == 2">
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star"></li>
+								<li class="star"></li>
+								<li class="star"></li>
+								<span class="grade-text">一般</span>
+							</ul>
+							<ul class="grade" v-else-if="item.oge_score == 3">
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star"></li>
+								<li class="star"></li>
+								<span class="grade-text">还行</span>
+							</ul>
+							<ul class="grade" v-else-if="item.oge_score == 4">
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star"></li>
+								<span class="grade-text">挺好</span>
+							</ul>
+							<ul class="grade" v-else-if="item.oge_score == 5">
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<li class="star select"></li>
+								<span class="grade-text">非常好</span>
+							</ul>
+				        </div>
+			       	</div>
+			        
+			        <textarea v-model="item.oge_content" class="evaluateContent" disabled="" style="border-bottom:none;">
+			
+			        </textarea>
+		       	</div>
+	       	
+		        
+	       	</div>
+       </div>
+    </div>
+</div>
+</body>
+<script>
+	function selectStar(th,num){
+		for(var i = 0; i < $(th).parent().children("li").length; i++) {			
+			if(i < num) {				
+				$(th).parent().children("li").eq(i).addClass("select");					
+			} else {
+				$(th).parent().children("li").eq(i).removeClass("select");					
+			}
+		}
+		if($(th).parent().children("li.select").length =="5"){
+			$(th).parent().children("span").html("非常好");
+		}else if($(th).parent().children("li.select").length =="4"){
+			$(th).parent().children("span").html("挺好");
+		}else if($(th).parent().children("li.select").length =="3"){
+			$(th).parent().children("span").html("还行");
+		}else if($(th).parent().children("li.select").length =="2"){
+			$(th).parent().children("span").html("一般");
+		}else if($(th).parent().children("li.select").length =="1"){
+			$(th).parent().children("span").html("很差");
+		}
+	}
+	Vue.use(VueLazyload, {
+        preLoad: 1.3,
+        error: "错误",
+        loading: '__IMG__/timg_01.gif',
+        attempt: 1
+    });
+    new Vue({
+        el: '#evaluate',
+        data: {
+           id: '',
+           goodsList: [],
+           order_goods:[],
+           order_sn: '',
+           data: '',
+           token:''
+        },
+
+        created:function() {
+            __checkLogin();
+            this.token = getToken();
+            this.id = getUrlParam("order_id");
+	        orderid = this.id;
+            this.detail();
+        },
+        methods: {
+        	//详情
+	        	detail:function(){
+	        		var _this = this;
+	        		axios({
+	                    url:__apiurl + '/order/detail',
+	                    method:'get',			                    
+	                    headers: {
+	                        Accept: "application/json; charset=utf-8",
+	                        Token: this.token,
+	                        Aid:getAId()
+	                    },
+	                    params:{
+	                        id:orderid
+	                    }
+	               }).then(function (res) {
+	               		console.info(res);
+		                _this.goodsList = res.data.data.data;//订单信息
+		                _this.order_goods=_this.goodsList[0].sub_order_goods;//订单商品信息
+		                _this.order_sn = _this.goodsList[0].order_sn;//订单id		
+		
+		            }).catch(function (error) {
+		                alert(error)
+		            })
+	        	},
+                mySubmit:function(event,order_id,order_goods_id) {
+	            	//获取点击对象      
+		   			var e = event.currentTarget;
+	        		var selectLength = e.parentNode.parentNode.getElementsByClassName("select").length;
+	        		var content = e.parentNode.previousElementSibling.value;
+	        		//console.info(content);
+	                axios({
+	                    method: 'POST',
+	                    url: __apiurl + '/order/addEval',
+	                    headers: {
+	                        Accept: "application/json; charset=utf-8",
+	                        Token: this.token,
+	                        Aid:getAId()
+	                    },
+	                    params: {
+	                        order_id: order_id,
+	                        order_goods_id:order_goods_id,
+	                        score:selectLength,     //得分
+	                        content:content
+	                    }
+	                })
+                    .then(function (res) {
+                    	console.info(res);
+                        if (res.data.status == 100) {
+                           mui.alert(res.data.msg,function () {
+                               window.location.href= "{:url('user/order')}?type=4";
+
+                           })
+                        }
+                    })
+                    .catch(function (error)  {
+                        mui.alert(error);
+                    });
+            }
+        }
+    });
+</script>
+
+
+</html>

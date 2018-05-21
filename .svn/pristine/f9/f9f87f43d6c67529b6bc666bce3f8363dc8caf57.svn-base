@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__" />
+</head>
+
+<body>
+    <div id="Collection">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">收藏夹</h1>
+            <div class="web-top-right" onclick="showToggle(this)">
+                <span>管理</span>
+            </div>
+        </header>
+
+        <div style="margin-top:60px"></div>
+        <div class="shoucang" >
+            <div class="goodsList" v-for="(item,index) in CollectionList">
+                <div class="goods">
+                	<input type="checkbox" class="chechbox-product" onclick="clickcheck()">
+                    <img :src="item.thumb" alt="">
+                    <span>{{item.name}}</span>
+                    <b class="red">￥{{item.price}}</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="settlement">
+            <div class="select-all" onclick="checkall()">
+            	<input type="checkbox">
+            	<span class="check-all">全选</span>
+            </div>
+            <a class="set-btn" id="removeData">
+                删除(
+                <span class="sum">0</span>)
+            </a>
+            <a class="set-btn" id="settlement-btn">
+                加入购物车(
+                <span class="sum">0</span>)
+            </a>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+	var manegerBol = false;
+    new Vue({
+        el: "#Collection",
+        data: {
+            isShow: false,
+            token: '',
+            CollectionList: []
+        },
+        mounted:function() {
+            this.token = getToken();
+            this.goodsCollectionList();
+        },
+        methods: {
+            goodsCollectionList:function() {
+                var that = this;
+                axios({
+                        method: 'POST',
+                        url: __apiurl + '/user/getUserGoodsCollectionList',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        }
+                    })
+                    .then(function (response) {
+                        that.CollectionList = response.data.data.data;
+
+                    })
+                    .catch(function (error)  {
+                        alert(error);
+                    })
+            }           
+        }
+    })
+    function showToggle(th) {
+	    //this.isShow = !this.isShow
+	    if(manegerBol){
+			th.innerHTML = '<span>管理</span>';
+			$(".chechbox-product,.settlement").css("display","none")
+			manegerBol = false;
+			
+		}else{
+			th.innerHTML = '<span>完成</span>';
+			$(".chechbox-product,.settlement").css("display","inline-table");
+			manegerBol = true;
+		} 
+	}
+    //点击全选
+    var selectAllBol = false;
+    function checkall(){    	
+    	if(selectAllBol){    		
+   			$(".chechbox-product").prop("checked",false);
+   			selectAllBol = false;
+   		}else{   			
+   			$(".chechbox-product").prop("checked",true);
+   			selectAllBol = true;
+   		}
+    }
+    /*点击选择，全选消失*/
+   function clickcheck(){
+    	var checkLen = $(".goods .chechbox-product").length;
+    	//判断全选是否被选中
+	  if($(".settlement input").is(':checked')){
+	  		$(".settlement input").prop("checked",false);
+	  }else{
+	  	//判断勾选的项是否是最后一个
+	  	if($(".goods input[type='checkbox']:checked").length==checkLen){
+		  	$(".settlement input").prop("checked",true);
+		}
+	  } 
+   }
+</script>
+
+</html>

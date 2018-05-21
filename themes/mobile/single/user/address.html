@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+</head>
+
+<body>
+<div id="address">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">地址管理</h1>
+    </header>
+    <div class="mui-content">
+        <div class="address-list" v-for="(item,index) in addressList">
+            <div class="content">
+                <div class="top">
+                    <div class="fl">{{item.recname}}</div>
+                    <div class="fr">{{item.phone}}</div>
+                </div>
+                <div class="describe" v-text="item.area.replace('-','省').replace('-','市')+item.address"></div>
+            </div>
+            <div class="operation">
+                <div class="fl">
+                    <input type="radio" class="zdy-radio" @click="showDefault(index,item)"
+                           :class="{ active: item.is_default==1 }"
+                           name="default-address" value="">
+                    <label class="moren-text">设为默认</label>
+                </div>
+                <div class="fr">
+                	 <!--<img src="__IMG__/edit_icon.png" class="operation-icon">-->
+                    <a :href="'editAddress.html?id='+item.id">
+                    	<span class="mui-icon mui-icon-compose"></span>编辑                       
+                    </a>
+                    
+                    <a href="javascript:void(0);"  @click="deleteAdress(index,item)">
+                    	<span class="mui-icon mui-icon-trash"></span>删除
+                    </a>
+                    
+                    <!--<img src="__IMG__/remove_icon.png" class="operation-icon">-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="quit addAddress">
+    <a href="addAddress.html" class="address_btn">
+        <img src="__IMG__/add_address_icon.png" alt=""> 添加新地址
+    </a>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#address',
+        data: {
+            token: '',
+            addressList: [],
+        },
+        mounted:function() {
+            this.token = getToken();
+            this.getAddress();
+        },
+        methods: {
+            getAddress:function() {
+                var that = this;
+                axios({
+                    method: 'POST',
+                    url: __apiurl + '/user/getAddress',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: that.token
+                    }
+                })
+                    .then(function (response) {
+                        that.addressList = response.data.data;
+                    })
+                    .catch(function (error)  {
+                        mui.alert(error);
+                    })
+
+            },
+            showDefault:function(index, obj) {
+                obj.is_default = 1;
+                for (var i in this.addressList) {
+                    if (index != i) {
+                        this.addressList[i].is_default = 0;
+                    }
+                }
+                axios({
+                    method: 'post',
+                    url: __apiurl + '/user/updateAddress',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    data: obj
+                }).then(function (res) {
+                    console.log(res)
+                }).catch(function (error) {
+                    console.log(error)
+                })
+            },
+            //删除地址
+            /*deleteAdress(index,obj) {            	
+            	var btnArr = ["是","否"];
+                    mui.confirm("确定删除","提示",btnArr,function(e){
+                    	if(e.index == 0) {
+                    		axios({
+			                    method: 'post',
+			                    url: __apiurl + '/user/delAddress',
+			                    headers: {
+			                        Accept: "application/json; charset=utf-8",
+			                        Token: this.token
+			                    },
+			                    data: {
+			                        id:obj.id
+			                    }
+			                    
+			                }).then(res => {
+			                	console.info(res);
+			                  	console.info(this.token);
+			                    if(res.status==200){
+			                        this.addressList.splice(index, 1);
+			                        mui.toast("删除成功");
+			                    }
+			                }).catch(error => {
+			                	
+			                  	mui.alert(error)
+			                })
+						}
+                   	
+                   })                
+            }*/
+           deleteAdress:function(index,obj) {
+                axios({
+                    method: 'post',
+                    url: __apiurl + '/user/delAddress',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    data: {
+                        id:obj.id
+                    }
+                    
+                }).then(function (res) {
+                	console.info(res);
+                  	console.info(this.token);
+                    if(res.status==200){
+                        this.addressList.splice(index, 1);
+                        mui.toast("删除成功");
+                    }
+                }).catch(function (error)  {
+                  	mui.alert(error)
+                })
+            }
+        }
+    });
+</script>
+
+</html>

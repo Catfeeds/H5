@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body>
+<div id="store">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">门店预约</h1>
+    </header>
+    <div class="mui-content" style="font-size: 14px">
+        <div>
+            <div class="st-title">
+                <img src="__IMG__/600.jpg" alt="">
+                <p>{{detailList.name}}</p>
+            </div>
+            <div class="st-min">
+                <ul>
+                    <li>
+                        <span class="st_title">
+                             	店铺地址:
+				      </span>
+                        <span class="st_text mui-ellipsis-1">
+                        	{{detailList.province_name+detailList.city_name+detailList.district_name+detailList.contacts+detailList.address}}
+                        </span>
+                    </li>
+                    <li>
+                        <span class="st_title">
+                           	联系方式 : 
+				      </span>
+                       <span class="st_text mui-ellipsis-1">
+                       	 {{detailList.phone}}
+                       </span>
+                    </li>
+                    <li>
+                        <span class="st_title">
+                           	上班时间  :
+				      </span>
+                      <span class="st_text mui-ellipsis-1">
+                      	  周一~周五：{{detailList.workstatus}}<br/>
+                      	  周六周日：{{detailList.worktime}}
+                      </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div style="width: 100%;height: 60px"></div>
+    <div class="st-fixd-alert" v-show="isShow">
+        <div class="alert-title clear">
+            <strong>预约进店，享尊贵服务</strong>
+            <span>已有2553位成功预约</span>
+        </div>
+        <input v-model="name" type="text" placeholder="请输入姓名">
+        <input v-model="phone" type="number" placeholder="请输入手机号码">
+        <button @click="myBtn" type="button" style="width: 100%; margin-bottom: 5px;">确定</button>
+    </div>
+    <div class="st-fixd" @click="isShow=true">预约进店</div>
+</div>
+</body>
+<script>
+    Vue.use(VueLazyload, {
+        preLoad: 1.3,
+        error: "错误",
+        loading: '',
+        attempt: 1
+    });
+    var vm = new Vue({
+        el: '#store',
+        data: {
+            detailList: '',
+            id: '',
+            isShow: false,
+            name: '',
+            phone: ''
+        },
+        created: function () {
+            this.id = getUrlParam("id");
+            axios({
+                url: __apiurl + '/store/detail',
+                method: 'GET',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: getToken(),
+                    Aid: getAId()
+                },
+                params: {
+                    id: this.id
+                }
+            }).then(function (res) {
+                if (res.status == 200) {
+                    vm.detailList = res.data.data;
+                }
+            }).catch(function (error) {
+                mui.alert(error)
+            })
+        },
+
+        methods: {
+            myBtn: function () {
+                if (this.name == '') {
+                    mui.alert('请输入姓名');
+                }
+                if (!(/^1[34578]\d{9}$/.test(this.phone))) {
+                    mui.alert("手机号码格式有误，请重填");
+                    return false;
+                }
+                axios({
+                    url: __apiurl + '/order/setorderstore',
+                    method: 'POST',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: getToken(),
+                        Aid:getAId()
+                    },
+                    data: {
+                        id: vm.id,
+                        name: vm.name,
+                        phone: vm.phone,
+                        sex: '',
+                        content: ''
+                    }
+
+                }).then(function (res) {
+                    if (res.status == 200) {
+                        mui.alert(res.data.msg, function () {
+                            window.location.href = "{:url('store/index')}"
+                        })
+                    }
+
+                }).catch(function (error) {
+                    mui.alert(error)
+            })
+            }
+        }
+    })
+
+
+</script>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__" />
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+
+        .mui-content {
+            margin-top: 40px;
+        }
+
+        .quit_login {
+            width: 100%;
+            height: 50px;
+            color: #f786a3;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .guess {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #999;
+            position: relative;
+        }
+
+        .guess span::after {
+            content: "";
+            width: 30%;
+            height: 1px;
+            background-color: #999;
+            display: block;
+            position: absolute;
+            top: 11px;
+            left: 30px;
+        }
+
+        .guess span::before {
+            content: "";
+            width: 30%;
+            height: 1px;
+            background-color: #999;
+            display: block;
+            position: absolute;
+            top: 11px;
+            right: 30px;
+        }
+
+        .loveGoods {
+            padding: 30px 10px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .loveGoods li {
+            width: 48%;
+        }
+
+        .loveGoods li img {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="user" v-cloak>
+        <div class="user-top">
+            <span class="user-top-name">个人中心</span>
+            <a href="seting.html" class="mui-icon mui-icon-gear mui-pull-right"></a>
+        </div>
+        <div class="mui-content">
+            <div class="personal clear">
+                <div style="width: 80px;height: 80px; float: left">
+                    <img :src="head_pic" alt="" width="100%;" height="100%" style="border-radius: 50%">
+                </div>
+                <div class="number">
+                    <span>用户名：{{userName}}</span>
+                </div>
+            </div>
+            <div class="user-main-list">
+                <ul>
+                    <li>
+                        <a href="order.html?type=0">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-dingdan"></use>
+                            </svg>
+                            <span class="list-name">我的订单</span>
+                            <span class="right-icon">
+                                查看全部订单
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-xiangyou"></use>
+                                </svg>
+                            </span>
+                        </a>
+                    </li>
+                    <!--我的订单 start-->
+                    <div class="order-item">
+                        <div class="order-box">
+                            <a href="order.html?type=1">
+                                <img src="__IMG__/order-icon-01.png" alt="" />
+                                <span>待付款</span>
+                            </a>
+                        </div>
+                        <div class="order-box">
+                            <a href="order.html?type=2">
+                                <img src="__IMG__/order-icon-02.png" alt="" />
+                                <span>待发货</span>
+                            </a>
+                        </div>
+                        <div class="order-box">
+                            <a href="order.html?type=3">
+                                <img src="__IMG__/order-icon-03.png" alt="" />
+                                <span>待收货</span>
+                            </a>
+                        </div>
+                        <div class="order-box">
+                            <a href="order.html?type=4">
+                                <img src="__IMG__/order-icon-04.png" alt="" />
+                                <span>已完成</span>
+                            </a>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+            <div class="user-main-list">
+                <li>
+                    <a href="collection.html">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-xihuan-xianxing"></use>
+                        </svg>
+                        <span class="list-name">我的收藏</span>
+                        <svg class="icon right-icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiangyou"></use>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="goodsview.html">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-shizhong"></use>
+                        </svg>
+                        <span class="list-name">浏览记录</span>
+                        <svg class="icon right-icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiangyou"></use>
+                        </svg>
+                    </a>
+                </li>
+            </div>
+        </div>
+
+        <div class="guess">
+            <span>猜你喜欢</span>
+            <div class="loveGoods">
+                <ul>
+                    <li class="fl">
+                        <img src="__IMG__/banner_05.jpg" alt="">
+                    </li>
+                    <li class="fr">
+                        <img src="__IMG__/banner_05.jpg" alt="">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {include file="public/nav"/}
+</body>
+
+<script>
+    new Vue({
+        el: '.user',
+        data: {
+            userName: '',
+            head_pic:'',
+            token: '',
+        },
+        created: function () {
+            __checkLogin();
+            this.userName = getUserInfo().username;
+            this.head_pic = getUserInfo().head_pic ? getUserInfo().head_pic :'__IMG__/user_head.png';
+        },
+        methods: {
+            
+        },
+    });
+    /*监听滚动*/
+    window.onscroll = function () {
+        //改变top的rgba
+        var t = document.documentElement.scrollTop || document.body.scrollTop; //获取距离页面顶部的距离
+        //如果小于220像素改变rgba
+        var changeRgba = (t / 200) > 1 ? 1 : t / 200;
+        document.getElementsByClassName("user-top-name")[0].style.opacity = changeRgba;
+    }
+</script>
+
+</html>

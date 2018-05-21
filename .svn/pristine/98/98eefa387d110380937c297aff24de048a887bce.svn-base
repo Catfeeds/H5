@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__" />
+    <style>
+        .shoucang .goods .checkbox_style {
+            position: absolute;
+            right: 0;
+            display: none
+        }
+    </style>
+</head>
+
+<body>
+    <div id="Collection">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">收藏夹</h1>
+            <div class="web-top-right" @click="showToggle">
+                <span>管理</span>
+            </div>
+        </header>
+
+        <div style="margin-top:60px"></div>
+        <div class="shoucang">
+            <div class="goodsList" v-for="(item,index) in CollectionList">
+                <div class="goods">
+                    <input type="checkbox" class="chechbox-product" :value="index" v-model="checkModel" v-show="isShow">
+                    <img :src="item.thumb" alt="">
+                    <span class="goodsName">{{item.name}}</span>
+                    <b class="red">￥{{item.price}}</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom_content settlement" v-show="isShow">
+            <input type="checkbox" class="checkbox" v-model="checkedAll" @change="changeState" style="" />
+            <span>全选</span>
+            <a href="javascript:;">删除</a>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    var manegerBol = false;
+    new Vue({
+        el: "#Collection",
+        data: {
+            isShow: false,
+            token: '',
+            CollectionList: [],
+            checkModel: [],
+            checkedAll: false,
+        },
+        watch: {
+            checkModel: {
+                handler() {
+                    if (this.checkModel.length == this.CollectionList.length) {
+                        this.checkedAll = true
+                    } else {
+                        this.checkedAll = false
+                    }
+                }
+            }
+        },
+        mounted: function () {
+            this.token = getToken();
+            this.goodsCollectionList();
+        },
+        methods: {
+            goodsCollectionList: function () {
+                var that = this;
+                axios({
+                        method: 'POST',
+                        url: __apiurl + '/user/getUserGoodsCollectionList',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        }
+                    })
+                    .then(function (response) {
+                        that.CollectionList = response.data.data.data;
+                    })
+                    .catch(function (error) {
+                        alert(error);
+                    })
+            },
+            // 点击管理显示全选和删除
+            showToggle: function () {
+                this.isShow = !this.isShow
+            },
+
+            // 点击管理显示全选和删除
+            changeState(item) {
+                this.checkModel = []
+                if (this.checkedAll == true) {
+                    this.CollectionList.forEach((item, i) => {
+                        this.checkModel.push(i)
+                    });
+                }
+            }
+        }
+    })
+</script>
+
+</html>

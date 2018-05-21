@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__" />
+</head>
+
+<body>
+    <div id="Collection">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">收藏夹</h1>
+            <div class="web-top-right">
+                <span @click="showToggle">管理</span>
+            </div>
+        </header>
+
+        <div style="margin-top:60px"></div>
+        <div class="shoucang" >
+            <div class="goodsList" v-for="(item,index) in CollectionList">
+                <div class="goods">
+                    <img :src="item.thumb" alt="">
+                    <span>{{item.name}}</span>
+                    <b class="red">￥{{item.price}}</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="settlement">
+            <input type="checkbox" class="sc-checkbox">
+            <span class="check-all">全选</span>
+            <a class="set-btn" id="removeData">
+                删除(
+                <span class="sum">0</span>)
+            </a>
+            <a class="set-btn" id="settlement-btn">
+                加入购物车(
+                <span class="sum">0</span>)
+            </a>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    new Vue({
+        el: "#Collection",
+        data: {
+            isShow: false,
+            token: '',
+            CollectionList: []
+        },
+        mounted() {
+            this.token = getToken();
+            this.goodsCollectionList();
+        },
+        methods: {
+            goodsCollectionList() {
+                var that = this;
+                axios({
+                        method: 'POST',
+                        url: __apiurl + '/user/getUserGoodsCollectionList',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        }
+                    })
+                    .then(response => {
+                        that.CollectionList = response.data.data.data;
+                        console.log(that.CollectionList);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert('网络错误，不能访问');
+                    })
+            },
+
+            showToggle: function () {
+                this.isShow = !this.isShow
+            }
+        }
+    })
+</script>
+
+</html>

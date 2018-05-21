@@ -1,0 +1,71 @@
+<div class="my_nav clear">
+    <a class="list_a {if condition='$actionpath eq "mobile/index/index" or $actionpath eq "/"'}active{/if}" href="{:url('/mobile/index/index')}" >
+				<span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-sy"></use>
+                     </svg>
+				</span>
+        <span>首页</span>
+    </a>
+    <a class="list_a {if condition='$actionpath eq "mobile/goods/index"'}active{/if}" href="{:url('/mobile/goods/index')}">
+				<span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-zb1"></use>
+                     </svg>
+				</span>
+        <span>珠宝</span>
+    </a>
+    <a class="list_a {if condition='$actionpath eq "mobile/goods/diamond"'}active{/if}" href="{:url('goods/diamond')}">
+				<span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-zs"></use>
+                     </svg>
+				</span>
+        <span>钻石</span>
+    </a>
+    <a class="list_a addClick {if condition='$actionpath eq "mobile/cart/index"'}active{/if}" href="{:url('/mobile/cart/index')}">
+				<span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-gwc"></use>
+                     </svg>
+				</span>
+        <span>购物车</span>
+    </a>
+    <a class="list_a addUserClick {if condition='$actionpath eq "mobile/user/index"'}active{/if}" href="{:url('/mobile/user/index')}">
+				<span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-grzx"></use>
+                     </svg>
+				</span>
+        <span>个人中心</span>
+    </a>
+</div>
+
+
+<script>
+        
+$(function () {
+	
+    $('.addClick').on('tap',  function () {
+        if (getToken() == '') {
+            mui.alert('请先登录', function () {
+                window.location.href = "{:url('com/login')}"
+            });
+            return false;
+        }
+    });
+
+    $('.addUserClick').on('tap', function () {
+        if (getToken() == '') {
+            mui.alert('请先登录', function () {
+                window.location.href = "{:url('com/login')}"
+            });
+            return false;
+        }
+    })
+	
+});
+
+
+</script>
+		

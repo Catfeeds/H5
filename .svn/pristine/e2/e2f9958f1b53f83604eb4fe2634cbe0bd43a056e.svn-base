@@ -1,0 +1,604 @@
+<?php
+namespace app\common\logic;
+use think\db;
+class Cart
+{
+
+    public function __construct(){
+    }
+
+    //fire 根据购物车分类 组装购物车列表循环数据
+    public function CartMethod($CartList){
+        $data['total_num'] = 0; //全部商品数量
+        $data['selected_total_num'] = 0; //已选中商品数量
+        $data['selected_total_price'] = 0; //选中商品价格
+        $selected = [];
+        $cart_type = ConditionShow('','cart','cart_type');
+        foreach ($CartList as $k => $v) {
+            $v['g_stock_num_s'] = '';
+            if($v['g_type'] == 0||$v['g_type'] == 1||$v['g_type'] == 2){ //钻石判断无货
+                if($v['g_stock_num']<=0){
+                    $v['g_stock_num_s'] = '无货';
+                }
+            }
+            //返回显示数组
+            $v['spec_key_name_arr'] = logic('DataProcessing')->spec_key_name_arr($v);
+    
+            $data['list'][] = $v;
+    
+            $data['total_num']+=$v['goods_num'];
+            $selected [] = $v['selected'];
+            if($v['selected'] == 1){
+                $data['selected_total_num']+=$v['goods_num'];
+                $data['selected_total_price']+=$v['goods_num']*$v['member_goods_price'];
+                $selected_id[] = $v['id'];
+            }
+        }
+    
+        $data['selected_id'] = $selected_id; //选中数组
+        if(in_array(0, $selected)){ //全选选中
+            $data['selectedAll'] = 0; //未全选
+        }else{
+            $data['selectedAll'] = 1; //全选
+        }
+    
+        return $data;
+    }
+    
+    
+    //zwx 根据购物车分类 组装购物车列表循环数据
+    public function CartShow($CartList){
+        $data['total_num'] = 0; //全部商品数量
+        $data['selected_total_num'] = 0; //已选中商品数量
+        $data['selected_total_price'] = 0; //选中商品价格
+        $selected = [];
+        //获取显示类型
+    	$cart_type = ConditionShow('','cart','cart_type');
+        //设置商品ID为键值
+        $CartListGoodsId = convert_arr_key($CartList,'goods_id');
+
+    	foreach ($CartList as $k => $v) {
+            //托配钻
+            if($v['cart_type'] == 3 && $v['goods_group']){
+                //分割托配钻数组 0 托 1 钻
+                $goods_group = explode('_', $v['goods_group']);
+                $v['goods_name'] = '托配钻('.$CartListGoodsId[$goods_group[0]]['goods_name'].','.$CartListGoodsId[$goods_group[1]]['goods_name'].')';
+            }
+
+            $v['g_stock_num_s'] = '';
+            if($v['g_type'] == 0||$v['g_type'] == 1||$v['g_type'] == 2){ //钻石判断无货
+                if($v['g_stock_num']<=0){
+                    $v['g_stock_num_s'] = '无货';
+                }
+            }
+
+            if(($v['g_type'] == 0||$v['g_type'] == 1||$v['g_type'] == 2)&&$v['supply_goods_id']>0){
+
+                $Openzm = logic('Openzm')->get_diamond_detail($v['supply_goods_id']);
+
+                if($Openzm['data']['goods_number'] != 1 || $Openzm['data']['is_sale'] != 1){
+                    $v['g_stock_num_s'] = '无货';
+                    if($v['selected']==1){
+                        $v['selected'] = 0;
+                        M('cart')->where(['id'=>$v['id']])->update(['selected'=>0]);
+                    }
+                }
+            }
+
+            //返回显示数组
+            $v['spec_key_name_arr'] = logic('DataProcessing')->spec_key_name_arr($v);
+
+    		$data['list'][$cart_type[$v['cart_type']]][] = $v;
+
+            $data['total_num']+=$v['goods_num'];
+            $selected [] = $v['selected'];
+            if($v['selected'] == 1){
+                $data['selected_total_num']+=$v['goods_num'];
+                $data['selected_total_price']+=$v['goods_num']*$v['member_goods_price'];
+                $selected_id[] = $v['id'];
+            }
+    	}
+
+        $data['selected_id'] = $selected_id; //选中数组
+        if(in_array(0, $selected)){ //全选选中
+            $data['selectedAll'] = 0; //未全选
+        }else{
+            $data['selectedAll'] = 1; //全选
+        }
+        // p($data);
+    	return $data;
+    }
+
+    public function addCart($user_id,$data=[]){
+        if(!is_numeric($user_id)||$user_id<=0) return ['status'=>99,'msg'=>'请先登录','data'=>''];
+        if(!is_numeric($data['goods_id'])||$data['goods_id']<=0) return ['status'=>0,'msg'=>'添加购物车错误','data'=>''];
+        if(!is_numeric($data['goods_num'])||$data['goods_num']<=0) return ['status'=>0,'msg'=>'数量不能为0','data'=>''];
+
+        $data['user_id'] = $user_id;
+        cookie('cart_count'.$user_id,null); //新增购物车清空cookie
+
+        if($data['diamond_id']>0){ //定制钻配托
+            return $this->addCartZpt($data);
+        }else{
+            return $this->addCartPt($data);
+        }
+    }
+
+    //zwx 添加购物车 普通单个商品添加购物车
+    public function addCartPt($data){
+        $goods = D('goods')->getGoodsDiamondInfoJoinGd(['id'=>$data['goods_id'],'agent_id'=>$data['agent_id']]);
+        if(!$goods) return ['status'=>0,'msg'=>'商品已下架','data'=>''];
+        
+        $return_data = $goods; //要返回的数据
+
+        $cart_type = ConditionShow('','cart','goods_cart_type');
+        $return_data['cart_type'] = $cart_type[$goods['type']];
+
+        $where = [];
+        $where['goods_id'] = $data['goods_id'];
+        $where['agent_id'] = $data['agent_id'];
+        $where['user_id'] = $data['user_id'];
+        $where['spec_key'] = $data['spec_key'];
+
+        $D_cart = D('cart');
+        $cart = $D_cart->getInfo($where);
+
+        if($cart){ //购物车已存在商品
+            //钻石类商品只有一个
+            if($cart['cart_type']==3||$goods['type']==0||$goods['type']==1||$goods['type']==2) return ['status'=>0,'msg'=>'已添加到购物车','data'=>''];
+            
+            $return_data['cart_goods_num'] = $data['goods_num']+$cart['goods_num'];
+            $return_data['act'] = 'edit';
+            $return_data['cart_id'] = $cart['id'];
+        }else{
+    
+            $return_data['cart_goods_num'] = $data['goods_num'];
+            $return_data['act'] = 'add';
+        }
+
+        if($data['type'] == 1){ //立即购买
+            $return_data['cart_goods_num'] = 1;
+        }
+
+        if($goods['type']==3||$goods['type']==4){ //戒托加入购物车
+            $where = []; //便于阅读
+            $where['goods_id'] = $data['goods_id'];
+            $where['agent_id'] = $data['agent_id'];
+            $goods_sku = D('goods')->getGoodsSkuInfo($where);
+
+            if($goods_sku){ // 该商品有规格 进行规格验证
+                $where = []; //便于阅读
+                $where['goods_id'] = $data['goods_id'];
+                $where['agent_id'] = $data['agent_id'];
+                $where['attributes'] = $data['spec_key'];
+                $goods_sku = D('goods')->getGoodsSkuInfo($where);
+
+                if(!$goods_sku) return ['status'=>0,'msg'=>'请选择规格','data'=>''];
+                if($goods['stock_status']==1&&$goods_sku['goods_number'] < $return_data['cart_goods_num']) return ['status'=>0,'msg'=>'库存不足','data'=>''];
+                
+                $return_data['price'] = $goods_sku['goods_price'];
+                $return_data['spec_key_name'] = $goods_sku['name'];
+                $return_data['spec_key'] = $goods_sku['attributes'];
+                
+            }else{ //商品没有规格验证方式
+                if($goods['stock_status']==1&&$goods['stock_num'] < $return_data['cart_goods_num']) return ['status'=>0,'msg'=>'库存不足','data'=>''];
+            }
+        }else if($goods['type']==0||$goods['type']==1||$goods['type']==2){ //钻石散货
+            if($goods['stock_num'] <= 0) return ['status'=>0,'msg'=>'库存不足','data'=>''];
+
+            $GoodsDiamond = M('GoodsDiamond')->where(['goods_id'=>$data['goods_id']])->find();
+            //判断是否是钻明的钻石
+            if($goods['supply_goods_id']>0){ 
+
+                $Openzm = logic('Openzm')->get_diamond_detail($goods['supply_goods_id']);
+
+                if($Openzm['data']['goods_number'] != 1){
+                    return ['status'=>0,'msg'=>$Openzm['data']['goods_name'].' 库存不足','data'=>''];
+                }
+                if($Openzm['data']['is_sale'] != 1){
+                    return ['status'=>0,'msg'=>$Openzm['data']['goods_name'].' 商品已下架','data'=>''];
+                }
+            }
+            $return_data['spec_key_name'] = $D_cart->setGoodsDiamondSkN($GoodsDiamond);
+        }
+
+        if($data['type'] == 1){ //立即购买
+            M('cart')->where(['user_id'=>$data['user_id']])->update(['selected'=>0]);
+        }
+
+        //个性刻字
+        $return_data['attr_main_json'] = $data['character_carving']?json_encode(['character_carving'=>$data['character_carving']]):'';
+
+        if($return_data['act'] == 'add'){
+            $save['user_id'] = $data['user_id'];
+            $save['cart_type'] = $return_data['cart_type'];
+            $save['goods_id'] = $return_data['id'];
+            $save['goods_sn'] = $return_data['code'];
+            $save['goods_name'] = $return_data['name'];
+            $save['member_goods_price'] = $return_data['price'];
+            $save['goods_num'] = $return_data['cart_goods_num'];
+            $save['create_time'] = date('Y-m-d H:i:s',time());
+            $save['prom_type'] = 0; //0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
+            $save['selected'] = 1;
+            $save['attr_main_json'] = $return_data['attr_main_json'];
+
+            isset($return_data['spec_key_name'])?$save['spec_key_name'] = $return_data['spec_key_name']:'';
+            isset($return_data['spec_key'])?$save['spec_key'] = $return_data['spec_key']:'';
+
+            $bool = $D_cart->setCart($save,'add'); //返回添加购物车id
+
+        }else{
+            $save['attr_main_json'] = $return_data['attr_main_json'];
+            $save['goods_num'] =  $return_data['cart_goods_num'];
+            $save['selected'] =  1;
+
+            $bool = $D_cart->setCart($save,'edit',['id'=>$return_data['cart_id']]); //返回添加购物车id
+        }
+        if($bool){
+            return ['status'=>100,'msg'=>'添加成功','data'=>''];
+        }else{
+            return ['status'=>0,'msg'=>'添加失败','data'=>''];
+        }
+    }
+
+    //zwx 添加购物车 钻配托 添加购物车
+    public function addCartZpt($data){
+        if($data['type'] == 1){ //立即购买
+            M('cart')->where(['user_id'=>$data['user_id']])->update(['selected'=>0]);
+        }
+
+        $data['goods_group'] = $data['goods_id'].'_'.$data['diamond_id'];
+
+        Db::startTrans();
+
+        $return = $this->Zpt($data); //戒托加入购物车
+
+        if($return === true){
+            $data_diamond['goods_id'] = $data['diamond_id'];
+            $data_diamond['goods_num'] = 1;
+            $data_diamond['user_id'] = $data['user_id'];
+            $data_diamond['agent_id'] = $data['agent_id'];
+            $data_diamond['goods_group'] = $data['goods_id'].'_'.$data['diamond_id'];
+            $return = $this->Zpt($data_diamond); //钻石加入购物车
+            if($return !== true){
+                Db::rollback();
+                return $return;
+            }else{ //添加成功
+                Db::commit();
+                return ['status'=>100,'msg'=>'添加成功','data'=>''];
+            }
+        }else{
+            Db::rollback();
+            return $return;
+        }
+    }
+
+    //zwx 钻配托
+    public function Zpt($data){
+        $this->return_data = [];
+        $where = [];
+        $goods = D('goods')->getGoodsDiamondInfoJoinGd(['id'=>$data['goods_id'],'agent_id'=>$data['agent_id']]);
+        if(!$goods) return ['status'=>0,'msg'=>'商品已下架','data'=>''];
+        if($goods['type']==3) return ['status'=>0,'msg'=>'商品类型错误','data'=>''];
+
+        $this->return_data = $goods; //要返回的数据
+
+        $cart_type = ConditionShow('','cart','goods_cart_type');
+        $this->return_data['cart_type'] = 3; //钻配托 
+        $this->return_data['cart_goods_num'] = 1; //数量改为1
+        
+        $where = [];
+        $where['goods_id'] = $data['goods_id'];
+        $where['agent_id'] = $data['agent_id'];
+        $where['user_id'] = $data['user_id'];
+        $where['spec_key'] = $data['spec_key'];
+
+        $D_cart = D('cart');
+        $cart = $D_cart->getInfo($where);
+
+        if($cart){ //购物车已存在商品
+            //钻石类商品只有一个
+            if($goods['type']==0||$goods['type']==1||$goods['type']==2){
+                M('cart')->where(['id'=>$cart['id']])->update(['cart_type'=>3,'selected'=>1]);
+                return ['status'=>0,'msg'=>'已添加过购物车','data'=>''];
+            }
+            $this->return_data['act'] = 'edit';
+            $this->return_data['cart_id'] = $cart['id'];
+        }else{
+
+            $this->return_data['act'] = 'add';
+        }
+
+        if($goods['type']==4){ //戒托加入购物车
+            $where = []; //便于阅读
+            $where['goods_id'] = $data['goods_id'];
+            $where['agent_id'] = $data['agent_id'];
+            $goods_sku = D('goods')->getGoodsSkuInfo($where);
+
+            if($goods_sku){ // 该商品有规格 进行规格验证
+                $where = []; //便于阅读
+                $where['goods_id'] = $data['goods_id'];
+                $where['agent_id'] = $data['agent_id'];
+                $where['attributes'] = $data['spec_key'];
+                $goods_sku = D('goods')->getGoodsSkuInfo($where);
+
+                if(!$goods_sku) return ['status'=>0,'msg'=>'请选择规格','data'=>''];
+                if($goods['stock_status']==1&&$goods_sku['goods_number'] < $return_data['cart_goods_num']) return ['status'=>0,'msg'=>'库存不足','data'=>''];
+
+                $this->return_data['price'] = $goods_sku['goods_price'];
+                $this->return_data['spec_key_name'] = $goods_sku['name'];
+                $this->return_data['spec_key'] = $goods_sku['attributes'];
+            }else{ //商品没有规格验证方式
+                if($goods['stock_status']==1&&$goods['stock_num'] < $return_data['cart_goods_num']) return ['status'=>0,'msg'=>'库存不足','data'=>''];
+            }
+        }else if($goods['type']==0||$goods['type']==1||$goods['type']==2){ //钻石散货
+            if($goods['stock_num'] <= 0) return ['status'=>0,'msg'=>'钻石库存不足','data'=>''];
+
+            $GoodsDiamond = M('GoodsDiamond')->where(['goods_id'=>$data['goods_id']])->find();
+            $this->return_data['spec_key_name'] = $D_cart->setGoodsDiamondSkN($GoodsDiamond);
+        }
+
+        //个性刻字
+        $this->return_data['attr_main_json'] = $data['character_carving']?json_encode(['character_carving'=>$data['character_carving']]):'';
+
+        if($this->return_data['act'] == 'add'){
+            $save['user_id'] = $data['user_id'];
+            $save['cart_type'] = $this->return_data['cart_type'];
+            $save['goods_id'] = $this->return_data['id'];
+            $save['goods_sn'] = $this->return_data['code'];
+            $save['goods_name'] = $this->return_data['name'];
+            $save['member_goods_price'] = $this->return_data['price'];
+            $save['goods_num'] = $this->return_data['cart_goods_num'];
+            $save['create_time'] = date('Y-m-d H:i:s',time());
+            $save['prom_type'] = 0; //0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
+            $save['selected'] = 1;
+            $save['attr_main_json'] = $this->return_data['attr_main_json'];
+            $save['goods_group'] = $data['goods_group']; //商品组合
+            isset($this->return_data['spec_key_name'])?$save['spec_key_name'] = $this->return_data['spec_key_name']:'';
+            isset($this->return_data['spec_key'])?$save['spec_key'] = $this->return_data['spec_key']:'';
+            
+            $bool = M('cart')->insertGetId($save); //返回添加购物车id
+
+        }else{
+            $save['attr_main_json'] = $this->return_data['attr_main_json'];
+            $save['goods_num'] = $this->return_data['cart_goods_num'];
+            $save['selected'] = 1;
+            $D_cart->setCart($save,'edit',['id'=>$this->return_data['cart_id']]); //返回添加购物车id
+            $bool = 1;
+        }
+
+        if($bool){
+            return true;
+        }else{
+            return ['status'=>0,'msg'=>'添加失败','data'=>''];
+        }
+    }
+
+    //zwx 添加购物车 下单通
+    public function addCartXdt($user_id,$data=[]){
+        if(!is_numeric($user_id)||$user_id<=0) return ['status'=>99,'msg'=>'请先登录','data'=>''];
+        if(!is_numeric($data['goods_id'])||$data['goods_id']<=0) return ['status'=>0,'msg'=>'添加购物车错误','data'=>''];
+        if(!is_numeric($data['goods_num'])||$data['goods_num']<=0) return ['status'=>0,'msg'=>'数量不能为0','data'=>''];
+
+        if(!$data['material_id']) return ['status'=>0,'msg'=>'请选择材质','data'=>''];
+        if(!$data['stone_id']) return ['status'=>0,'msg'=>'请选择主石','data'=>''];
+        if(!$data['matched_diamond_id']) return ['status'=>0,'msg'=>'请匹配钻石','data'=>''];
+
+        $data['user_id'] = $user_id;
+        cookie('cart_count'.$user_id,null); //新增购物车清空cookie
+
+        $goods = D('goods')->getGoodsDiamondInfoJoinGd(['id'=>$data['goods_id'],'agent_id'=>$data['agent_id']]);
+        
+        //商品type为 3 4，并且不是自己的商品 判断分销上下架
+        if(!$goods||(($goods['type']==4||$goods['type']==3)&&$agent_id!=$goods['agent_id']&&$goods['status']!=1)) return ['status'=>0,'msg'=>'商品已下架','data'=>''];
+
+        $where = [];
+        $where['goods_id'] = $data['goods_id'];
+        $where['agent_id'] = $data['agent_id'];
+        $where['user_id'] = $data['user_id'];
+        //组装提交订单json数据
+        $attr_main_json = json_encode([[
+            'goods_id'=> $goods['supply_goods_id'],
+            'goods_number'=>$data['goods_num'],
+            'customize'=>[
+                'stone_id'=>$data['stone_id'],
+                'material_id'=>$data['material_id'],
+                'hand'=>$data['hand'],
+            ],
+            'matched_diamond_id'=>$data['matched_diamond_id'],
+            'relation_id'=>1
+        ]]);
+
+        //组装显示数据
+        $spec_key_name = '材质：'.$data['material_name'].',主石：'.$data['stone_name'].',颜色：'.$data['color'].',净度：'.$data['clarity'];
+        $data['hand_name'] && $spec_key_name.=','.$data['hand_name'].'：'.$data['hand'];
+        $data['letter'] && $spec_key_name.=',个性刻字：'.$data['letter'];
+
+        $where['attr_main_json'] = $attr_main_json;
+        $where['spec_key_name'] = $spec_key_name;
+
+        $D_cart = D('cart');
+        $cart = $D_cart->getInfo($where);
+        if($cart) return ['status'=>0,'msg'=>'已添加到购物车','data'=>''];
+        //调用接口获取下单通价格
+        $Openzm = logic('Openzm')->get_customize_calculatePrice($goods['supply_goods_id'],$data['material_id'],$data['stone_id'],$data['matched_diamond_id']);
+        if($Openzm['code']==100200){
+            $goods['price'] = $Openzm['data']['price'];
+            //计算下单通 销售价格
+            $goods = logic('PriceCalculation')->goods_price([$goods])[0];
+        }else{
+            return ['status'=>0,'msg'=>'价格获取错误','data'=>''];
+        }
+
+        $save['user_id'] = $data['user_id'];
+        //定制
+        $save['cart_type'] = 3;
+        $save['goods_id'] = $goods['id'];
+        $save['goods_sn'] = $goods['code'];
+        $save['goods_name'] = $goods['name'];
+        $save['member_goods_price'] = $goods['price'];
+        $save['goods_num'] = $data['goods_num'];
+        $save['create_time'] = date('Y-m-d H:i:s',time());
+        $save['prom_type'] = 0; //0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
+        $save['selected'] = 1;
+        $save['attr_main_json'] = $attr_main_json;
+        $save['spec_key_name'] = $spec_key_name;
+
+        $bool = $D_cart->setCart($save,'add'); //返回添加购物车id
+        
+        if($bool){
+            return ['status'=>100,'msg'=>'添加成功','data'=>''];
+        }else{
+            return ['status'=>0,'msg'=>'添加失败','data'=>''];
+        }
+    }
+
+    //zwx 修改购物车
+    public function editCart($user_id,$data){
+        if(!is_numeric($user_id)||$user_id<=0) return ['status'=>0,'msg'=>'请先登录','data'=>''];
+        if(!$data['cart']) return ['status'=>0,'msg'=>'提交错误','data'=>''];
+
+        $data['user_id'] = $user_id;
+        $new_list = $data['cart'];
+        
+        $where['user_id'] = $data['user_id'];
+        $where['product_status'] = 1; //上架
+        $where['id'] = array_keys($new_list);
+        $where['agent_id'] = $data['agent_id'];
+        $list = D('cart')->getListJoinG($where);
+
+        if(!$list) return ['status'=>0,'msg'=>'提交错误','data'=>''];
+
+        foreach ($list as $k => $v) { //循环数据库原数据 对提交的数据进行对比
+
+            if(!is_numeric($new_list[$v['id']]['goods_num'])||$new_list[$v['id']]['goods_num']<0){
+                return ['status'=>0,'msg'=>'购买数量大于0','data'=>''];
+            }
+            if($v['g_goods_id']<=0){
+                return ['status'=>0,'msg'=>$v['goods_name'].' 商品已下架','data'=>''];
+            }
+            if(!in_array($new_list[$v['id']]['selected'],[0,1])){
+                return ['status'=>0,'msg'=>'选中错误','data'=>''];
+            }
+
+            if(($v['g_type'] ==0||$v['g_type']==1||$v['g_type']==2)&&$v['supply_goods_id']>0){ //判断上下级
+
+                $Openzm = logic('Openzm')->get_diamond_detail($v['supply_goods_id']);
+
+                if($Openzm['data']['goods_number'] != 1){
+                    return ['status'=>0,'msg'=>$Openzm['data']['goods_name'].' 库存不足','data'=>''];
+                }
+                if($Openzm['data']['is_sale'] != 1){
+                    return ['status'=>0,'msg'=>$Openzm['data']['goods_name'].' 商品已下架','data'=>''];
+                }
+            }
+
+            $save['id'] = $v['id'];
+            $save['goods_num'] = $new_list[$v['id']]['goods_num'];
+            $save['selected'] = $new_list[$v['id']]['selected'];
+
+            $save['member_goods_price'] = $v['member_goods_price'];
+            
+            if($v['gs_sku_id']>0){ //有规格
+                if($v['g_stock_status']==1&&$new_list[$v['id']]['goods_num']>$v['gs_goods_number']){ //要修改商品数量大于库存
+                    return ['status'=>0,'msg'=>$v['goods_name'].' 库存不足,剩余库存'.$v['gs_goods_number'],'data'=>''];
+                }
+            }else{ //没有规格
+                if($v['g_stock_status']==1&&$new_list[$v['id']]['goods_num']>$v['g_stock_num']){ //要修改商品数量大于库存
+                    return ['status'=>0,'msg'=>$v['goods_name'].' 库存不足,剩余库存'.$v['g_stock_num'],'data'=>''];
+                }
+            }
+            $saveAll[] = $save;
+        }
+
+        $bool = D('cart')->saveAll($saveAll); //更新购物车数据
+        
+        if($bool){
+            return ['status'=>100,'msg'=>'提交成功','data'=>''];
+        }else{
+            return ['status'=>0,'msg'=>'提交失败','data'=>''];
+        }
+        
+    }
+
+    //sxm 编辑单个购物车后返回价格与总价
+    public function getoneprice($data,$uid)
+    {
+        $result =M('cart')->field('member_goods_price,id,selected,goods_num')->where(['user_id'=>$uid])->select();
+        $returndata = [];
+        $returndata['totalprice'] = 0;
+        $returndata['oneprice'] = 0;
+        $returndata['selectedAll'] = 1;
+        foreach ($result as $key => $val) {
+            // $val['selected'] == 1 ? $returndata['totalprice'] += $val['member_goods_price'] * $val['goods_num'] : $returndata['totalprice'] += 0;
+            if ($val['selected'] == 1) {
+                $returndata['totalprice'] += $val['member_goods_price'] * $val['goods_num'];
+            } else {
+                $returndata['totalprice'] += 0;
+                $returndata['selectedAll'] = 0;
+            }
+            if ($data[$val['id']]) {
+                $returndata['oneprice'] = $val['member_goods_price'] * $val['goods_num'];
+            }
+        }
+        $returndata['totalprice'] = round($returndata['totalprice'],2);
+        $returndata['oneprice'] = round($returndata['oneprice'],2);
+        return $returndata;
+    }
+
+    //全选购物车状态
+    public function changeAll($uid,$isselected)
+    {
+        $save = [];
+        $save['selected'] = $isselected ? 1 : 0;
+        $res = M('cart')->where('user_id',$uid)->update($save);
+        $result =M('cart')->field('member_goods_price,id,selected,goods_num')->where(['user_id'=>$uid,'selected'=>1])->select();
+        $totalprice = 0;
+        if ($result) {
+            foreach ($result as $key => $val) {
+                $totalprice +=  $val['member_goods_price'] * $val['goods_num'];
+            }
+        }
+        if ($res) {
+            return ['status'=>100,'msg'=>'ok','totalprice'=>round($totalprice,2)];
+        } else {
+            return ['status'=>101,'msg'=>'更改失败','data'=>''];
+        }
+    }
+
+
+    //zwx 删除购物车
+    public function delCart($user_id,$id){
+        if(!is_numeric($user_id)||$user_id<=0) return ['status'=>0,'msg'=>'请先登录','data'=>''];
+
+        if(is_array($id)){
+          $id_in = implode(',',$id);
+          $id_count = count($id);
+      }else{
+          $id_in = $id;
+          $id_count = 1;
+          $id = [$id]; //字符串转数组
+      }
+      if(!$id) return ['status'=>0,'msg'=>'删除错误','data'=>''];
+
+      $where = [];
+      $where['id'] = ['in',$id_in];
+      $where['user_id'] = $user_id;
+      $list = M('cart')->where($where)->select();
+
+      if(count($list) != $id_count) return ['status'=>0,'msg'=>'删除错误','data'=>''];
+
+      if(M('cart')->where($where)->delete()){
+        foreach ($list as $k => $v) {
+          if($v['cart_type'] == 3){
+            //删除钻配托
+            M('cart')->where(['user_id'=>$user_id,'goods_group'=>$v['goods_group']])->delete();
+          }
+        }
+        cookie('cart_count'.$user_id,null); //删除购物车清空cookie
+        return ['status'=>100,'msg'=>'删除成功','data'=>''];
+      }else{
+        return ['status'=>0,'msg'=>'删除失败','data'=>''];
+      }
+    }
+}

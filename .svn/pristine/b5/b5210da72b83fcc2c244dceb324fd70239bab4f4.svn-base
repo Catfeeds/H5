@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>珠宝分类</title>
+    {include file="public/base" /}
+    <style type="text/css">
+    	body, .mui-content {
+		    background-color: #EEEEEE;
+		}
+    	.mui-bar {
+		    background-color: white;
+		}
+		.mui-search .mui-placeholder {
+		    font-size: 13px;
+		    line-height: 50px;
+		}
+		.mui-search .mui-placeholder .mui-icon {
+		    color: #F430B6;
+		    margin-right: 1px;
+		}
+		.mui-bar {
+		    height: 50px;
+		    line-height: 50px;
+		    padding-right: 0px;
+    		padding-left: 0px;
+		}
+		.mui-bar-nav {
+		    top: 0;
+		    -webkit-box-shadow: 0 1px 6px #fff;
+		    box-shadow: 0 1px 6px #fff;
+		}
+		.mui-search{
+			margin: 0px 10px;
+		}
+		.mui-bar input[type=search] {
+		    height: 35px;
+		    margin: 6px 0;
+		    background-color: #F0F0F0;
+		    border-radius: 40px;
+		}
+		.mui-search:before{
+			top: 40%;
+		}
+		.mui-search.mui-active:before{
+			left: 15px;
+			height: 35px;
+			line-height: 35px;
+			color: #F430B6;
+		}
+		.mui-search.mui-active input[type='search']{
+			padding-left: 40px;
+		}
+		.history-search{
+			display: none;			
+			background: white;
+			padding: 0px 10px;
+			border-bottom: 1px solid #dedcdc;
+		}
+		.history-text{
+			font-size: 12px;
+    		color: darkgray;
+    		height: 30px;
+    		line-height: 30px;
+		}
+		.history-text .icon{
+			width: 15px;
+    		height: 15px;
+		}
+		.history-search ul{
+			margin-bottom: 10px;
+		    max-height: 125px;
+		    overflow: hidden;
+		}
+		.history-search ul li{
+			max-width: 23%;
+		    margin: 0px 1%;
+		    margin-bottom: 10px;
+		    float: left;
+		    text-align: center;
+		    height: 32px;
+		    line-height: 32px;
+		    border-radius: 20px;
+		    border: 1px solid darkgray;
+		    padding: 0px 20px;
+		    overflow: hidden;
+		    color: black;
+		    font-size: 12px;
+		}
+		.mui-bar-nav~.mui-content {
+		    padding-top: 50px!important;
+		}
+		.classifyTabs{
+			position: fixed;
+		    width: 100%;
+		    z-index: 2;
+		    border-bottom: 1px solid #e8e6e6;
+		}
+		.classifyTabs .red {
+		    color: #F52B9D;
+		    border-bottom: 2px solid #F52B9D;		    
+		}
+		.wap_all{
+			margin-top: 54px;
+		}
+		.tab-tit {
+		    width: 25%;
+		    position: fixed;
+		    height: 100%;
+		    border-right:0px;
+		}
+		.tab-tit ul{
+			background: white;
+		}
+		.tab-tit ul li{
+			height: 45px;
+		    border-bottom: 1px solid #CCCCCC;
+		    text-align: center;
+		    overflow: hidden;
+		}
+		.tab-tit ul li:last-child{
+			 border-bottom: 0px;
+		}
+		.tab-tit ul li.active {
+		    background: #EEEEEE;
+		    color: black;
+			border-bottom: 1px solid #CCCCCC;
+			border-right: 1px solid #CCCCCC;
+		}
+		.tab-tit ul li a {
+		    margin: 7px 0px;
+		    height: 30px;
+		    line-height: 30px;
+		    padding: 0px 10px;
+		}
+		.tab-tit ul li.active a{
+			border-left: 2px solid #F52B9D;
+		}
+		.tab-con {
+		    width: 75%;
+		    margin-bottom: 50px;
+		}
+		.box_style{
+			margin: 10px;
+		}
+		.active_title{
+			width: 100%;
+			height: 50px;
+    		line-height: 50px;
+			text-align: center;
+			font-size: 16px;
+			color: black;
+		}
+		.active_text{
+			margin: 0px 10px;
+		}
+		.box_style img{
+			height: 120px;
+    		border-radius: 10px;
+		}
+		.box_style ul {
+		    margin: 0px;
+		}
+		.box_style ul li {
+		    min-width: 23%;
+		    max-width: 23%;
+		    margin: 1%;
+		    float: left;
+		    text-align: center;
+		    height: 55px;
+		    max-height: 55px;
+		    line-height: 55px;
+		    background: white;
+		    border-radius: 0px;
+		    border: 0px;
+		    overflow: hidden;
+		    color: darkgray;
+		    font-size: 12px;
+		}
+    </style>
+</head>
+
+<body>
+    <header class="mui-bar mui-bar-nav">
+        <!--<h1 class="mui-title">珠宝分类</h1>-->
+        <div class="mui-input-row mui-search">
+            <input type="search" placeholder="搜索商品" class="mui-input-clear" v-model="inputValue" id="myform">
+        </div>
+        <div class="history-search">
+        	<div class="history-text">
+        		<svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-shizhong2"></use>
+                </svg>
+        		历史记录
+        	</div>
+    		<ul class="clear">
+    			<li>钻石</li>
+    			<li>珠宝首饰</li>
+    			<li>成品珠宝</li>
+    			<li>戒指</li>
+    			<li>耳环</li>
+    			<li>裸钻</li>
+    			<li>钻石</li>
+    			<li>珠宝首饰</li>
+    			<li>成品珠宝</li>
+    			<li>钻石</li>
+    			<li>珠宝首饰</li>
+    			
+    		</ul>
+    	</div>
+    </header>
+    <div class="mui-content">
+    	
+        <div class="classifyTabs clear">
+            <ul>
+                <!--<li>
+                    <a href="{:url('goods/index')}?goods_type=3" :class="{red:isShowTitle}" @click="changetitle">自有成品</a>
+                </li>
+                <li>
+                    <a href="{:url('goods/index')}?goods_type=4" :class="{red:isShowTitle2}" @click="changetitle">自有定制</a>
+                </li>
+                <li>
+                    <a href="{:url('goods/index')}?goods_type=5" :class="{red:isShowTitle3}" @click="changetitle">精品定制</a>
+                </li>-->
+                <li>
+                    <a href="#" :class="{red:isShowTitle}" @click="changetitle('3')">自有成品</a>
+                </li>
+                <li>
+                    <a href="#" :class="{red:isShowTitle2}" @click="changetitle('4')">自有定制</a>
+                </li>
+                <li>
+                    <a href="#" :class="{red:isShowTitle3}" @click="changetitle('5')">精品定制</a>
+                </li>
+            </ul>
+        </div>
+        <div class="clear wap_all">
+            <div class="tab-tit fl">
+                <ul>
+                    <li v-for="(item,index) in goodsCategory" @click="chgtab(index,item.name)" :class="{'active':index==num}">
+                        <a href="#">{{item.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-con fr">
+                <div class="box_style" v-for="(item,index) in goodsCategory" v-show="index==num">
+                    <a :href="adurl">
+                        <img :src="adimg" alt="" width="100%">
+                    </a>
+                    <div class="active_title">
+                    	<span>/</span>
+                    	<span class="active_text">钻石</span>
+                    	<span>/</span>
+                    </div>
+                    <ul class="clear">
+                        <li v-for="tab in goodsCategory[index].sub">
+                            <a :href="'{:url('goods/goodsList')}?category_id='+[tab.id]+'&goods_type='+goods_type">
+                                {{tab.name}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include file="public/nav" /}
+</body>
+<script>
+	mui(".tab-con").scroll();
+	var firstname ;
+    var vm = new Vue({
+        el: '.mui-content',
+        data: {
+            isShowTitle: true,
+            isShowTitle2: false,
+            isShowTitle3: false,
+            num: 0,
+            goodsCategory: [],
+            adimg: "",
+            adurl: "",
+            goods_type: ''
+
+        },
+        created: function () {
+        	 this.getAd();
+            // 区分成品和定制
+            var goods_type = 3;
+			this.changetitle(goods_type)
+            
+
+        },
+        methods: {
+            //获取分类广告
+            getAd: function () {
+                var _this = this;
+                axios({
+                    type: 'get',
+                    url: __apiurl2 + '/goods/getcatead',
+                    headers: {
+                        Aid: getAId()
+                    },
+                }).then(function (res) {
+                	//console.info(res);
+                    
+                    if(res.data.data && res.data.data != null && res.data.data != ""){
+                    	_this.adurl = res.data.data.url;
+                    	_this.adimg = res.data.data.images;
+                    }else{
+                    	_this.adurl = "#";
+                    	_this.adimg = "__IMG__/600.jpg";
+                    }
+                    
+                })
+            },
+            /*标签切换*/
+            chgtab: function (index,name) {
+                this.num = index;
+                //alert($(".active_text").text())
+                $(".active_text").text(name);
+            },
+	        changetitle:function(index){	        	
+	        	var goods_type = index;
+	        	// 判断初始时候goods_type，并且默认赋值第一个
+	            if (!goods_type) {
+	                this.goods_type = 3;
+	            } else {
+	                this.goods_type = goods_type;
+	            }
+	
+	            // 根据goods_type判断对应的tab项
+	            if (this.goods_type == 3) {
+	                this.isShowTitle = true
+	                this.isShowTitle2 = false
+	                this.isShowTitle3 = false                
+	            } else if (this.goods_type == 4) {
+	                this.isShowTitle = false
+	                this.isShowTitle2 = true
+	                this.isShowTitle3 = false
+	            } else {
+	                this.isShowTitle = false
+	                this.isShowTitle2 = false
+	                this.isShowTitle3 = true
+	                
+	            }
+				
+	            var _this = this;
+	           // __checkLogin();
+	            axios({
+	                type: 'get',
+	                url: __apiurl2 + '/goods/getcategory',
+	                params: {
+	                    goods_type: this.goods_type
+	                },
+	                headers: {
+	                    Aid: getAId()
+	                },
+	            }).then(function (res) {
+	                _this.goodsCategory = res.data.data;
+	               firstname = res.data.data[0].name;
+	               vm.chgtab(0,firstname);
+	            })
+	        }
+        }
+    })
+    
+    $("#myform").focus(function(){
+    	$(".history-search").slideToggle("slow");
+    });
+    $("#myform").blur(function(){
+    	$(".history-search").slideToggle("slow");
+    });
+</script>
+
+</html>

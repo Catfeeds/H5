@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body>
+<div id="page_01">
+    <header class="mui-bar mui-bar-nav">
+        <div>
+            <input type="search" placeholder="" v-model="inputValue" id="myform" style="text-indent: 30px">
+            <span class="index_span">
+            <svg class="icon" style="font-size: 25px" aria-hidden="true"><use xlink:href="#icon-Search"></use></svg>
+        </span>
+        </div>
+        <div class="down_box">
+            <ul>
+                <li @click="zuanshi">钻石</li>
+                <li @click="zhubao">成品珠宝</li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="mui-content">
+        <!--首页轮播-->
+        <div class="swiper-container swiper-container_01">
+            <div class="swiper-wrapper">
+                {volist name=":tfilter($templateitem,'slide')" id="vo"}
+                <div class="swiper-slide"><a href="{$vo.url}"><img src="{$vo.images}"/></a></div>
+                {/volist}
+            </div>
+            <!-- 如果需要分页器 -->
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <ul class="mui-table-view mui-grid-view mui-grid-9">
+            {volist name=":tfilter($templateitem,'nav')" id="vo" key="k"}
+            {elt name="k" value="4"}
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <a href="{$vo.url}">
+                    <img class="width_style" src="{$vo.images}" alt="">
+                    <div class="mui-media-body">{$vo.title}</div>
+                </a>
+            </li>
+            {/elt}
+            {/volist}
+        </ul>
+        <div class="wrap_01">
+            <div class="new_goods">
+                <p>新品上线</p>
+                <p><span>献上爱礼，赞颂生活的美好</span></p>
+            </div>
+            <!--中间轮播-->
+            <div class="swiper-container swiper-container_02">
+                <div class="swiper-wrapper">
+                    {web:goods cat='new' num='8'}
+                    <div class="swiper-slide"><a href="{:url('mobile/goods/details')}?id={$vo.id}"><img
+                            src="{$vo.thumb}" alt="无图({$vo.name})"></a></div>
+                    {/web:goods}
+                </div>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+        <!--中间图片-->
+        <div class="m_img">
+            {volist name=":tfilter($templateitem,'newad')" id="vo" key="k"}
+            {eq name="k" value="1"}
+            <a href="{$vo.url}"><img alt="" src="{$vo.images}"/></a>
+            {/eq}
+            {/volist}
+        </div>
+
+        <div class="wrap_01">
+            <div class="new_goods">
+                <p>商城热卖</p>
+                <p><span>献上爱礼，赞颂生活的美好</span></p>
+            </div>
+            <!--中间轮播-->
+            <div class="swiper-container swiper-container_02">
+                <div class="swiper-wrapper">
+                    {web:goods cat='hot' num='8'}
+                    <div class="swiper-slide"><a href="{:url('mobile/goods/details')}?id={$vo.id}"><img
+                            src="{$vo.thumb}" alt="无图({$vo.name})"></a></div>
+                    {/web:goods}
+                </div>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+
+        <!--中间图片-->
+        {volist name=":tfilter($templateitem,'hotad')" id="vo" key="k"}
+        {elt name="k" value="2"}
+        <div class="m_img">
+            <a href="{$vo.url}"><img alt="" src="{$vo.images}"/></a>
+        </div>
+        {/elt}
+        {/volist}
+        <div style="width: 100%;height: 60px"></div>
+    </div>
+</div>
+{include file="public/nav" /}
+</body>
+<script>
+    mui.init();
+    new Vue({
+        el: '#page_01',
+        data:{
+            inputValue:''
+        },
+        methods:{
+            zuanshi(){
+                window.location.href = "{:url('goods/searchgoodslist')}?keyword="+this.inputValue+'&type=0'
+            },
+            zhubao(){
+                window.location.href = "{:url('goods/searchgoodslist')}?keyword="+this.inputValue+'&type=3'
+            }
+        }
+    })
+    // mui('body').on('tap','a',function(){document.location.href=this.href;});
+    /*swiper_01 */
+    var mySwiper1 = new Swiper('.swiper-container_01', {
+        direction: 'horizontal',
+        loop: true,
+        //自动播放
+        autoplay: {
+            delay: 3000,
+            stopOnLastSlide: false,
+            disableOnInteraction: true,
+        },
+        // 如果需要分页器
+        pagination: {
+            el: '.swiper-pagination',
+        }
+
+    });
+    /*swiper_02 */
+    var mySwiper2 = new Swiper('.swiper-container_02', {
+        slidesPerView: 3,
+        autoplay: false,
+        loop: false,
+    });
+    //搜索功能
+
+    $('#myform').click(function () {
+        $('.down_box').toggle(500);
+    })
+
+
+
+
+</script>
+
+
+</html>

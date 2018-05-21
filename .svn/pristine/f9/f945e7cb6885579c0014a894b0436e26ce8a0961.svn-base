@@ -1,0 +1,92 @@
+<?php
+/**
+ * 控制器下多层new，简化版本
+ * zhy	find404@foxmail.com
+ * 2017年11月12日 15:14:23
+ */
+namespace think;
+
+class Commutator {
+	
+	
+	const MUSER 			= '\app\common\model\User';
+	const MAGENT 			= '\app\common\model\Agent';
+	const MAGENTCONFIG 		= '\app\common\model\AgentConfig';
+	const MREPORTCERT 		= '\app\common\model\Report_certificate';	
+	const MGOODS 			= '\app\common\model\Goods';
+	const MGOODSCATEGORY 	= '\app\common\model\GoodsCategory';
+	const MGOODSATTR 		= '\app\common\model\GoodsAttr';
+
+	
+	const LUSER 			= '\app\common\logic\User';
+	const LAGENT 			= '\app\common\logic\Agent';
+	const LAGENTCONFIG 		= '\app\common\logic\AgentConfig';
+	const LGOODS 			= '\app\common\logic\Goods';
+	const LGOODSCATEGORY 	= '\app\common\logic\GoodsCategory';
+	const LGOODSATTR 		= '\app\common\logic\GoodsAttr';	
+
+
+	
+		
+    private static $result = '';
+	private static $class  = [];
+    /**
+     * 判断是否为一级二级数组，在行跳转
+     * zhy	find404@foxmail.com
+     * 2017年11月12日 15:49:44
+     */ 
+	static public function Subject($data){
+		if(is_array($data[0])){
+			foreach ($data as $key=>$val){
+				self::$result[isset($val[3]) ? $val[3] : $key]	= self::algorithm($val);
+			}
+		}else{
+				self::$result									= self::algorithm($data);
+		}
+		return  self::$result;
+	}
+    /**
+     * 加载，转发，使用方法
+     * zhy	find404@foxmail.com
+     * 2017年11月12日 15:51:16
+     */ 
+	static private function algorithm($data){
+		if(empty(self::$class[$data[0]])){
+			$ModelClass  = 	self::$class[$data[0]]		= new $data[0]();
+		}else{
+			$ModelClass  =  self::$class[$data[0]];
+		}
+		if($data[1]){
+			foreach ($data[1] as $key=>$val){
+				$ModelClass->{$key} 		= $val;
+			}
+		}
+		return $ModelClass->$data[2]();
+	}
+	
+	
+	/**
+	 * 实例逻辑层
+	 * zhy	find404@foxmail.com
+	 * 2017年11月18日 15:48:12
+	 */
+	static function ConnectLogic($name,$key){
+		$Logic 	  = new  $name();
+		return $Logic->Subject($key);
+	}	
+	
+
+	
+	/**
+	 * 简易实例逻辑层
+	 * zhy	find404@foxmail.com
+	 * 2017年11月22日 10:01:30
+	 */
+	static function BridgeLogic($name,$fun,$key=null){
+		$Logic 	  = new  $name();
+		return $Logic->$fun($key);
+	}		
+	
+	
+	
+}

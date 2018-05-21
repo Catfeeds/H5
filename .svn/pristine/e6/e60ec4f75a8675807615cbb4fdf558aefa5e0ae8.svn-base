@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+    <!-- 使用px -->
+    <link rel="stylesheet" href="//unpkg.com/vue-ydui/dist/ydui.px.css">
+    <!-- 引入组件库 -->
+    <script src="//unpkg.com/vue-ydui/dist/ydui.px.js"></script>
+    <style>
+        .yd-cell-box {
+            margin-bottom: 0;
+        }
+        .evaluate_main{
+        	background: white;
+        	margin-top: 10px;
+        	padding: 20px 10px;
+        }
+        .yd-cell:after {
+		    content: "";
+		    position: absolute;
+		    z-index: 0;
+		    bottom: 0;
+		    left: 0;
+		    width: 100%;
+		    border-bottom: 0px;
+		}
+		.pro-grade{
+			height: 50px;
+			line-height: 50px;
+			margin-left: 10px;
+		}
+		.yd-cell-item {
+		    padding-left: 0px!important;
+		    font-size: 16px;
+		}
+		.yd-rate a:after {
+		    font-size: 20px;
+		}
+    </style>
+</head>
+
+<body>
+<div id="evaluate">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">订单评价</h1>
+    </header>
+    <div class="mui-content">
+       <div class="evaluate_main">
+	       	<div class="evaluate-left fl">
+	            <img :src="img" alt="">
+	        </div>
+	        
+            <div class="pro-grade fl">
+            	商品评分：
+            </div>
+            <div class="evaluate-content fl">
+	            <template>
+	                <yd-cell-group>
+	                    <yd-cell-item>
+	                        <yd-rate slot="left" v-model="arr"
+	                                 :show-text="['很差','还行','一般','挺好','非常好']"></yd-rate>
+	                    </yd-cell-item>
+	                </yd-cell-group>
+	            </template>
+	        </div>
+	        
+	        <textarea v-model="data" placeholder="请写下对产品的评价感受~">
+	
+	        </textarea>
+	        <div class="sub-btn">
+	            <button class="mui-btn" @click="mySubmit">提交</button>
+	        </div>
+       </div>
+    </div>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#evaluate',
+        data: {
+            goodsList: [],
+            goodsList01: [],
+            data: '',
+            arr: 2,
+            order_id:'',
+            order_goods_id:'',
+            img:''
+        },
+
+        created:function() {
+            __checkLogin();
+            this.token = getToken();
+            this.order_id = getUrlParam("order_id");
+            this.order_goods_id = getUrlParam("order_goods_id");
+            this.img = getUrlParam("thumb");
+        },
+        methods: {
+            mySubmit:function() {
+                axios({
+                    method: 'POST',
+                    url: __apiurl + '/order/addEval',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token
+                    },
+                    params: {
+                        order_id: this.order_id,
+                        order_goods_id:this.order_goods_id,
+                        score:this.arr,     //得分
+                        content:this.data
+                    }
+                })
+                    .then(function (res) {
+                        if (res.data.status == 100) {
+                           mui.alert(res.data.msg,function () {
+                               window.location.href= "{:url('user/order')}?type=4";
+
+                           })
+                        }
+                    })
+                    .catch(function (error)  {
+                        mui.alert(error);
+                    });
+            }
+        }
+    });
+</script>
+
+
+</html>

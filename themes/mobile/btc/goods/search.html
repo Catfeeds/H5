@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <title>搜索页面</title>
+    <style type="text/css">
+    	.mui-bar,body, .mui-content {
+		    background-color: #EEEEEE;
+		}		
+		.mui-pull-right{
+		    color: #4c4b4b!important;
+		    margin-right: 10px;
+		    font-size: 14px;
+		}
+		.mui-search .mui-placeholder {
+		    font-size: 13px;
+		    line-height: 50px;
+		}
+		.mui-search .mui-placeholder .mui-icon {
+		    color: #F430B6;
+		    margin-right: 1px;
+		}
+		.mui-bar {
+		    height: 50px;
+		    line-height: 50px;
+		    padding-right: 0px;
+    		padding-left: 0px;
+		}
+		.mui-bar-nav {
+		    top: 0;
+		    -webkit-box-shadow: 0 1px 6px #EEEEEE;
+		    box-shadow: 0 1px 6px #EEEEEE;
+		}
+		.mui-search {
+		    margin: 0px 2%;
+		    width: 85%;
+		    float: left;
+		}
+		.mui-bar input[type=search] {
+		    height: 35px;
+		    margin: 6px 0;
+		    background-color: white;
+		    border-radius: 40px;
+		}
+		.mui-search:before{
+			top: 40%;
+		}
+		.mui-search.mui-active:before{
+			left: 15px;
+			height: 35px;
+			line-height: 35px;
+			color: #F430B6;
+		}
+		.mui-search.mui-active input[type='search']{
+			padding-left: 40px;
+		}
+		.history-search{
+			padding: 10px;
+		}
+		.history-text{
+			font-size: 12px;
+		    color: #4c4b4b!important;
+		    height: 40px;
+    		line-height: 30px;
+		}
+		.history-text .icon{
+			width: 15px;
+    		height: 15px;
+		}
+		.history-search ul{
+			margin-bottom: 10px;
+		    max-height: 125px;
+		    overflow: hidden;
+		}
+		.history-search ul li {
+		    max-width: 23%;
+		    margin: 0px 1.5%;
+		    margin-bottom: 10px;
+		    float: left;
+		    text-align: center;
+		    height: 30px;
+		    line-height: 30px;
+		    border-radius: 20px;
+		    background: #e6e2e2ad;
+		    padding: 0px 20px;
+		    overflow: hidden;
+		    color: #4c4b4b!important;
+		    font-size: 12px;
+		}
+		.nosearch{
+			width: 100%;
+			text-align: center;
+			font-size: 12px;
+			color: #666;
+		}
+    </style>
+</head>
+
+<body>
+	<div id="search" v-cloak>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-pull-right">取消</a>
+		    <!--<a class="mui-pull-right" @click="search">搜索</a>-->
+		    <div class="mui-input-row mui-search">
+	            <input type="search" placeholder="搜索商品" class="mui-input-clear" v-model="searchInput" id="search_input">
+	        </div>
+	        
+		</header>
+		<div class="mui-content">
+		    <div class="history-search">
+	        	<div class="history-text">
+	        		<svg class="icon" aria-hidden="true">
+	                    <use xlink:href="#icon-shizhong2"></use>
+	                </svg>
+	        		历史搜索
+	        	</div>
+	    		<ul class="clear searchlist" v-if="searchList.length>0">
+	    			<li v-for="item in searchList" @click="clickSearchList(item)">{{item}}</li>
+	    			
+	    		</ul>
+	    		<div class="nosearch" v-else>
+	    			—————— 暂无搜索条件 ——————
+	    		</div>
+	    	</div>
+		</div>
+	</div>
+</body>
+<script>
+	//判断是否在数组里面
+    function in_array(search, array) {
+        for (var i in array) {
+            if (array[i] == search) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //查找指定的元素在数组中的位置
+    Array.prototype.indexOf = function(val) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] == val){ 
+				return i;
+			}
+		}
+		return -1;
+	};
+	//去删除这个元素
+	Array.prototype.remove = function(val) {
+		var index = this.indexOf(val);
+		if (index > -1) {
+			this.splice(index, 1);
+		}
+	};
+	var tokenMsg;
+	var vm = new Vue({
+        el: '#search',
+        data: {
+        	searchInput:'',
+			searchList:[]
+			
+        },
+        created:function(){        	
+        	if(JSON.parse(localStorage.getItem("searchList"))){
+        		this.searchList = JSON.parse(localStorage.getItem("searchList"));//获取本地搜索条件      
+        	}
+        	console.info(this.searchList)
+        },
+		methods:{
+			search:function(){
+				if (in_array(this.searchInput,this.searchList)) { //判断this.searchInput是否在数组中
+                    this.searchList.remove(this.searchInput);//获取搜索内容
+                    this.searchList.unshift(this.searchInput);//获取搜索内容
+                }else{
+                	this.searchList.unshift(this.searchInput);//获取搜索内容
+                }
+				localStorage.setItem("searchList", JSON.stringify(this.searchList));//本地存储搜索内容
+				//plus.storage.setItem("searchList", JSON.stringify(this.searchList));//本地存储搜索内容
+				
+				console.info(this.searchList)
+				window.location.href = encodeURI(encodeURI("{:url('goods/searchgoodslist')}?search="+this.searchInput));
+				/*mui.openWindow({
+					url: "searchgoodslist.html",
+					id: "searchgoodslist.html",
+					show: {
+						aniShow: 'slide-in-right'
+					},
+					extras: {
+						search: this.searchInput
+					}
+				});*/
+			
+			},
+			clickSearchList:function(e){
+				this.searchInput = e;
+				$(".mui-search").addClass("mui-active");
+				this.search();
+			}
+		}
+	});
+	
+	
+	
+	
+	//回车 搜索
+	$("#search_input").keypress(function(e) {
+		if(e.which == 13) {
+			if(vm.searchInput.replace(/(^\s*)|(\s*$)/g, "") !== ""){
+				vm.search();
+			}else{
+				mui.alert("请输入搜索内容");
+			}
+		}			
+	});
+	
+</script>
+</html>

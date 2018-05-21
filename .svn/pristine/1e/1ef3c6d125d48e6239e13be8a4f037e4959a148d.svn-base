@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__" />
+    <style type="text/css">
+        .personal {
+            background-color: #fff;
+            height: 100px;
+            line-height: 100px;
+        }
+
+        .fontColor {
+            color: #999
+        }
+
+        input::-webkit-input-placeholder {
+            color: #999;
+        }
+
+        .number {
+            margin-left: 12px;
+        }
+
+        .personal .userPhoto {
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ddd;
+            margin: 10px 40px 10px 0;
+            border-radius: 50%;
+        }
+
+        .personal .userPhoto img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .personal .userPhoto input {
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            opacity: 0;
+            position: absolute;
+            top: 55px;
+        }
+
+        .user-main-list li {
+            padding: 0 10px;
+            overflow: hidden;
+        }
+
+        .user-main-list li span:nth-child(2) {
+            float: right;
+        }
+
+        .user-main-list li:nth-child(2) {
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .right-icon {
+            right: 10px;
+        }
+
+        .sex {
+            margin-right: 30px;
+        }
+
+        .revise {
+            width: 100%;
+            height: 50px;
+            color: #f786a3;
+            border: none;
+            font-size: 1rem;
+            margin-top: 20px
+        }
+
+        .revise:focus,
+        .revise:active {
+            background: #fff !important;
+            color: #f786a3 !important;
+        }
+
+        li.select input {
+            width: 65%;
+            float: right;
+            height: 48px;
+            margin-right: 20px;
+            border: 0;
+            text-align: right;
+            font-size: 14px;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="personal" v-cloak>
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">个人信息</h1>
+        </header>
+        <form id="myform">
+            <div class="mui-content" style="margin-top: 45px;">
+                <div class="personal clear">
+                    <div class="number fl">
+                        <span>头像</span>
+                    </div>
+                    <div class="userPhoto fr">
+                        <img :src="head_pic" v-model="head_pic" alt="">
+                        <input type="file" name="head_pic" accept="image/gif,image/jpeg,image/jpg,image/png" @change="changeImage($event)">
+                    </div>
+                    <div class="usermessge fr" style="padding-top: 25px;">
+                        <svg class="icon right-icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiangyou"></use>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="user-main-list">
+                    <li>
+                        <span>用户名</span>
+                        <span class="fontColor" style="margin-right: 20px;">{{userName}}</span>
+                    </li>
+                    <li class="select">
+                        <span>昵称</span>
+                        <input class="fontColor" type="text" name="realname" v-model="realname" placeholder="请输入昵称">
+                    </li>
+                    <li class="select" @click="selectSex">
+                        <span>性别</span>
+                        <span class="sex fontColor" v-if="sex == 1">男</span>
+                        <span class="sex fontColor" v-if="sex == 2">女</span>
+                        <span class="sex fontColor" v-if="sex == 0">保密</span>
+                        <svg class="icon right-icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiangyou"></use>
+                        </svg>
+                        <input type="hidden" name="sex">
+                    </li>
+                    <li class="select" @click="selectTime">
+                        <span>出生日期</span>
+                        <input class="selectTime fontColor" type="text" name="birthday" placeholder="请选择日期" v-model="birthday">
+                        <svg class="icon right-icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiangyou"></use>
+                        </svg>
+                    </li>
+                </div>
+            </div>
+        </form>
+
+        <div>
+            <button type="button" class="revise" @click="revise">确定修改</button>
+        </div>
+
+    </div>
+</body>
+
+<script>
+    new Vue({
+        el: '.personal',
+        data: {
+            userName: '',
+            token: '',
+            sex: '',
+            birthday: '',
+            head_pic: '',
+            realname: ''
+        },
+        created: function () {
+            __checkLogin();
+            this.userName = getUserInfo().username;
+            this.token = getToken()
+        },
+        mounted:function () {
+            this.$nextTick(function () {
+                this.beginDate()
+            })
+        },
+        methods: {
+            // 初始化数据
+            beginDate: function () {
+                var that = this
+                axios({
+                    method: 'GET',
+                    url: __apiurl2 + '/user/getuserinfo',
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: that.token,
+                        Aid: getAId()
+                    },
+                }).then(function (response) {
+                    that.head_pic = response.data.data.head_pic
+                    that.sex = response.data.data.sex
+                    that.realname = response.data.data.realname
+                    that.birthday = new Date(parseInt(response.data.data.birthday) * 1000).toLocaleDateString().replace(/\//g,'-') // 转换时间戳
+                    localStorage.setItem("user", JSON.stringify(response.data.data));
+                }).catch(function (error) {
+                    mui.alert(error);
+                })
+            },
+            //上传头像
+            changeImage(e) {
+                var file = e.target.files[0]
+                var reader = new FileReader()
+                var that = this
+                reader.readAsDataURL(file)
+                reader.onload = function (e) {
+                    that.head_pic = this.result
+                }
+            },
+            //确认修改
+            revise: function () {
+                var that = this
+                var form = document.getElementById("myform");
+                var formData = new FormData(form);
+                axios({
+                    method: 'POST',
+                    url: __apiurl2 + '/user/editinfo',
+                    data: formData,
+                    processData: false,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Token: that.token,
+                        Aid: getAId()
+                    },
+                }).then(function (response) {
+                    if(response.data.status == 100) {
+                        that.beginDate()
+                        mui.toast("修改成功")
+                    }
+                }).catch(function (error) {
+                    mui.alert(error);
+                })
+            }
+        }
+
+    });
+
+    // 选择性别
+    function selectSex() {
+        var dtPicker = new mui.PopPicker();
+        dtPicker.setData([{
+            text: '男',
+            value: 1
+        }, {
+            text: "女",
+            value: 2
+        }, {
+            text: "保密",
+            value: 0
+        }]);
+        dtPicker.show(function (selectItems) {
+            $("input[name='sex']").val(selectItems[0].value);
+            $(".sex").text(selectItems[0].text)
+        })
+    }
+
+
+
+    // 选择日期
+    function selectTime() {
+        var dtPicker = new mui.DtPicker({
+            "type": "date",
+            beginDate: new Date(1900.01, 01), //设置开始日期 
+            endDate: new Date(2068, 12, 31), //设置结束日期 
+        });
+        dtPicker.show(function (selectItems) {
+            $(".selectTime").val(selectItems.value);
+        });
+    }
+</script>
+
+</html>

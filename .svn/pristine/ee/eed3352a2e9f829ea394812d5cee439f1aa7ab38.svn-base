@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+{include file="public/base" /}
+
+</head>
+<body>
+<script type="text/javascript">
+
+var userStr='{$user}';
+if(userStr!=''){
+	var user=eval('(' + userStr + ')');	
+	setUserInfo(user);
+	
+	
+	var sessionuser=getUserInfo();
+	alert(sessionuser.username);
+	console.log(sessionuser);
+}
+
+
+$.ajax({
+    type: "GET",
+    url: "http://zbfxapi.com/api/goods/index",
+    beforeSend: function(request) {    	
+    	request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
+        request.setRequestHeader("Aid", "1003");
+    },
+    success: function(result) {
+        console.log(result);
+    }
+});
+
+
+
+
+
+
+//转换
+
+//判断user['token']是否存在
+
+//如果user['token']是不存在，判断：user['openid']是否存在，如果存在，调用loginbyopenid登录，如果不存在，login登录
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?php
+namespace app\newapi\controller\v1;
+
+use app\newapi\controller\Base;
+use app\newapi\service\Goods as GoodsService;
+use think\Db;
+
+class Goods extends Base
+{
+	public $agent_id = '';
+	protected function _initialize()
+    {
+    	$this->agent_id = get_agent_id();
+        parent::_initialize();       
+    }  
+
+	//钻配托 获取定制商品列表 by sxm
+	public function getcustomgoods()
+	{
+		$data['agent_id'] = $this->agent_id; //分销商
+        $data['type'] = 4; //成品 定制
+        $data['diamond_id'] = I('diamond_id') ? I('diamond_id') : '';// 定制钻配托 goods表 ID
+        $data['goods_attr_filter'] = I('goods_attr_filter') ? I('goods_attr_filter') : ''; //属性搜索
+        
+        $page = I('page')>0?I('page'):1;
+        $pagesize = I('pagesize')?I('pagesize'):20;
+        $result = GoodsService::zptGoodslist($data,$page,$pagesize);
+	}
+
+    
+}

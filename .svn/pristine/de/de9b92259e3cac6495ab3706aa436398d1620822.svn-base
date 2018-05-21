@@ -1,0 +1,74 @@
+<meta charset="utf-8">
+<title>速易宝H5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="stylesheet" href="__MOBILE__/css/mui.min.css">
+<link rel="stylesheet" href="__MOBILE__/css/mui.picker.min.css">
+<link rel="stylesheet" href="__MOBILE__/css/app.css?__Version__"/>
+<link rel="stylesheet" href="__MOBILE__/css/swiper.min.css"/>
+<link rel="stylesheet" href="__MOBILE__/css/mobileSelect.css"/>
+<link rel="stylesheet" href="__CSS__/mstyle.css?__Version__"/>
+
+<script src="__MOBILE__/js/jquery.min.js"></script>
+<script src="http://at.alicdn.com/t/font_503258_ydr3mirvxk9y66r.js"></script> <!--icon 阿里字体图标-->
+<script src="__MOBILE__/js/swiper.min.js"></script>
+<script src="__MOBILE__/js/mobileSelect.js"></script>
+<script src="__MOBILE__/js/mui.min.js"></script>
+<script src="__MOBILE__/js/mui.picker.min.js"></script>
+<script src="__MOBILE__/js/app.js?__Version__"></script>
+
+<script src="__JS__/vue.min.js"></script>
+<script src="__JS__/axios.js"></script>
+<script src="__JS__/vue-lazyload.js"></script>  <!--vue 懒加载-->
+
+<script>
+
+	$(function () {   
+		setAId("{$agent.id}");
+		setOpenId("{$user.openid}");			    
+	});
+
+    mui.init();    
+    var __apiurl = "{$apiurl}";   
+    var __apiurl2 = "{$apiurl2}";
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    }
+
+
+    //检查登录
+    function __checkLogin(){
+    	var token=getToken();    
+    	if(token===null){
+    		var openid=getOpenId();  		
+    		if(openid){    		
+    			//通过loginbyopenid登录   
+    	    	$.ajax({    	    		  
+    	    		  url: __apiurl+"/com/loginbyopenid",
+    	    		  type:"POST",
+    	    		  data: {"openid":openid},
+    	    		  dataType: 'json',
+    	    		  async:false,
+    	    		  success:function(ret, err){    	    			  
+    	    			  if(ret.status==100){
+    	    				  setUserInfo(ret.data);//本地用户信息存储           	    				  
+    	    				  return;
+    	    			  }
+                      }
+    	    	});
+    		}   		
+    	}
+    	
+    	if(getToken()===null){
+    		//跳转到登录页    		 
+    		window.location.href = "{:url('/mobile/com/login')}?r_url="+window.location.href;
+    	}
+    	return;
+    }
+</script>
+ 

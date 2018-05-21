@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+</head>
+
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">订单提交成功</h1>
+</header>
+<div class="mui-content" id="succcess">
+    <p class="p-style">订单信息</p>
+    <div class="main-content">
+        <ul>
+            <li>支付方式：{{payName}}</li>
+            <li>配送方式：物流配送</li>
+            <li>订单号：{{order_sn}}</li>
+            <li>订单金额：￥{{goods_price}}</li>
+        </ul>
+    </div>
+    <div class="pay-box" v-if="payType==1">
+        <p>收款户名：{{bankaccount}}</p>
+        <p>收款账号：{{bankcard}}</p>
+        <p>开户银行：{{bank}}</p>
+    </div>
+    <div class="btn-list clear">
+        <a href="{:url('user/order')}?type=0">查看订单</a>
+        <a href="javascript:;"  v-if="payType==1">线下转账</a>
+        <a href="javascript:;"  @click="goPay" v-else>去支付</a>
+    </div>
+    <div class="my-mask" v-show="myMask" @click="MaskNone"></div>
+    <div class="mask-html" v-show="myMask">
+        <ul>
+            <li @click="wxGoPay">
+                <span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-wechat"></use>
+                     </svg>
+				</span>
+                微信支付
+            </li>
+            <li @click="zfbGoPay">
+                <span>
+                     <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-alipay"></use>
+                     </svg>
+				</span>
+                支付宝支付
+            </li>
+        </ul>
+    </div>
+    <div style="width: 100%;height: 50px"></div>
+</div>
+
+
+{include file="public/nav" /}
+</body>
+<script>
+    new Vue({
+        el: '#succcess',
+        data: {
+            payName:'' ,     //支付方式
+            order_sn:'' ,    //订单号
+            goods_price:'',
+            bankaccount:'',
+            bank:'',
+            bankcard:'',
+            payType:'',
+            myMask:false
+
+
+        },
+        created:function() {
+            __checkLogin();
+            this.token = getToken();
+            axios({
+                method:'get',
+                url:__apiurl + '/order/addconfirm',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+                params:{
+                    id:getUrlParam("id")
+                }
+            }).then(function (response){
+                this.payName=response.data.data.order.pay_name;
+                this.order_sn=response.data.data.order.order_sn;
+                this.goods_price=response.data.data.order.goods_price;
+                this.payType=response.data.data.order.pay_type;
+            }).catch(function (error)  {
+                mui.alert(error);
+            });
+
+            //获取银行账户信息
+            axios.get(__apiurl + '/order/addpre', {
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token
+                },
+            }).then(function (response) {
+                this.bankaccount =response.data.data.payment[0].ziliao.bankaccount;
+                this.bankcard =response.data.data.payment[0].ziliao.bankcard;
+                this.bank =response.data.data.payment[0].ziliao.bank;
+            }).catch(function (error)  {
+                mui.alert(error);
+            });
+        },
+        methods: {
+            goPay:function(){
+                this.myMask=true;
+            },
+            MaskNone:function(){
+                this.myMask=false;
+            },
+            wxGoPay:function(){
+                var wxopenid=getOpenId();
+                //微信支付接口  ,如果有openid就是公众号支付，没有为H5支付，upt by fire
+                axios.post(__apiurl + '/pay/wxpay', {
+                        order_id:this.order_sn,
+                        openid:wxopenid
+                    }, {
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        }
+                    }
+                ).then(function (res) {
+                    if(wxopenid){
+                        jsApiMpPay(res.data.data.options,"{:url('order/wxpaysuccess')}" + '?id=' + this.order_sn);
+                    }else{
+                        window.location.href = res.data.data.options;
+                    }
+
+                }).catch(function (error){
+                    mui.alert(error)
+                })
+            },
+            zfbGoPay:function(){
+
+            },
+
+        }
+    })
+
+
+</script>
+
+</html>

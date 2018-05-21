@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>珠宝分类</title>
+    {include file="public/base" /}
+</head>
+
+<body>
+    <header class="mui-bar mui-bar-nav">
+        <h1 class="mui-title">珠宝分类</h1>
+    </header>
+    <div class="mui-content">
+        <div class="classifyTabs clear">
+            <ul>
+                <li>
+                    <a href="{:url('goods/index')}?goods_type=3" :class="{red:isShowTitle}">自有成品</a>
+                </li>
+                <li>
+                    <a href="{:url('goods/index')}?goods_type=4" :class="{red:isShowTitle2}">自有定制</a>
+                </li>
+                <li>
+                    <a href="{:url('goods/index')}?goods_type=5" :class="{red:isShowTitle3}">精品定制</a>
+                </li>
+            </ul>
+        </div>
+        <div class="clear wap_all">
+            <div class="tab-tit fl">
+                <ul>
+                    <li v-for="(item,index) in goodsCategory" @click="chgtab(index)" :class="{'active':index==num}">
+                        {{item.name}}
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-con fr">
+                <div class="box_style" v-for="(item,index) in goodsCategory" v-show="index==num">
+                    <a :href="adurl">
+                        <img :src="adimg" alt="" width="100%">
+                    </a>
+                    <ul class="clear">
+                        <li v-for="tab in goodsCategory[index].sub">
+                            <a :href="'{:url('goods/goodsList')}?category_id='+[tab.id]+'&goods_type='+goods_type">
+                                {{tab.name}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include file="public/nav" /}
+</body>
+<script>
+    new Vue({
+        el: '.mui-content',
+        data: {
+            isShowTitle: true,
+            isShowTitle2: false,
+            isShowTitle3: false,
+            num: 0,
+            goodsCategory: [],
+            adimg: "",
+            adurl: "",
+            goods_type: ''
+
+        },
+        mounted: function () {
+            this.$nextTick(function () {
+                this.getAd();
+            })
+
+        },
+        created: function () {
+            // 区分成品和定制
+            var goods_type = getUrlParam("goods_type");
+            console.log(goods_type);
+
+            // 判断初始时候goods_type，并且默认赋值第一个
+            if (!goods_type) {
+                this.goods_type = 3;
+            } else {
+                this.goods_type = goods_type;
+            }
+
+            // 根据goods_type判断对应的tab项
+            if (this.goods_type == 3) {
+                this.isShowTitle = true
+                this.isShowTitle2 = false
+                this.isShowTitle3 = false
+            } else if (this.goods_type == 4) {
+                this.isShowTitle = false
+                this.isShowTitle2 = true
+                this.isShowTitle3 = false
+            } else {
+                this.isShowTitle = false
+                this.isShowTitle2 = false
+                this.isShowTitle3 = true
+            }
+
+            var _this = this;
+            __checkLogin();
+            axios({
+                    method: 'get',
+                    url: __apiurl + '/goods/getcategory',
+                    params: {
+                        goods_type: this.goods_type
+                    },
+                    headers: getHeader(),
+                })
+                .then(function (response) {
+                    _this.goodsCategory = response.data.data;
+                })
+                .catch(function (error) {
+
+                    mui.alert(error);
+                })
+
+        },
+        methods: {
+            //获取分类广告
+            getAd: function () {
+                var _this = this;
+                axios.get(__apiurl + '/goods/getcatead')
+                    .then(function (response) {
+                        _this.adurl = response.data.data.url;
+                        _this.adimg = response.data.data.images;
+                        // console.log( _this.adimg)
+                    })
+                    .catch(function (error) {
+                        mui.alert(error);
+                    })
+            },
+            /*标签切换*/
+            chgtab: function (index) {
+                this.num = index;
+            }
+
+        },
+    })
+</script>
+
+</html>

@@ -1,0 +1,167 @@
+<?php
+namespace app\common\logic;
+
+//zwx 价格计算
+class PriceCalculation
+{
+    public $agent_info;
+    public function __construct(){
+        $this->agent_info = get_agent_info();
+        //dollar_huilv 美元汇率
+
+    }
+
+    //商品销售价格计算
+    public function goods_price($list,$data=[]){
+        $g_agent_id = isset($data['agent_id'])?$data['agent_id']:'agent_id';//商品所属分销商
+        $price = isset($data['price'])?$data['price']:'price';//要计算的价格字段
+        $type = isset($data['type'])?$data['type']:'type';//商品类型
+        $global_price = isset($data['global_price'])?$data['global_price']:'global_price';//国际报价
+        $weight = isset($data['weight'])?$data['weight']:'weight';//重量
+        $dia_discount = isset($data['dia_discount'])?$data['dia_discount']:'dia_discount';//dia_discount 折扣 
+        $supply_goods_id = isset($data['supply_goods_id'])?$data['supply_goods_id']:'supply_goods_id';//supply_goods_id 条件 
+
+        // 1.1 白钻计算公式： 白钻价格 = 国际报价*钻重*汇率*折扣；
+        // 例如：国际报价为2000，钻重为0.5，汇率为7，折扣为72
+        // 销售价 = 2000*0.5*7*[（72 /100）]
+
+        // 1.2 彩钻价格 = 国际报价*钻重*汇率*折扣
+        // 例如：国际报价为2000，钻重为0.5，汇率为7，折扣为72
+        // 销售价 = 2000*0.5*7*[（72 /100）]
+
+        //钻明汇率
+        $zm_dollar_huilv = 0; 
+        //上级分销商汇率
+        $t_dollar_huilv = 0;
+        $agent_id = get_agent_id();
+
+        $trader = []; //分销商信息
+        $trader_price_list = []; //自己的加点信息
+        $t_trader_price_list = []; //上级的加点信息
+
+        //分销商信息
+        $trader = M('trader')->where(['agent_id'=>$agent_id])->find();
+        //自己的加点信息
+        $trader_price_list = logic('DataProcessing')->get_trader_price($agent_id);
+        //上级加点信息
+        if($trader['t_agent_id']>0){ 
+            $t_trader_price_list = logic('DataProcessing')->get_trader_price($trader['t_agent_id']);
+        }
+        //上级分销商汇率
+        if($t_dollar_huilv == 0){
+            $t_dollar_huilv = get_agent_info($trader['t_agent_id'])['dollar_huilv'];
+        }
+
+        foreach ($list as $k => $v) {
+            //暂时只做一级分销商加点 
+            if(!$v) return ;
+
+            //戒托计算价格 销售加点进行
+            if($v[$type] == 3 ||$v[$type] == 4){
+                
+                if($v[$supply_goods_id]>0){ //官网戒托
+                    $list[$k][$price] = formatRound($v[$price]*$trader_price_list[$v[$type]]['point']/10000);
+                }elseif($v[$g_agent_id]>0&&$v[$g_agent_id] != $agent_id){ //上级分销商的商品
+                    $list[$k][$price] = formatRound($v[$price]*$trader_price_list[$v[$type]]['point_my']/10000);
+                }
+            }
+
+            //白钻彩砖计算价格 销售加折扣计算
+            if($v[$type] == 0 ||$v[$type] == 1){ 
+                if($v[$supply_goods_id]>0){ //官网钻石
+                    if($zm_dollar_huilv == 0){ //获取汇率
+                        $Openzm = logic('Openzm')->config_getConfig();
+                        if($Openzm['code']==100200){
+                            $zm_dollar_huilv = $Openzm['data']['dollar_huilv'];
+                        }else{
+                            return false;
+                        }
+                    }
+                    $list[$k][$price] = formatRound($v[$global_price]*$v[$weight]*$zm_dollar_huilv*($v[$dia_discount]+$trader_price_list[$v[$type]]['point'])/100);
+                }else if($v[$g_agent_id] == $agent_id){ //自己的钻石商品
+                    $list[$k][$price] = formatRound($v[$global_price]*$v[$weight]*$this->agent_info['dollar_huilv']*($v[$dia_discount]/100));
+                }else if($v[$g_agent_id]>0&&$v[$g_agent_id] != $agent_id){ //上级分销商钻石商品
+                    $list[$k][$price] = formatRound($v[$global_price]*$v[$weight]*$t_dollar_huilv*($v[$dia_discount]+$trader_price_list[$v[$type]]['point_my']/100));
+                }
+            }
+        }
+        return $list;
+    }
+
+    //商品采购价格计算
+    public function goods_purchase_price($list,$data=[]){
+        $g_agent_id = isset($data['agent_id'])?$data['agent_id']:'agent_id';//商品所属分销商
+        $price = isset($data['price'])?$data['price']:'price';//要计算的价格字段
+        $type = isset($data['type'])?$data['type']:'type';//商品类型
+        $global_price = isset($data['global_price'])?$data['global_price']:'global_price';//国际报价
+        $weight = isset($data['weight'])?$data['weight']:'weight';//重量
+        $dia_discount = isset($data['dia_discount'])?$data['dia_discount']:'dia_discount';//dia_discount 折扣 
+        $supply_goods_id = isset($data['supply_goods_id'])?$data['supply_goods_id']:'supply_goods_id';//supply_goods_id 条件 
+
+        // 1.1 白钻计算公式： 白钻价格 = 国际报价*钻重*汇率*折扣；
+        // 例如：国际报价为2000，钻重为0.5，汇率为7，折扣为72
+        // 销售价 = 2000*0.5*7*[（72 /100）]
+
+        // 1.2 彩钻价格 = 国际报价*钻重*汇率*折扣
+        // 例如：国际报价为2000，钻重为0.5，汇率为7，折扣为72
+        // 销售价 = 2000*0.5*7*[（72 /100）]
+
+        //钻明汇率
+        $zm_dollar_huilv = 0; 
+        //上级分销商汇率
+        $t_dollar_huilv = 0;
+        $agent_id = get_agent_id();
+
+        $trader = []; //分销商信息
+        $trader_price_list = []; //自己的加点信息
+        $t_trader_price_list = []; //上级的加点信息
+        
+        //分销商信息
+        $trader = M('trader')->where(['agent_id'=>$agent_id])->find();
+        //自己的加点信息
+        $trader_price_list = logic('DataProcessing')->get_trader_price($agent_id);
+        //上级加点信息
+        if($trader['t_agent_id']>0){ 
+            $t_trader_price_list = logic('DataProcessing')->get_trader_price($trader['t_agent_id']);
+        }
+        //上级分销商汇率
+        if($t_dollar_huilv == 0){
+            $t_dollar_huilv = get_agent_info($trader['t_agent_id'])['dollar_huilv'];
+        }
+
+        foreach ($list as $k => $v) {
+            //暂时只做一级分销商加点 
+            if(!$v) return ;
+
+            //戒托计算价格 销售加点进行
+            if($v[$type] == 3 ||$v[$type] == 4){
+                
+                if($v[$supply_goods_id]>0){ //官网戒托
+                    $list[$k][$price] = formatRound($v[$price]*$trader_price_list[$v[$type]]['rate']/10000);
+                }elseif($v[$g_agent_id]>0&&$v[$g_agent_id] != $agent_id){ //上级分销商的商品
+                    $list[$k][$price] = formatRound($v[$price]*$trader_price_list[$v[$type]]['rate_my']/10000);
+                }
+            }
+
+            //白钻彩砖计算价格 销售加折扣计算
+            if($v[$type] == 0 ||$v[$type] == 1){ 
+                if($v[$supply_goods_id]>0){ //官网钻石
+                    if($zm_dollar_huilv == 0){ //获取汇率
+                        $Openzm = logic('Openzm')->config_getConfig();
+                        if($Openzm['code']==100200){
+                            $zm_dollar_huilv = $Openzm['data']['dollar_huilv'];
+                        }else{
+                            return false;
+                        }
+                    }
+                    $list[$k][$price] = formatRound($v[$global_price]*$v[$weight]*$zm_dollar_huilv*($v[$dia_discount]+$trader_price_list[$v[$type]]['rate'])/100);
+                }else if($v[$g_agent_id] == $agent_id){ //自己的钻石商品
+                    $list[$k][$price] = formatRound($v[$global_price]*$v[$weight]*$this->agent_info['dollar_huilv']*($v[$dia_discount]/100));
+                }else if($v[$g_agent_id]>0&&$v[$g_agent_id] != $agent_id){ //上级分销商钻石商品
+                    $list[$k][$price] = formatRound($v[$global_price]*$v[$weight]*$t_dollar_huilv*($v[$dia_discount]+$trader_price_list[$v[$type]]['rate_my']/100));
+                }
+            }
+        }
+        return $list;
+    }
+}

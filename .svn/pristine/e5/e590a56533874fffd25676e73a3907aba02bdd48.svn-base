@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="__CSS__/mint-ui.css"/>
+
+<head>
+    {include file="public/base" /}
+    <style>
+        .mint-swipe-indicator {
+            background: #666666;
+        }
+
+        .mint-swipe-indicator.is-active {
+            background: red;
+        }
+        .noshow {
+            background: #ccc;
+        }
+
+    </style>
+</head>
+
+<body>
+<div id="details">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">详情</h1>
+    </header>
+    <div class="mui-content">
+        <!--列表头-->
+        <div class="list_title clear  ">
+            <ul class="mui-row">
+                <li class="mui-col-sm-4 mui-col-xs-4"><a href="javascript:;">商品</a></li>
+                <li class="mui-col-sm-4 mui-col-xs-4"><a :href="'{:url('goods/details_page')}?id='+id">详情</a>
+                </li>
+                <li class="mui-col-sm-4 mui-col-xs-4"><a :href="'{:url('goods/evaluation')}?id='+id">评价</a>
+                </li>
+            </ul>
+        </div>
+        <!--轮播-->
+        <div>
+            <mt-swipe :auto="4000" style="height: 300px">
+                <mt-swipe-item v-for="item in goodsImage">
+                    <img :src="item.big" width="100%" height="100%"/>
+                </mt-swipe-item>
+            </mt-swipe>
+        </div>
+        <!--产品详情-->
+        <div class="goods_name">
+            <p>{{goodsName}}</p>
+            <p>价格：<strong>￥{{goodsPrice*num}}</strong> <span>￥{{goodsPrice*num}}</span></p>
+        </div>
+        <!--产品规格-->
+        <div id="mask">
+            <div class="clear title">
+                <p class="fl" style="font-size: 16px; color: #333333;">产品规格</p>
+            </div>
+            <div class="clear" >
+                <ul class="clear" v-for="(item,index) in goodsAttr">
+                    <p class="p_style">{{item.attrname}}</p>
+                    <li v-for="(list,listIndex) in goodsAttr[index].sub_attr_id"
+                        @click="liListClick(list,listIndex,index,list.isshow)" :class="{active:listIndex==attrIndex[index],noshow:list.isshow==false}" >
+                        {{list.attrvaluename}}
+                    </li>
+                </ul>
+               <!-- <p class="p_style">刻字</p>
+                <input class="kezi" type="text" placeholder="最多输入10个字符">
+               <div style="position: relative">
+                   <select>
+                       <option>定制图案</option>
+                       <option>鸡毛</option>
+                       <option>鸭毛</option>
+                       <option>狗毛</option>
+                   </select>
+               </div>-->
+            </div>
+            <div class="clear list_04">
+                <p class="p_style">数量</p>
+                <button class="val_sel" @click="pro_num_jian">-</button>
+                <input class="val_text" type="text" v-model="num" disabled>
+                <button class="val_sel" @click="pro_num_jia">+</button>
+                <p class="kucun">库存 <span>{{goodsStockNum}}</span></p>
+            </div>
+            <div class="clear ser_num">商品编号：<span>{{goodsCode}}</span></div>
+        </div>
+        <!--产品参数-->
+        <div class="Parameter">
+            <p class="title">产品参数</p>
+            <ul class="clear" v-for="(item,index) in goodsAttr">
+                <p>{{item.attrname}}:</p>
+                <li v-for="(list) in goodsAttr[index].sub_attr_id">{{list.attrvaluename}}</li>
+            </ul>
+        </div>
+
+        <div style="width: 100%;height: 60px"></div>
+    </div>
+
+</div>
+{include file="public/footer" /}
+</body>
+<script src="__MOBILE__/js/mint-ui.js?__Version__"></script>
+<script>
+    /*图片懒加载*/
+    Vue.use(VueLazyload, {
+        preLoad: 1.3,
+        error: "错误",
+        loading: '',
+        attempt: 1,
+        cartnum:0
+    });
+
+    let vm = new Vue({
+        el: '#details',
+        components: {},
+        data() {
+            return {
+                number: 0,
+                num: 1,
+                id: '',
+                goodsName: '',
+                goodsPrice: '',
+                goodsImage: [],
+                goodsCode: '',
+                goodsStockNum: '',
+                token: '',
+                goodsAttr: [],
+                goodsId: '',
+                str: [],
+                attrIndex: [],
+                skuObj:[],
+                skuProduct:''
+            }
+        },
+        filters: {},
+        created() {
+            this.token = getCookie('Token');
+            this.id = getUrlParam("id");
+            /*轮播图片ajax*/
+           axios.get(__apiurl+ '/goods/getgoodsinfo',{
+               params: {
+                   id: this.id
+               }
+           }).then(res=>{
+               // console.log(res)
+               this.goodsName = res.data.data.name;
+               this.goodsImage = res.data.data.image;
+               this.goodsCode = res.data.data.code;
+           }).catch(error=>{
+               mui.alert(error)
+           })
+           //获取sku规格
+            this.getDetailsData();
+            /*获取产品规格数据*/
+            axios.get(__apiurl + '/goods/newgetgoodsattr', {
+                params: {
+                    id: this.id,
+                    is_sku: 1
+                }
+            }).then(res => {
+                this.goodsAttr = res.data.data; //前台遍历属性
+                for (var index in this.goodsAttr) {
+                    this.attrIndex[index] = 0;
+                    for (var key in this.goodsAttr[index].sub_attr_id) {
+                        if (key == 0) {
+                            this.str[this.goodsAttr[index].attr_id] = this.goodsAttr[index].sub_attr_id[key]['attr_value_id']
+                            this.$set(this.goodsAttr[index].sub_attr_id[key],'isactive',true);
+                        } else {
+                            this.$set(this.goodsAttr[index].sub_attr_id[key],'isactive',false);
+                        }
+                        // if (typeof this.goodsAttr[index].sub_attr_id[key]['isshow'] == 'undefined' ) {
+                            this.$set(this.goodsAttr[index].sub_attr_id[key],'isshow',true); //加上显示标识
+                        // }
+                    }
+                }
+                var newstr = '';
+                for (var index in this.str) {
+                    newstr += index + ':' + this.str[index] + '^';
+                }
+                // console.log(this.skuProduct);
+                for(var i in this.skuProduct) {
+                    if (newstr.substr(0, newstr.length - 1) == this.skuProduct[i].attributes) {
+                        this.goodsPrice = this.skuProduct[i].goods_price;
+                        this.goodsStockNum = this.skuProduct[i].goods_number;
+                    }
+                }
+            }).catch(error => {
+                // mui.alert(error)
+            })
+        },
+        computed: {},
+        mounted() {
+            this.$nextTick(function () {
+                /*swiper_03 */
+                new Swiper('.swiper-container-details', {
+                    observer: true,
+                    observeParents: true,
+                    direction: 'horizontal',
+                    loop: true,
+                    //自动播放
+                    autoplay: {
+                        delay: 2000,
+                        stopOnLastSlide: false,
+                        disableOnInteraction: true,
+                    },
+                    // 如果需要分页器
+                    pagination: {
+                        el: '.swiper-pagination'
+                    }
+                });
+            });
+        },
+        methods: {
+            getDetailsData() {
+                axios.get(__apiurl + '/goods/getgoodssku', {
+                    params: {
+                        id: this.id
+                    }
+                }).then(response => {
+                    this.skuProduct = response.data.data;
+                    for (var i in response.data.data) {
+                        this.skuObj.push(response.data.data[i].attributes);
+                    }
+
+                }).catch(error => {
+                    mui.alert(error)
+                })
+            },
+            pro_num_jian() {
+                this.num--;
+                if (this.num == 0) {
+                    this.num = 1
+                }
+            },
+            pro_num_jia() {
+                this.num++
+            },
+            addcart() {
+                if (this.token == '') {
+                    mui.alert('请先登录', function () {
+                        window.location.href = "{:url('com/login')}";
+                    })
+                } else {
+                    var newstr = '';
+                    for (var index in this.str) {
+                        newstr += index + ':' + this.str[index] + '^';
+                    }
+
+                    // console.log(newstr);return false;
+                    axios({
+                        url: __apiurl + '/Cart/addToCart',
+                        method: 'post',
+                        headers: {
+                            Accept: "application/json; charset=utf-8",
+                            Token: this.token
+                        },
+                        data: {
+                            goods_id: this.id,
+                            goods_num: this.num,
+                            spec_key: newstr.substr(0, newstr.length - 1)
+                        },
+                    }).then(res => {
+                        console.log(res);
+                        if (res.data.status == 100) {
+                            mui.alert('您已成功添加到购物车')
+                        } else {
+                            mui.alert(res.data.msg)
+                        }
+                    }).catch(function (error) {
+                        mui.alert("error init" + error)
+                    })
+                }
+            },
+            /*产品规格LI点击事件*/
+            liListClick(product, index, sIndex,isshow) {
+                if (product.isactive == true) {return false;}
+                if (isshow == false) {return false;}
+                this.attrIndex[sIndex] = index
+                let _this = this;
+                _this.number = index;
+                /*获取商品价格*/
+                var newstr = '';
+                for (var index in _this.str) {
+                    if (index == product.attr_id) {
+                        if (_this.str[index] != product.attr_value_id) {
+                            _this.str[index] = product.attr_value_id;
+                        }
+                    }
+                    newstr += index + ':' + _this.str[index] + '^';
+                }
+                _this.showliorther(product); //查找对应sku里面属性
+                for(var i in this.skuProduct) {
+                    if (newstr.substr(0, newstr.length - 1) == this.skuProduct[i].attributes) {
+                        this.goodsPrice = this.skuProduct[i].goods_price;
+                        this.goodsStockNum = this.skuProduct[i].goods_number;
+                    }
+                }
+            },
+            showliorther(obj) { //点击当前属性时查找对应sku里面属性
+                var nowli = obj.attr_id+':'+obj.attr_value_id;
+                var tmp = [];
+                for(var i in this.skuObj) {
+                    if (this.skuObj[i].indexOf(nowli) != -1) {
+                        tmp.push(this.skuObj[i]); //取出包含当前属性的sku
+                    }
+                }
+                // console.log(this.str);
+                //根据选出的sku去隐藏该属性没有的li
+                var lasttmp = [];
+                tmp.forEach(function(v,k){
+                    var temp = v.split("^");
+                    temp.forEach(function(val,key){
+                        if(nowli != val){
+                            lasttmp.push(val);
+                        }
+                    })
+                })
+               for(var i in this.goodsAttr) {
+                    for(var j in this.goodsAttr[i].sub_attr_id) {
+                        if (this.goodsAttr[i].sub_attr_id[j].attr_id != obj.attr_id) {
+                            var ttt = this.goodsAttr[i].sub_attr_id[j].attr_id+':'+this.goodsAttr[i].sub_attr_id[j].attr_value_id;
+                            if (!in_array(ttt,lasttmp)) { //没有的无法点击
+                                this.goodsAttr[i].sub_attr_id[j].isshow = false;
+                            } else {
+                                this.goodsAttr[i].sub_attr_id[j].isshow = true;
+                            }
+                        } else { //拥有active的无法点击
+                            if (this.goodsAttr[i].sub_attr_id[j].attr_value_id == obj.attr_value_id) {
+                                this.goodsAttr[i].sub_attr_id[j].isactive = true;
+                            } else {
+                                this.goodsAttr[i].sub_attr_id[j].isactive = false;
+                            }
+                        }
+                    }
+               }
+            }
+        }
+    });
+    $('.addcart').click(function () {
+        vm.addcart();
+
+    });
+
+    //判断是否在数组里面
+    function in_array(search,array){
+        for(var i in array){
+            if(array[i]==search){
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+
+</html>

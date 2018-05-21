@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {include file="public/base" /}
+    <link rel="stylesheet" href="__CSS__/user.css?__Version__"/>
+    <style>
+    	.mui-content,body {
+		    margin-top: 0px;	
+		    background-color: white!important;	    
+		}
+        .picker{
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #ccc;
+        }
+        .mui-content{
+        	padding: 15px;
+        }
+        .wrap-ul{
+            margin: 20px 0 16px 20px;
+        }
+        .wrap-ul li span{
+        	width: 70px;
+        	font-size:14px ;
+        	display: inline-block;
+        }
+        .wrap-ul li input{
+        	font-size: 14px;
+        }
+        .clear-btn:focus, .clear-btn:active {
+            color: #fff !important;
+        }
+    </style>
+</head>
+
+<body>
+<div id="editAddress">
+<header class="mui-bar mui-bar-nav">
+    <a href="javascript:history.go(-1)"  class=" mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">管理收货地址</h1>
+</header>
+<div class="mui-content" >
+    <ul class="wrap-ul">
+        <li>
+            <span>收货人：</span>
+            <input type="text" v-model="name" >
+        </li>
+        <li>
+            <span>联系电话：</span>
+            <input type='number'v-model="phone">
+        </li>
+        <li>
+            <span>配送地址：</span>
+            <input type="text" onclick="address()" v-model="area">
+        </li>
+        <li>
+            <span>详细地址：</span>
+            <input type="text" v-model="address">
+        </li>
+        <li>
+            <span>邮政编码：</span>
+            <input type="text">
+        </li>
+    </ul>
+    <a href="javascript:;" class="clear-btn" @click="save" >保存地址</a>
+</div>
+</div>
+
+</body>
+
+<script>
+    var picker = new mui.PopPicker({
+        layer: 3
+    });
+    picker.hide();
+
+  var vm=new Vue({
+        el: '#editAddress',
+        data: {
+            token: '',
+            id:'',
+            addressList:[],
+            name:'',
+            phone:'',
+            address:'',
+            area:'',
+            isOk:false,
+            province: '选择省',     //省
+            provinceID: '选择省',     //省ID
+            city: '选择市',     //市
+            cityID: '选择市',     //市ID
+            county: '选择区',     //区
+            countyID: '选择区',     //区ID
+            area:'',
+        },
+
+        created:function() {
+            __checkLogin();
+            this.token = getToken();
+            this.id = getUrlParam("id");
+            axios({ //地址数据
+                method: 'GET',
+                url: __apiurl2 + '/user/getRegion',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token,
+                    Aid: getAId()
+                },
+            }).then(function (response)  {
+                var tmparr = [];
+                for (var i in response.data) {
+                    var tmp = {};
+                    tmp.value = response.data[i].id;
+                    tmp.text = response.data[i].name;
+                    tmp.pid = response.data[i].pid;
+                    tmparr.push(tmp);
+                }
+                var tree = toTree(tmparr);
+                picker.setData(tree[0].children);
+            }).catch(function (error) {
+                mui.alert(error);
+            })
+
+            //原始数据
+            axios({
+                method: 'POST',
+                url: __apiurl2 + '/user/getAddress',
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Token: this.token,
+                    Aid: getAId()
+                }
+            })
+                .then(function (response)  {
+                   for(var i in  response.data.data){
+                    if(response.data.data[i].id == this.id) {
+                        this.addressList = response.data.data[i];
+                       this.name=this.addressList.recname;
+                       this.phone=this.addressList.phone;
+                       this.area=this.addressList.area;
+                       this.address=this.addressList.address;
+                    }
+                   }
+                })
+                .catch(function (error){
+                    mui.alert(error);
+                });
+
+        },
+        methods: {
+            //保存按钮
+            save:function(){
+                    //手机号码验证
+                if (!(/^1[34578]\d{9}$/.test(this.phone))) {
+                   mui.alert("手机号码格式有误，请重填");
+                    return false;
+                }
+
+                axios({
+                    method: 'POST',
+                    url: __apiurl2 + "/user/updateAddress",
+                    headers: {
+                        Accept: "application/json; charset=utf-8",
+                        Token: this.token,
+                        Aid: getAId()
+                    },
+                    data: {
+                        id:this.id,
+                        title: '',
+                        province: this.provinceID,
+                        city: this.cityID,
+                        district: this.countyID,
+                        address: this.address,
+                        recname: this.name,
+                        phone: this.phone,
+                        area:this.area,
+                    }
+                })
+                    .then(function (res){
+                        if(res.data.status==100){
+                            mui.alert('地址修改成功',function () {
+                                window.location.href="{:url('user/address')}";
+                            })
+                        }else {
+                            mui.alert(res.data.msg,function () {
+                                // window.location.href="{:url('com/login')}"
+                            })
+                        }
+                    })
+                    .catch(function (error)  {
+                        mui.alert(error)
+                    })
+            },
+            addinput:function(){
+                this.isOk= !this.isOk;
+            },
+
+        }
+    });
+    function address() {
+        picker.show(function (SelectedItem) {
+            console.log(SelectedItem);
+            vm.province = SelectedItem[0].text;
+            vm.provinceID = SelectedItem[0].value;
+            vm.city = SelectedItem[1].text;
+            vm.cityID = SelectedItem[1].value;
+            vm.county = SelectedItem[2].text;
+            vm.countyID = SelectedItem[2].value;
+            vm.area = SelectedItem[0].text+'-'+SelectedItem[1].text+'-'+SelectedItem[2].text;
+        })
+    }
+
+    //递归函数
+    function toTree(data) {
+        // 删除 所有 children,以防止多次调用
+        data.forEach(function (item) {
+            delete item.children;
+        });
+        // 将数据存储为 以 id 为 KEY 的 map 索引数据列
+        var map = {};
+        data.forEach(function (item) {
+            map[item.value] = item;
+        });
+        var val = [];
+        data.forEach(function (item) {
+            // 以当前遍历项，的pid,去map对象中找到索引的id
+            var parent = map[item.pid];
+            // 好绕啊，如果找到索引，那么说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
+            if (parent) {
+                (parent.children || (parent.children = [])).push(item);
+            } else {
+                //如果没有在map中找到对应的索引ID,那么直接把 当前的item添加到 val结果集中，作为顶级
+                val.push(item);
+            }
+        });
+        return val;
+    }
+</script>
+
+</html>
