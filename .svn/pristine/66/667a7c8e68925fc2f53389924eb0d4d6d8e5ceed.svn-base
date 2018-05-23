@@ -136,9 +136,7 @@
             success: function (res) {
                 //console.log(res);
                 if (res.status == 100) {
-                    mui.alert("注册成功，快去登陆吧",function(){
-                    	window.location.href = "{:url('/mobile/com/login')}?username=" + res.data.username;
-                    });
+                    window.location.href = "{:url('/mobile/com/login')}?username=" + res.data.username;
                 } else {
                     showErrorMsg(res.msg);
                 }
@@ -156,6 +154,9 @@
         var timer;
         $.ajax({
             url: __apiurl + "/com/sendcode?username=" + iphoneNum,
+            headers: {
+                Aid: getAId()
+            },
             dataType: "json",
             headers: {
                 Aid: getAId()

@@ -117,40 +117,5 @@
     	}
     	return;
     }
-
-    //自动登录
-    if(getOpenId() && !getToken()){  
-        //通过loginbyopenid登录   
-        $.ajax({                      
-            url: __apiurl+"/com/loginbyopenid",
-            headers:{
-                Aid:getAId()
-            },
-            type:"POST",
-            data: {"openid":getOpenId()},
-            dataType: 'json',
-            async:false,
-            success:function(ret, err){                     
-              if(ret.status==100){
-                  setUserInfo(ret.data);//本地用户信息存储                                    
-                  return;
-              }
-            }
-        });
-    }
-
-
-
-    axios.interceptors.response.use(function (response) {
-        // token 已过期，重定向到登录页面
-        if (response.data.code == 4){
-            localStorage.clear()
-            window.location.href = "{:url('/mobile/com/login')}?r_url="+window.location.href;
-        }
-        return response
-    }, function (error) {
-        // Do something with response error
-        return Promise.reject(error)
-    })
 </script>
  

@@ -12,7 +12,7 @@
 
         .mui-table-view-cell {
             background: white;
-            padding: 10px 5px;
+            padding: 10px;
         }
 		.mui-media{
 			margin-bottom: 10px;

@@ -230,6 +230,7 @@
                     },
                 }).then(function (response) {
                     if (response.data.status == 100) {
+                        that.beginDate()
                         mui.toast("修改成功")
                     }
                 }).catch(function (error) {

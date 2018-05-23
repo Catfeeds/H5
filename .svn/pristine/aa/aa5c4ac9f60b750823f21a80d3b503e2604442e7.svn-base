@@ -85,7 +85,7 @@
         }
 
         .price-num {
-            margin-top: 0px;
+            margin-top: 10px;
         }
 
         .user-note {

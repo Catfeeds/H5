@@ -250,7 +250,7 @@
                     }
                 },
                 error: function (error) {
-                    mui.alert('错误' + error.status)
+                    mui.toast('错误' + error.status)
                 }
             })
        }

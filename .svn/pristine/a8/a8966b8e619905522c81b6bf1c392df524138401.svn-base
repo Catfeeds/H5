@@ -113,7 +113,7 @@
 	        	<button @click="go_index">首页逛逛</button>
 	        </div>
 	        <div class="list_bottom">
-				—————— 上拉加载更多 ——————
+				—————— 下拉加载更多 ——————
 			</div>
 	        <img v-show="showImg" src="__IMG__/timg_01.gif" alt="" style="display: block;width: 30px;margin: auto;">
 
@@ -214,10 +214,9 @@
 							pagesize:this.pagesize
 							
 	                    }
-	                }).then(function (response)  {
-	                	console.info(response);
-	                	vm.productList = response.data.data;
-	                    if(response.data.data.length >0 ){	                    	
+	                }).then(function (response)  {	                  
+	                    if(response.data.data.length >0 ){
+	                    	vm.productList = response.data.data;	
 	                    	$(".list_bottom").css("display","block");
 	                    	 $(".nodata").css("display","none");
 	                    }else{
